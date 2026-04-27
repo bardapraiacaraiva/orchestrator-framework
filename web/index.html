@@ -245,11 +245,11 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     <p class="section-sub">All plans include the full open-source core. Paid tiers unlock advanced features and priority support.</p>
     <div class="pricing-grid">
 
-      <!-- Community -->
+      <!-- Trial -->
       <div class="price-card">
         <h3>Free Trial</h3>
         <div class="price-amount">Free</div>
-        <div class="price-note">14 days. No credit card.</div>
+        <div class="price-note">14 days. Requires key.</div>
         <ul class="price-features">
           <li>8 core skills</li>
           <li>Budget tracking</li>
@@ -257,7 +257,11 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>Quality scoring</li>
           <li>2 parallel tasks</li>
         </ul>
-        <button class="price-btn" id="install-free-btn">Start 14-Day Trial</button>
+        <div id="trial-form">
+          <input type="email" id="trial-email" placeholder="Your email" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
+          <button class="price-btn" id="trial-btn">Get Trial Key</button>
+        </div>
+        <div id="trial-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all;"></div>
       </div>
 
       <!-- Pro -->
@@ -405,8 +409,29 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     clearTimeout(timer);
     timer=setTimeout(function(){toast.classList.remove('show')},2200);
   }
-  document.getElementById('install-free-btn').addEventListener('click',function(){
-    if(navigator.clipboard&&navigator.clipboard.writeText){
+  /* Trial key generation */
+  document.getElementById('trial-btn').addEventListener('click',function(){
+    var email=document.getElementById('trial-email').value.trim();
+    if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
+    this.textContent='Generating...';this.disabled=true;
+    fetch('/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,days:14})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.key){
+        document.getElementById('trial-form').style.display='none';
+        var r=document.getElementById('trial-result');
+        r.style.display='block';
+        r.innerHTML='<div style="color:var(--cyan);font-weight:600;margin-bottom:6px;">Your trial key:</div><code style="color:#fff;font-size:1em;">'+d.key+'</code><div style="margin-top:8px;color:#aaa;font-size:.8em;">Install: <code>npx orchestrator-ai-framework init --license '+d.key+'</code></div>';
+        showToast('Trial key generated! Check your email.');
+      }else{
+        showToast('Error: '+(d.error||'Try again'));
+        document.getElementById('trial-btn').textContent='Get Trial Key';
+        document.getElementById('trial-btn').disabled=false;
+      }
+    }).catch(function(){showToast('Network error. Try again.');document.getElementById('trial-btn').textContent='Get Trial Key';document.getElementById('trial-btn').disabled=false;});
+  });
+  /* Legacy copy button removed — all access requires key now */
+  if(false){
       navigator.clipboard.writeText(cmd).then(function(){showToast()}).catch(function(){fallbackCopy()});
     }else{fallbackCopy()}
   });

@@ -216,13 +216,20 @@ async function init(args) {
     fs.copyFileSync(licenseSrc, path.join(ORCH_DIR, 'license.js'));
   }
 
-  if (licenseKey) {
-    let tier = 'pro';
+  if (!licenseKey) {
+    error('License key required. Get your key at: https://orchestrator-ai-three.vercel.app/#pricing');
+    error('Then run: npx orchestrator-ai-framework init --license YOUR-KEY');
+    process.exit(1);
+  }
+
+  {
+    let tier = 'trial';
     if (licenseKey.startsWith('VIP-')) tier = 'vip';
     else if (licenseKey.startsWith('TEAM-')) tier = 'team';
     else if (licenseKey.startsWith('ENT-')) tier = 'enterprise';
+    else if (licenseKey.startsWith('PRO-')) tier = 'pro';
     const expires = tier === 'vip' ? null : new Date();
-    if (expires) expires.setDate(expires.getDate() + 30);
+    if (expires) expires.setDate(expires.getDate() + (tier === 'trial' ? 14 : 30));
     const licenseData = {
       version: '1.0', tier, key: licenseKey, email: '',
       issued_at: new Date().toISOString(),
@@ -232,18 +239,9 @@ async function init(args) {
       status: 'active'
     };
     fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
-    success(tier === 'vip' ? `VIP Lifetime license activated — Full access forever` : `License activated: ${tier} tier (30 days)`);
-  } else {
-    const trialExpires = new Date();
-    trialExpires.setDate(trialExpires.getDate() + 14);
-    const licenseData = {
-      version: '1.0', tier: 'trial', key: 'TRIAL-' + Date.now(),
-      issued_at: new Date().toISOString(),
-      expires_at: trialExpires.toISOString(),
-      status: 'active'
-    };
-    fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
-    success(`Free trial activated (14 days — expires ${trialExpires.toISOString().split('T')[0]})`);
+    success(tier === 'vip' ? `VIP Lifetime license activated — Full access forever` :
+           tier === 'trial' ? `Free trial activated (14 days — expires ${expires.toISOString().split('T')[0]})` :
+           `License activated: ${tier} tier (30 days)`);
   }
 
   // Done

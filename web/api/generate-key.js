@@ -30,7 +30,7 @@ async function setToKV(key, value) {
 }
 
 function generateKey(tier) {
-  const prefix = tier === 'vip' ? 'VIP' : tier === 'enterprise' ? 'ENT' : tier === 'team' ? 'TEAM' : 'PRO';
+  const prefix = tier === 'vip' ? 'VIP' : tier === 'enterprise' ? 'ENT' : tier === 'team' ? 'TEAM' : tier === 'trial' ? 'TRIAL' : 'PRO';
   const random = crypto.randomBytes(8).toString('hex').toUpperCase();
   return `${prefix}-${random.match(/.{4}/g).join('-')}`;
 }
@@ -39,17 +39,18 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  // Admin auth
+  // Admin auth (skip for trial — anyone can request a trial key with email)
   const authHeader = req.headers.authorization || '';
   const adminSecret = process.env.ADMIN_SECRET;
-  if (adminSecret && authHeader !== `Bearer ${adminSecret}`) {
-    return res.status(401).json({ error: 'Unauthorized. Provide ADMIN_SECRET.' });
+  const { tier = 'trial' } = req.body || {};
+  if (tier !== 'trial' && adminSecret && authHeader !== `Bearer ${adminSecret}`) {
+    return res.status(401).json({ error: 'Unauthorized. Admin key required for non-trial tiers.' });
   }
 
   const { tier = 'pro', email = '', days = 30 } = req.body || {};
 
-  if (!['pro', 'team', 'enterprise', 'vip'].includes(tier)) {
-    return res.status(400).json({ error: 'Invalid tier. Use: pro, team, enterprise, vip' });
+  if (!['trial', 'pro', 'team', 'enterprise', 'vip'].includes(tier)) {
+    return res.status(400).json({ error: 'Invalid tier. Use: trial, pro, team, enterprise, vip' });
   }
 
   const key = generateKey(tier);
