@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA</title>
-<meta name="description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma. 14 dias gratis.">
-<meta property="og:title" content="Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA">
-<meta property="og:description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma.">
+<title>DARIO Orchestrator AI — 131 Entidades IA. 99 Skills. Zero Caos.</title>
+<meta name="description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 131 entidades (30 agentes + 101 workers), 99 skills, quality scoring 88.3/100, budget tracking, execucao autonoma. 14 dias gratis.">
+<meta property="og:title" content="DARIO Orchestrator AI — 131 Entidades IA. 99 Skills. Zero Caos.">
+<meta property="og:description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 131 entidades, 99 skills, quality scoring 88.3/100, execucao autonoma.">
 <meta property="og:image" content="https://orchestrator-ai.dev/og-image.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA">
-<meta name="twitter:description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma.">
+<meta name="twitter:title" content="DARIO Orchestrator AI — 131 Entidades IA. 99 Skills. Zero Caos.">
+<meta name="twitter:description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 131 entidades, 99 skills, quality scoring 88.3/100, execucao autonoma.">
 <meta name="twitter:image" content="https://orchestrator-ai.dev/og-image.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -19,8 +19,10 @@
   --bg:#0a0e1a;--bg2:#0f1424;--bg3:#141a2e;
   --cyan:#00e5ff;--cyan-dim:rgba(0,229,255,.15);--cyan-glow:rgba(0,229,255,.25);
   --white:#f0f4ff;--gray:#8892a8;--gray2:#5a6378;
+  --red:#ff4444;--orange:#ffa500;--green:#00e676;
   --radius:16px;--radius-sm:10px;
   --max-w:1180px;
+  --mono:'SF Mono',Consolas,'Courier New',monospace;
 }
 html{scroll-behavior:smooth;font-size:16px}
 body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;line-height:1.6;overflow-x:hidden}
@@ -52,9 +54,9 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.08) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);pointer-events:none}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.2);border-radius:999px;padding:6px 18px;font-size:.8rem;font-weight:600;color:var(--cyan);margin-bottom:28px}
-.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);letter-spacing:-.03em;max-width:750px;margin:0 auto 18px}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);letter-spacing:-.03em;max-width:800px;margin:0 auto 18px}
 .hero h1 span{background:linear-gradient(135deg,var(--cyan),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{color:var(--gray);font-size:clamp(1rem,2vw,1.15rem);max-width:560px;margin:0 auto 36px;line-height:1.7}
+.hero p{color:var(--gray);font-size:clamp(1rem,2vw,1.15rem);max-width:580px;margin:0 auto 36px;line-height:1.7}
 .hero-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:32px}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:transform .15s,box-shadow .2s}
 .btn:hover{transform:translateY(-1px)}
@@ -62,13 +64,15 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .btn-primary:hover{box-shadow:0 0 28px var(--cyan-glow);text-decoration:none;color:var(--bg)}
 .btn-secondary{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.15)}
 .btn-secondary:hover{border-color:rgba(255,255,255,.3);text-decoration:none}
+.btn-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700;cursor:pointer;border:none;background:var(--cyan);color:var(--bg);transition:transform .15s,box-shadow .2s;text-decoration:none}
+.btn-cta:hover{transform:translateY(-1px);box-shadow:0 0 28px var(--cyan-glow);text-decoration:none;color:var(--bg)}
 
 /* HERO STATS BAR */
 .hero-stats{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-top:40px;padding:20px 32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm)}
-.hero-stat{text-align:center;font-size:.82rem;color:var(--gray);font-weight:500}
-.hero-stat strong{display:block;font-size:1rem;color:var(--cyan);font-weight:700;margin-bottom:2px}
+.hero-stat{text-align:center;font-size:.82rem;color:var(--gray);font-weight:500;min-width:120px}
+.hero-stat strong{display:block;font-size:1.1rem;color:var(--cyan);font-weight:700;margin-bottom:2px}
 
-/* FEATURES */
+/* FEATURES / CARDS */
 .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
 .feature-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:32px;transition:border-color .25s,transform .25s}
 .feature-card:hover{border-color:rgba(0,229,255,.25);transform:translateY(-3px)}
@@ -76,14 +80,68 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .feature-card h3{font-size:1.1rem;margin-bottom:8px}
 .feature-card p{color:var(--gray);font-size:.9rem;line-height:1.6}
 
-/* HOW IT WORKS */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;counter-reset:step}
-.step{position:relative;padding:36px 32px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);text-align:center}
-.step::before{counter-increment:step;content:counter(step);display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#7c4dff);color:var(--bg);font-weight:800;font-size:1.1rem;margin:0 auto 20px}
-.step h3{margin-bottom:10px;font-size:1.05rem}
-.step p{color:var(--gray);font-size:.9rem;margin-bottom:14px}
-.step code{background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 16px;font-size:.82rem;color:var(--cyan);display:inline-block;font-family:'SF Mono',Consolas,'Courier New',monospace}
-.step-result{color:var(--cyan);font-size:.82rem;font-weight:600;margin-top:8px}
+/* TERMINAL / CLI */
+.terminal{background:#0d1117;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);overflow:hidden;font-family:var(--mono);font-size:.85rem;max-width:720px;margin:0 auto}
+.terminal-bar{background:rgba(255,255,255,.05);padding:10px 16px;display:flex;align-items:center;gap:8px}
+.terminal-dot{width:10px;height:10px;border-radius:50%}
+.terminal-body{padding:20px 24px;line-height:1.9}
+.t-prompt{color:var(--green)}
+.t-cmd{color:var(--white)}
+.t-comment{color:var(--gray2)}
+.t-output{color:var(--gray)}
+.t-success{color:var(--cyan)}
+.t-time{color:var(--orange);font-size:.8rem}
+.t-score{color:var(--green)}
+
+/* ARCHITECTURE */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:960px;margin:0 auto}
+.arch-layer{padding:28px 32px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);transition:border-color .3s,transform .3s,box-shadow .3s;display:flex;align-items:flex-start;gap:20px}
+.arch-layer:hover{border-color:rgba(0,229,255,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,229,255,.06)}
+.arch-layer .arch-emoji{font-size:2rem;flex-shrink:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.15);border-radius:14px}
+.arch-layer .arch-text{flex:1}
+.arch-layer h4{font-size:1.05rem;margin-bottom:6px;color:var(--cyan)}
+.arch-layer p{font-size:.88rem;color:var(--gray);line-height:1.65}
+
+/* DASHBOARD FEATURES */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.dash-item{padding:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm)}
+.dash-item h4{font-size:.95rem;margin-bottom:6px;color:var(--white)}
+.dash-item p{font-size:.85rem;color:var(--gray)}
+
+/* SKILLS LIBRARY */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.skill-cat{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:24px}
+.skill-cat h4{font-size:.95rem;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.skill-cat .skill-list{font-family:var(--mono);font-size:.8rem;color:var(--gray);line-height:2}
+.skill-cat .skill-list span{color:var(--white)}
+.skill-count{background:var(--cyan-dim);color:var(--cyan);font-size:.7rem;padding:2px 8px;border-radius:999px;font-weight:700}
+
+/* GUARDRAILS */
+.guard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.guard-card{padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);border-left:3px solid var(--cyan)}
+.guard-card h4{font-size:.95rem;margin-bottom:6px}
+.guard-card p{font-size:.85rem;color:var(--gray)}
+
+/* BEFORE-AFTER TABLE */
+.ba-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.ba-table th{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:12px 16px;text-align:left}
+.ba-table th.ba-h-task{color:var(--white);width:30%}
+.ba-table th.ba-h-before{color:var(--red);width:35%}
+.ba-table th.ba-h-after{color:var(--cyan);width:35%}
+.ba-table td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.ba-table td:first-child{color:var(--white);font-weight:600}
+.ba-table td:nth-child(2){color:var(--gray)}
+.ba-table td:nth-child(3){color:var(--cyan)}
+.ba-table-mobile{display:none}
+
+/* TIMELINE */
+.timeline{position:relative;max-width:800px;margin:0 auto;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),#7c4dff)}
+.tl-item{position:relative;margin-bottom:32px;padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius)}
+.tl-item::before{content:'';position:absolute;left:-33px;top:28px;width:12px;height:12px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg)}
+.tl-week{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);margin-bottom:6px}
+.tl-item h4{font-size:1rem;margin-bottom:6px}
+.tl-item p{font-size:.88rem;color:var(--gray)}
 
 /* SOCIAL PROOF */
 .proof{padding:80px 24px;background:var(--bg3)}
@@ -97,6 +155,21 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .proof-quote{max-width:680px;margin:0 auto;padding:28px 32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);border-left:3px solid var(--cyan)}
 .proof-quote p{color:var(--gray);font-size:.95rem;line-height:1.7;font-style:italic;margin-bottom:12px}
 .proof-quote cite{color:var(--white);font-size:.85rem;font-style:normal;font-weight:600}
+
+
+/* BONUSES */
+.bonus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.bonus-card{padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);position:relative}
+.bonus-card h4{font-size:1rem;margin-bottom:6px}
+.bonus-card p{font-size:.88rem;color:var(--gray);margin-bottom:8px}
+.bonus-value{font-size:.8rem;font-weight:700;color:var(--green)}
+
+/* VALUE SECTION */
+.value-section{text-align:center;padding:80px 24px}
+.value-section .section-inner{max-width:700px}
+.value-line{font-size:clamp(1.1rem,2.5vw,1.4rem);color:var(--gray);margin-bottom:16px;font-weight:500}
+.value-line strong{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;background:linear-gradient(135deg,var(--cyan),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:4px}
+.value-result{font-size:clamp(1.3rem,3vw,1.8rem);font-weight:800;color:var(--cyan);margin-top:32px;padding:20px;border:2px solid var(--cyan);border-radius:var(--radius);display:inline-block}
 
 /* PRICING */
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;align-items:start}
@@ -124,8 +197,19 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .faq-q::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.3rem;color:var(--cyan);transition:transform .25s}
 .faq-item.open .faq-q::after{transform:translateY(-50%) rotate(45deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
-.faq-item.open .faq-a{max-height:250px}
+.faq-item.open .faq-a{max-height:400px}
 .faq-a p{color:var(--gray);font-size:.92rem;padding:0 0 22px;line-height:1.7}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:300;display:none;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:40px;max-width:480px;width:90%;position:relative}
+.modal h3{font-size:1.3rem;margin-bottom:8px}
+.modal p{color:var(--gray);font-size:.92rem;margin-bottom:24px}
+.modal input{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:12px;font-size:.9rem;font-family:inherit}
+.modal input::placeholder{color:var(--gray2)}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--gray);font-size:1.4rem;cursor:pointer}
+.modal-close:hover{color:var(--white)}
 
 /* FOOTER */
 .footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 24px;text-align:center}
@@ -135,6 +219,15 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 .footer p{color:var(--gray2);font-size:.82rem}
 .footer p+p{margin-top:4px}
 
+/* CTA FINAL */
+.cta-final{text-align:center;padding:80px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg))}
+.cta-final h2{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:12px}
+.cta-final p{color:var(--gray);font-size:1.05rem;max-width:520px;margin:0 auto 32px}
+
+/* SECTION CTA */
+.section-cta{text-align:center;margin-top:48px;padding:24px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:var(--radius)}
+.section-cta p{font-size:1rem;font-weight:600;margin-bottom:14px;color:var(--white)}
+
 /* TOAST */
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--cyan);color:var(--bg);padding:12px 28px;border-radius:var(--radius-sm);font-size:.88rem;font-weight:700;opacity:0;transition:all .35s ease;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -142,49 +235,21 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 /* RESPONSIVE */
 @media(max-width:900px){
   .pricing-grid{grid-template-columns:repeat(2,1fr)}
+  .ba-table{display:none}
+  .ba-table-mobile{display:block}
 }
-/* BEFORE-AFTER */
-.before-after-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ba-header{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:8px 16px 16px;margin-bottom:8px}
-.ba-header.ba-today{color:#ff4444}
-.ba-header.ba-after{color:var(--cyan)}
-.ba-today{border-left:3px solid #ff4444;padding:16px;color:var(--gray);font-size:.9rem;line-height:1.6;background:rgba(255,68,68,.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
-.ba-after{border-left:3px solid var(--cyan);padding:16px;color:var(--white);font-size:.9rem;line-height:1.6;background:rgba(0,229,255,.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
-
-/* DEMO SUMMARY */
-.demo-summary{margin-top:40px;padding:24px 32px;background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(124,77,255,.08));border:1px solid rgba(0,229,255,.2);border-radius:var(--radius);text-align:center;font-size:1.05rem;font-weight:600;color:var(--white)}
-.demo-summary span{color:var(--cyan)}
-
-/* VALUE SECTION */
-.value-section{text-align:center;padding:80px 24px}
-.value-section .section-inner{max-width:700px}
-.value-line{font-size:clamp(1.1rem,2.5vw,1.4rem);color:var(--gray);margin-bottom:16px;font-weight:500}
-.value-line strong{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;background:linear-gradient(135deg,var(--cyan),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:4px}
-.value-result{font-size:clamp(1.3rem,3vw,1.8rem);font-weight:800;color:var(--cyan);margin-top:32px;padding:20px;border:2px solid var(--cyan);border-radius:var(--radius);display:inline-block}
-
-/* CTA FINAL */
-.cta-final{text-align:center;padding:80px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg))}
-.cta-final h2{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:12px}
-.cta-final p{color:var(--gray);font-size:1.05rem;max-width:520px;margin:0 auto 32px}
-
-/* DEMO STEPS (timeline-style) */
-.demo-steps{counter-reset:demo-step;max-width:720px;margin:0 auto}
-.demo-step{position:relative;padding:24px 24px 24px 72px;margin-bottom:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius)}
-.demo-step::before{counter-increment:demo-step;content:counter(demo-step);position:absolute;left:20px;top:24px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#7c4dff);color:var(--bg);font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center}
-.demo-step h4{font-size:1rem;margin-bottom:6px;color:var(--white)}
-.demo-step p{color:var(--gray);font-size:.9rem;line-height:1.6;margin:0}
-
 @media(max-width:600px){
   .section{padding:72px 20px}
   .features-grid{grid-template-columns:1fr}
   .pricing-grid{grid-template-columns:1fr;max-width:380px;margin-left:auto;margin-right:auto}
-  .steps{grid-template-columns:1fr}
   .hero-stats{flex-direction:column;gap:12px;padding:16px 20px}
   .proof-stats{flex-direction:column;gap:20px}
-  .before-after-grid{grid-template-columns:1fr}
-  .ba-header{display:none}
-  .ba-today::before{content:'HOJE: ';color:#ff4444;font-weight:700;font-size:.75rem}
-  .ba-after::before{content:'COM ORCHESTRATOR: ';color:var(--cyan);font-weight:700;font-size:.75rem}
+  .skills-grid{grid-template-columns:1fr}
+  .arch-grid{grid-template-columns:repeat(2,1fr)}
+  .guard-grid{grid-template-columns:1fr}
+  .bonus-grid{grid-template-columns:1fr}
+  .timeline{padding-left:32px}
+  .dash-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -193,434 +258,646 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- NAV -->
 <nav class="nav" id="nav">
   <div class="nav-inner">
-    <div class="nav-logo">Orchestrator <span>AI</span></div>
+    <div class="nav-logo">DARIO <span>Orchestrator</span></div>
     <div class="nav-links">
-      <a href="#features">O Problema</a>
-      <a href="#how-it-works">Como Funciona</a>
-      <a href="#tudo-que-faz">O que faz</a>
+      <a href="#problema">O Problema</a>
+      <a href="#demo">Demo</a>
+      <a href="#skills">Skills</a>
       <a href="#pricing">Planos</a>
-      <a href="#faq">Perguntas</a>
-      <a href="#pricing" class="nav-cta">Testar Gratis</a>
+      <a href="#faq">FAQ</a>
+      <a href="#pricing" class="nav-cta">QUERO TESTAR GRATIS</a>
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ============================================================ -->
+<!-- 1. HERO -->
+<!-- ============================================================ -->
 <section class="hero" id="hero">
   <div>
-    <div class="hero-badge">Usado diariamente para gerir mais de 100 projectos com IA</div>
-    <h1>A sua equipa usa IA. <span>Mas quem controla a IA?</span></h1>
-    <p>Voce perde horas a organizar tarefas, a verificar se as entregas estao boas, a controlar gastos, e a lembrar-se do que ficou por fazer. E se tudo isso fosse automatico? O Orchestrator AI faz exactamente isso. Voce foca no negocio. Ele gere a operacao.</p>
+    <div class="hero-badge">6+ meses em producao — 0 falhas — usado diariamente na BARDA Agency</div>
+    <h1>131 entidades IA. 99 skills. <span>Zero caos.</span></h1>
+    <p>Voce gasta 3 horas por dia a gerir IA em vez de gerir o negocio. O DARIO Orchestrator transforma o Claude Code numa operacao autonoma com 30 agentes, 101 workers, quality scoring, e budget tracking. Voce da a ordem. Ele executa, verifica, e entrega.</p>
     <div class="hero-actions">
-      <a href="#pricing" class="btn btn-primary">Testar Gratis 14 Dias</a>
-      <a href="#how-it-works" class="btn btn-secondary">Ver como funciona</a>
+      <a href="#pricing" class="btn btn-primary">QUERO ACABAR COM O CAOS</a>
+      <a href="#demo" class="btn btn-secondary">Ver em accao (2 min)</a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><strong>3h/dia</strong>Poupadas em media</div>
-      <div class="hero-stat"><strong>100%</strong>Entregas verificadas</div>
-      <div class="hero-stat"><strong>Zero</strong>Orcamento estourado</div>
-      <div class="hero-stat"><strong>Zero</strong>Tarefas esquecidas</div>
+      <div class="hero-stat"><strong>131</strong>Entidades IA</div>
+      <div class="hero-stat"><strong>89</strong>Skills instaladas</div>
+      <div class="hero-stat"><strong>88.3/100</strong>Quality Score medio</div>
+      <div class="hero-stat"><strong>0</strong>Falhas em 6+ meses</div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="section" id="features">
+<!-- ============================================================ -->
+<!-- 2. O PROBLEMA — 6 pain points -->
+<!-- ============================================================ -->
+<section class="section" id="problema">
   <div class="section-inner">
     <div class="section-label">Isto soa familiar?</div>
-    <h2 class="section-title">Se algum destes problemas e seu, esta no sitio certo.</h2>
-    <p class="section-sub">Cada um destes problemas custa-lhe tempo, dinheiro e clientes. O Orchestrator resolve todos.</p>
+    <h2 class="section-title">6 problemas que lhe roubam 3 horas por dia</h2>
+    <p class="section-sub">Cada um destes problemas custa-lhe tempo, dinheiro e clientes. O Orchestrator resolve todos — automaticamente.</p>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
-        <h3>"Comeco cada dia sem saber onde parei ontem"</h3>
-        <p>Perde 30 minutos so a lembrar-se do que estava a fazer. Tarefas perdidas entre sessoes. Coisas que ficaram por acabar e ninguem reparou. <strong>Com o Orchestrator:</strong> tudo fica registado automaticamente. Abre e continua de onde parou. Zero tempo perdido.</p>
+        <h3>"Comeco cada dia sem saber onde parei"</h3>
+        <p>Perde 30 minutos so a lembrar-se do estado de cada projecto. Tarefas perdidas entre sessoes. <strong style="color:var(--cyan)">Com Orchestrator:</strong> o taskboard mostra exactamente onde parou. Continua em 2 minutos.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg>
         </div>
-        <h3>"Enviei para o cliente sem revisar. Deu problema."</h3>
-        <p>A IA produziu algo. Parecia bom. Voce enviou. O cliente reclamou. Ja aconteceu? <strong>Com o Orchestrator:</strong> cada entrega e avaliada automaticamente em 5 criterios antes de chegar a si. Trabalho mau e apanhado. So ve o que esta pronto.</p>
+        <h3>"Enviei sem revisar. O cliente reclamou."</h3>
+        <p>A IA produziu algo. Parecia bom. Voce enviou. Depois viu os erros. <strong style="color:var(--cyan)">Com Orchestrator:</strong> quality scoring em 5 dimensoes (88.3/100 de media). So ve o que esta pronto.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20M10 3v18"/></svg>
         </div>
-        <h3>"No fim do mes levei um susto com a fatura da IA"</h3>
-        <p>Gastou sem controlo. Nao sabe quanto custou cada projecto. A fatura chegou e era o dobro do esperado. <strong>Com o Orchestrator:</strong> define o limite. Recebe aviso a 80%. Para tudo a 95%. Sabe exactamente quanto gasta e em que.</p>
+        <h3>"A fatura da IA foi o dobro do esperado"</h3>
+        <p>Gastou sem controlo. Nao sabe quanto custou cada projecto. <strong style="color:var(--cyan)">Com Orchestrator:</strong> budget tracking por projecto. Aviso a 80%. Auto-pause a 95%. Zero surpresas.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         </div>
-        <h3>"Tinha uma tarefa urgente. Ficou esquecida 5 dias."</h3>
-        <p>Algo falhou silenciosamente. Uma semana depois descobre que nada foi entregue. O cliente ja esta furioso. <strong>Com o Orchestrator:</strong> cada tarefa tem prazo. Se atrasar, o sistema alerta automaticamente. Nada fica esquecido.</p>
+        <h3>"Tarefa urgente ficou esquecida 5 dias"</h3>
+        <p>Algo falhou silenciosamente. Uma semana depois descobre. O cliente ja esta furioso. <strong style="color:var(--cyan)">Com Orchestrator:</strong> SLA enforcement com auto-escalation. Nada fica esquecido.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
         </div>
-        <h3>"Passo mais tempo a gerir a IA do que a trabalhar no negocio"</h3>
-        <p>Voce e o gargalo. Cada tarefa precisa da sua instrucao para comecar e da sua revisao para acabar. Nao sobra tempo para estrategia. <strong>Com o Orchestrator:</strong> diga o objectivo. Ele divide em passos, executa, revisa, e reporta. Voce ve resultados, nao gere processos.</p>
+        <h3>"Passo mais tempo a gerir IA do que o negocio"</h3>
+        <p>Voce e o gargalo. Cada tarefa precisa da sua instrucao e revisao. <strong style="color:var(--cyan)">Com Orchestrator:</strong> diga o objectivo. Ele divide, executa, revisa, e reporta. Voce ve resultados.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
         </div>
-        <h3>"Cada projecto novo comeca do zero. Reinvento a roda."</h3>
-        <p>Sem modelos. Sem processos. Cada cliente e uma improvisacao. Demora o triplo do necessario. <strong>Com o Orchestrator:</strong> diga o seu sector — restaurante, agencia, e-commerce, SaaS. Ele carrega um processo comprovado e comeca a executar imediatamente.</p>
+        <h3>"Cada projecto novo comeca do zero"</h3>
+        <p>Sem processos. Cada cliente e uma improvisacao. Demora o triplo. <strong style="color:var(--cyan)">Com Orchestrator:</strong> domain playbooks (restaurante, agencia, e-commerce, SaaS, arquitectura). Comeca a executar em 5 minutos.</p>
       </div>
+    </div>
+    <div class="section-cta">
+      <p>Reconhece-se em pelo menos 3 destes problemas?</p>
+      <a href="#pricing" class="btn-cta">QUERO PARAR DE APAGAR INCENDIOS</a>
     </div>
   </div>
 </section>
 
-<!-- WHO IS THIS FOR -->
-<section class="section" id="para-quem" style="background:var(--bg3);">
+<!-- ============================================================ -->
+<!-- 3. LIVE DEMO — Real command -->
+<!-- ============================================================ -->
+<section class="section" id="demo" style="background:var(--bg2)">
   <div class="section-inner">
-    <div class="section-label">Para quem e isto</div>
-    <h2 class="section-title">Criado para quem ja usa IA mas esta farto do caos.</h2>
-    <p class="section-sub">Se se identifica com pelo menos um destes perfis, o Orchestrator foi feito para si.</p>
-    <div class="features-grid">
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Donos de agencias digitais</h3>
-        <p>Gere multiplos clientes com IA. Precisa de controlar qualidade, prazos, e orcamento em todos ao mesmo tempo. Nao consegue escalar sem um sistema.</p>
+    <div class="section-label">Exemplo real em tempo real</div>
+    <h2 class="section-title">Voce escreve 1 comando. O sistema faz o resto.</h2>
+    <p class="section-sub">Veja exactamente o que acontece quando pede uma auditoria de site.</p>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot" style="background:#ff5f57"></span>
+        <span class="terminal-dot" style="background:#febc2e"></span>
+        <span class="terminal-dot" style="background:#28c840"></span>
+        <span style="color:var(--gray2);font-size:.78rem;margin-left:8px">DARIO Orchestrator v3.2</span>
       </div>
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Consultores e freelancers</h3>
-        <p>Trabalha sozinho mas quer entregar como uma equipa de 5. Precisa de automatizar a execucao para focar na estrategia e no relacionamento com clientes.</p>
+      <div class="terminal-body">
+        <div><span class="t-prompt">barda@dario ~$</span> <span class="t-cmd">/audit site-cliente.pt</span></div>
+        <br>
+        <div><span class="t-time">08:42:01</span> <span class="t-output">Pedido recebido. Analise de escopo em curso...</span></div>
+        <div><span class="t-time">08:42:03</span> <span class="t-success">5 tarefas criadas</span> <span class="t-comment">// performance, SEO, seguranca, conteudo, legal</span></div>
+        <div><span class="t-time">08:42:04</span> <span class="t-output">Dispatch: SEO-Worker-01, Perf-Worker-03, Security-Worker-01...</span></div>
+        <div><span class="t-time">08:42:05</span> <span class="t-success">3 workers em paralelo</span></div>
+        <br>
+        <div><span class="t-time">08:47:12</span> <span class="t-output">Task 1/5 concluida:</span> <span class="t-success">Performance</span> <span class="t-score">Score: 91/100</span></div>
+        <div><span class="t-time">08:49:33</span> <span class="t-output">Task 2/5 concluida:</span> <span class="t-success">SEO Tecnico</span> <span class="t-score">Score: 87/100</span></div>
+        <div><span class="t-time">08:50:18</span> <span class="t-output">Task 3/5 concluida:</span> <span class="t-success">Seguranca</span> <span class="t-score">Score: 94/100</span></div>
+        <div><span class="t-time">08:52:44</span> <span class="t-output">Task 4/5 concluida:</span> <span class="t-success">Conteudo</span> <span class="t-score">Score: 85/100</span></div>
+        <div><span class="t-time">08:54:01</span> <span class="t-output">Task 5/5 concluida:</span> <span class="t-success">Legal/RGPD</span> <span class="t-score">Score: 92/100</span></div>
+        <br>
+        <div><span class="t-time">08:54:08</span> <span class="t-success">Relatorio compilado.</span> <span class="t-output">Quality Score medio:</span> <span class="t-score">89.8/100</span></div>
+        <div><span class="t-time">08:54:10</span> <span class="t-output">Budget consumido: 2.3% do limite mensal</span></div>
+        <div><span class="t-time">08:54:11</span> <span class="t-success">Entregue.</span> <span class="t-comment">// 12 minutos. 5 tarefas. 0 intervencao.</span></div>
       </div>
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Empresarios com equipas pequenas</h3>
-        <p>Tem 2-5 pessoas e precisa de multiplicar a produtividade. Cada hora conta. Nao pode desperdicar tempo com tarefas que uma maquina faz melhor.</p>
-      </div>
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Gestores de projecto</h3>
-        <p>Coordena tarefas entre pessoas e ferramentas de IA. Perde o controlo facilmente. Precisa de um sistema que acompanha tudo e alerta quando algo falha.</p>
-      </div>
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Estudios de design e arquitectura</h3>
-        <p>Faz orcamentos, cronogramas, moodboards, especificacoes de materiais. Tudo demora. O Orchestrator tem 20 ferramentas so para projectos de design e construcao.</p>
-      </div>
-      <div class="feature-card" style="border-left:3px solid var(--cyan);">
-        <h3>Quem quer montar um negocio com IA</h3>
-        <p>Esta a comecar do zero. Precisa de descobrir nicho, criar oferta, montar landing page, preparar reunioes. O modulo A360 faz tudo isso, do zero ao primeiro cliente.</p>
-      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;padding:20px;background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(124,77,255,.08));border:1px solid rgba(0,229,255,.2);border-radius:var(--radius)">
+      <p style="font-size:1.1rem;font-weight:700;margin-bottom:4px">Tempo total: <span style="color:var(--cyan)">12 minutos</span>. Sem intervencao. O mesmo trabalho manual: <span style="color:var(--red)">3-4 horas</span>.</p>
+      <p style="color:var(--gray);font-size:.88rem">5 tarefas em paralelo. 5 quality scores. Budget rastreado. Tudo automatico.</p>
+    </div>
+
+    <div class="section-cta">
+      <p>Imagine fazer isto para cada cliente. Todos os dias. Sem esforco.</p>
+      <a href="#pricing" class="btn-cta">QUERO AUTOMATIZAR A MINHA OPERACAO</a>
     </div>
   </div>
 </section>
 
-<!-- BEFORE vs AFTER -->
-<section class="section" id="before-after" style="background:var(--bg2)">
+<!-- ============================================================ -->
+<!-- 4. ARCHITECTURE — 6-layer -->
+<!-- ============================================================ -->
+<section class="section" id="architecture">
+  <div class="section-inner">
+    <div class="section-label">Arquitectura Paperclip-Inspired</div>
+    <h2 class="section-title">6 camadas. Da estrategia a execucao.</h2>
+    <p class="section-sub">Hierarquia empresarial aplicada a IA. Cada camada tem responsabilidades claras.</p>
+
+    <div class="arch-grid">
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x1F451;</span>
+        <div class="arch-text">
+          <h4>CEO / Orchestrator</h4>
+          <p>Recebe objectivos de negocio. Analisa contexto. Decompose em sub-tarefas. Despacha para as divisoes certas. Monitoriza progresso. Sintetiza resultados finais.</p>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x1F4CA;</span>
+        <div class="arch-text">
+          <h4>VP / Divisoes</h4>
+          <p>5 divisoes autonomas: <strong style="color:var(--cyan)">DARIO</strong> (agencia digital), <strong style="color:#b388ff">DIVA</strong> (arquitectura), <strong style="color:var(--green)">LUCAS</strong> (operacoes), <strong style="color:#ffa500">SEO</strong> (visibilidade), <strong style="color:#448aff">A360</strong> (aceleracao).</p>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x1F3AF;</span>
+        <div class="arch-text">
+          <h4>Director / Agentes</h4>
+          <p>30 agentes especializados — Marketing, Technical, SEO, Finance, Legal, HR, Content, Design, Construction. Cada um gere o seu squad e coordena execucao.</p>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x2699;&#xFE0F;</span>
+        <div class="arch-text">
+          <h4>Worker / Executores</h4>
+          <p>101 workers executam tarefas atomicas com checkout exclusivo — ninguem toca na mesma tarefa. Cada worker e especialista numa skill especifica.</p>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x2705;</span>
+        <div class="arch-text">
+          <h4>Quality Gate</h4>
+          <p>Avaliacao 5 dimensoes (Specificity, Actionability, Completeness, Accuracy, Tone). Score 0-100. Abaixo de 60: reject automatico + re-execucao. Media actual: <strong style="color:var(--cyan)">88.3/100</strong>.</p>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <span class="arch-emoji">&#x1F4B0;</span>
+        <div class="arch-text">
+          <h4>Budget Controller</h4>
+          <p>Tracking por projecto, skill, e modelo (Opus/Sonnet/Haiku). Alerta automatico a 80%. Hard stop a 95% — zero estouros de orcamento. Historico completo por mes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;text-align:center">
+      <p style="color:var(--gray);font-size:.95rem;max-width:600px;margin:0 auto">Inspirado no modelo Paperclip Maximizer — a IA organiza-se como uma empresa real com hierarquia, responsabilidades, e controlos de qualidade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 5. MISSION CONTROL -->
+<!-- ============================================================ -->
+<section class="section" id="mission-control" style="background:var(--bg3)">
+  <div class="section-inner">
+    <div class="section-label">Centro de comando</div>
+    <h2 class="section-title">15 paginas de dashboard. Visibilidade total.</h2>
+    <p class="section-sub">Mission Control com visualizacao orbital. Veja tudo o que esta a acontecer em tempo real.</p>
+
+    <div class="dash-grid">
+      <div class="dash-item">
+        <h4>Mission Control</h4>
+        <p>Visualizacao orbital do ecossistema. Estado de cada agente e worker em tempo real.</p>
+      </div>
+      <div class="dash-item">
+        <h4>Taskboard</h4>
+        <p>Todas as tarefas por estado: pending, in_progress, review, done. Filtro por projecto.</p>
+      </div>
+      <div class="dash-item">
+        <h4>Quality Dashboard</h4>
+        <p>Scores por skill, por worker, por projecto. Media: 88.3/100. Tendencias ao longo do tempo.</p>
+      </div>
+      <div class="dash-item">
+        <h4>Budget Tracker</h4>
+        <p>Consumo por projecto, por divisao, por dia. Alertas configurados. Historico mensal.</p>
+      </div>
+      <div class="dash-item">
+        <h4>Skills Library</h4>
+        <p>99+ skills instaladas. Categorias, descricoes, metricas de uso e performance.</p>
+      </div>
+      <div class="dash-item">
+        <h4>Agent Health</h4>
+        <p>Heartbeat de cada entidade. Uptime, latencia, tarefas completadas, scores medios.</p>
+      </div>
+      <div class="dash-item">
+        <h4>SLA Monitor</h4>
+        <p>Prazos por tarefa. Tempo medio de resolucao. Alertas de atraso e escalation chain.</p>
+      </div>
+      <div class="dash-item">
+        <h4>RAG Knowledge Base</h4>
+        <p>88 fontes indexadas. 1.215 chunks. Pesquisa semantica com reranking e HyDE.</p>
+      </div>
+    </div>
+
+    <div class="section-cta">
+      <p>Nunca mais pergunte "como esta o projecto?" — veja em tempo real.</p>
+      <a href="#pricing" class="btn-cta">QUERO VISIBILIDADE TOTAL</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 6. SKILLS LIBRARY -->
+<!-- ============================================================ -->
+<section class="section" id="skills">
+  <div class="section-inner">
+    <div class="section-label">99+ skills instaladas</div>
+    <h2 class="section-title">Uma biblioteca inteira de comandos. Cada um faz algo concreto.</h2>
+    <p class="section-sub">Agrupados por divisao. Cada skill e um processo comprovado, nao uma improvisacao.</p>
+
+    <div class="skills-grid">
+      <div class="skill-cat">
+        <h4>DARIO — Agencia Digital <span class="skill-count">32 skills</span></h4>
+        <div class="skill-list">
+          <span>/diagnose</span> auditoria holistica<br>
+          <span>/offer</span> grand slam offer Hormozi<br>
+          <span>/funnel</span> value ladder completo<br>
+          <span>/sales-letter</span> carta de vendas<br>
+          <span>/email-seq</span> sequencias automatizadas<br>
+          <span>/proposal</span> proposta comercial 3 opcoes<br>
+          <span>/brand</span> posicionamento Kapferer<br>
+          <span>/pipeline</span> pipeline de vendas<br>
+          <span>/content</span> producao a escala<br>
+          <span>/social</span> redes sociais<br>
+          <span>+ 22 mais...</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <h4>SEO — Optimizacao <span class="skill-count">18 skills</span></h4>
+        <div class="skill-list">
+          <span>/seo-audit</span> auditoria completa<br>
+          <span>/seo-technical</span> 9 categorias tecnicas<br>
+          <span>/seo-content</span> E-E-A-T analysis<br>
+          <span>/seo-local</span> Google Business Profile<br>
+          <span>/seo-schema</span> JSON-LD structured data<br>
+          <span>/seo-geo</span> AI Overviews + GEO<br>
+          <span>/seo-dataforseo</span> dados ao vivo<br>
+          <span>/seo-page</span> analise single-page<br>
+          <span>+ 10 mais...</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <h4>DIVA — Arquitectura <span class="skill-count">22 skills</span></h4>
+        <div class="skill-list">
+          <span>/diva-diagnose</span> diagnostico projecto<br>
+          <span>/diva-budget</span> orcamento ProNIC/LNEC<br>
+          <span>/diva-timeline</span> cronograma Gantt<br>
+          <span>/diva-materials</span> especificacao materiais<br>
+          <span>/diva-licensing</span> licenciamento RJUE<br>
+          <span>/diva-floor-plan</span> analise planta<br>
+          <span>/diva-moodboard</span> conceito visual<br>
+          <span>/diva-render</span> visualizacoes 3D<br>
+          <span>+ 14 mais...</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <h4>LUCAS — Operacoes <span class="skill-count">9 skills</span></h4>
+        <div class="skill-list">
+          <span>/autopilot</span> execucao autonoma<br>
+          <span>/heartbeat</span> health check automatico<br>
+          <span>/quality</span> quality scoring 5D<br>
+          <span>/taskboard</span> gestao de tarefas<br>
+          <span>/dispatch</span> routing inteligente<br>
+          <span>/analytics</span> padroes cross-project<br>
+          <span>/finance</span> facturacao e IVA<br>
+          <span>+ 2 mais...</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <h4>A360 — Aceleracao <span class="skill-count">8 skills</span></h4>
+        <div class="skill-list">
+          <span>/pitch</span> pitch deck STRONG<br>
+          <span>/negotiation</span> Chris Voss empathy<br>
+          <span>/naming</span> naming workshop<br>
+          <span>/story-circle</span> narrativa marca<br>
+          <span>/saas-metrics</span> MRR, churn, LTV<br>
+          <span>/financial-model</span> P&L forecast<br>
+          <span>/pricing-calculator</span> rate/hora real<br>
+          <span>/make-blueprint</span> automacoes Make.com<br>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-cta">
+      <p>99 skills. Cada uma elimina horas de trabalho manual. Todas incluidas.</p>
+      <a href="#pricing" class="btn-cta">QUERO ACESSO A TODAS AS SKILLS</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 7. ANTI-FRAGILITY — Guardrails -->
+<!-- ============================================================ -->
+<section class="section" id="guardrails" style="background:var(--bg2)">
+  <div class="section-inner">
+    <div class="section-label">Anti-fragilidade</div>
+    <h2 class="section-title">6 guardrails que impedem o sistema de falhar</h2>
+    <p class="section-sub">Monitoramento em 3 camadas. Recuperacao automatica. O sistema protege-se a si mesmo.</p>
+
+    <div class="guard-grid">
+      <div class="guard-card">
+        <h4>Quality Gate (score &lt; 60 = reject)</h4>
+        <p>5 dimensoes: Specificity, Actionability, Completeness, Accuracy, Tone. Output abaixo de 60 e automaticamente re-executado. Sem intervencao sua.</p>
+      </div>
+      <div class="guard-card">
+        <h4>Budget Hard Stop (95%)</h4>
+        <p>Aviso a 80%. Limite a 1 tarefa a 80-95%. Paragem total a 95%. Nunca mais leva um susto com a fatura. Tracking por projecto.</p>
+      </div>
+      <div class="guard-card">
+        <h4>SLA Enforcement</h4>
+        <p>Cada tarefa tem deadline. Se atrasar, escalation chain automatica: aviso > re-assign > alerta critico. Nada fica esquecido.</p>
+      </div>
+      <div class="guard-card">
+        <h4>Heartbeat Monitor</h4>
+        <p>Pulse a cada ciclo. Detecta agentes ou workers offline. Auto-recovery se possivel. Alerta se nao. Uptime rastreado.</p>
+      </div>
+      <div class="guard-card">
+        <h4>Atomic Task Checkout</h4>
+        <p>Cada tarefa pertence a exactamente 1 worker. Sem duplicacao. Sem conflitos. Sem trabalho perdido. Ownership exclusivo.</p>
+      </div>
+      <div class="guard-card">
+        <h4>Recovery Mode</h4>
+        <p>Se algo falhar, o sistema sabe exactamente onde estava. Retoma do ultimo checkpoint. Sem perder progresso. Sem comecar de novo.</p>
+      </div>
+    </div>
+
+    <div class="section-cta">
+      <p>O sistema protege-se sozinho. Voce dorme descansado.</p>
+      <a href="#pricing" class="btn-cta">QUERO UM SISTEMA QUE NAO FALHA</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 8. BEFORE/AFTER TABLE -->
+<!-- ============================================================ -->
+<section class="section" id="before-after">
   <div class="section-inner">
     <div class="section-label">A transformacao</div>
-    <h2 class="section-title">O seu dia hoje vs o seu dia com Orchestrator</h2>
-    <p class="section-sub">Lado a lado. Sem exageros. So a diferenca real no seu dia-a-dia.</p>
-    <div class="before-after-grid">
-      <div class="ba-header ba-today">Hoje (sem Orchestrator)</div>
-      <div class="ba-header ba-after">Com Orchestrator</div>
+    <h2 class="section-title">O seu dia hoje vs com Orchestrator</h2>
+    <p class="section-sub">Numeros reais. Sem exageros. So a diferenca concreta no dia-a-dia.</p>
 
-      <div class="ba-today">Abre o computador. Tenta lembrar-se do que estava a fazer ontem. Perde 30 minutos.</div>
-      <div class="ba-after">Abre o computador. O dashboard mostra exactamente onde parou. Continua em 2 minutos.</div>
+    <table class="ba-table">
+      <thead>
+        <tr>
+          <th class="ba-h-task">Actividade</th>
+          <th class="ba-h-before">Hoje (manual)</th>
+          <th class="ba-h-after">Com Orchestrator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Auditoria de site completa</td>
+          <td>3-4 horas, 1 pessoa</td>
+          <td>12 min, 5 workers em paralelo</td>
+        </tr>
+        <tr>
+          <td>Preparar reuniao de vendas</td>
+          <td>2 horas de research manual</td>
+          <td>20 min, briefing + pitch + objecoes</td>
+        </tr>
+        <tr>
+          <td>Onboarding novo cliente</td>
+          <td>1-2 dias de setup</td>
+          <td>45 min, playbook do sector activado</td>
+        </tr>
+        <tr>
+          <td>Verificar qualidade das entregas</td>
+          <td>30 min por entrega, manual</td>
+          <td>Automatico, 5 dimensoes, 0 min seu</td>
+        </tr>
+        <tr>
+          <td>Controlo de budget</td>
+          <td>Surpresa no fim do mes</td>
+          <td>Tempo real, aviso a 80%, stop a 95%</td>
+        </tr>
+        <tr>
+          <td>Retomar trabalho do dia anterior</td>
+          <td>30 min a lembrar-se</td>
+          <td>2 min, taskboard exacto</td>
+        </tr>
+        <tr>
+          <td>Proposta comercial 3 opcoes</td>
+          <td>3-4 horas</td>
+          <td>25 min com /proposal</td>
+        </tr>
+        <tr>
+          <td>Estrategia de conteudo 3 meses</td>
+          <td>1 dia inteiro</td>
+          <td>35 min com /content</td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div class="ba-today">Pede a IA para fazer algo. Recebe resultado. Envia para o cliente sem revisar. O cliente reclama.</div>
-      <div class="ba-after">Pede a IA para fazer algo. O sistema verifica automaticamente a qualidade. So mostra o que esta pronto para enviar.</div>
+    <!-- Mobile version -->
+    <div class="ba-table-mobile">
+      <div style="margin-bottom:16px;padding:16px;background:rgba(255,68,68,.04);border-left:3px solid var(--red);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+        <p style="color:var(--red);font-size:.75rem;font-weight:700;text-transform:uppercase;margin-bottom:8px">Hoje (manual)</p>
+        <p style="color:var(--gray);font-size:.88rem">Auditoria: 3-4h | Reuniao: 2h | Onboarding: 1-2 dias | Quality: 30min/entrega | Budget: surpresa | Retomar: 30min</p>
+      </div>
+      <div style="padding:16px;background:rgba(0,229,255,.04);border-left:3px solid var(--cyan);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+        <p style="color:var(--cyan);font-size:.75rem;font-weight:700;text-transform:uppercase;margin-bottom:8px">Com Orchestrator</p>
+        <p style="color:var(--white);font-size:.88rem">Auditoria: 12min | Reuniao: 20min | Onboarding: 45min | Quality: auto | Budget: tempo real | Retomar: 2min</p>
+      </div>
+    </div>
 
-      <div class="ba-today">Fim do mes. Fatura da IA chega. Susto. Nao sabe quanto gastou em cada cliente.</div>
-      <div class="ba-after">Sabe em tempo real quanto gastou por projecto. Aviso automatico a 80%. Nunca mais e surpreendido.</div>
-
-      <div class="ba-today">Freelancer entregou tarde. Voce so descobre 5 dias depois quando o cliente pergunta.</div>
-      <div class="ba-after">Cada tarefa tem prazo. Se atrasar, o sistema avisa automaticamente. Nada fica esquecido.</div>
-
-      <div class="ba-today">Novo cliente chega. Comeca tudo do zero. Demora 3x mais que devia.</div>
-      <div class="ba-after">Novo cliente chega. Escolhe o sector. O sistema carrega um processo completo e comeca a executar em 5 minutos.</div>
+    <div style="text-align:center;margin-top:32px;padding:20px;background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(124,77,255,.08));border:1px solid rgba(0,229,255,.2);border-radius:var(--radius)">
+      <p style="font-size:1.1rem;font-weight:700">Total poupado: <span style="color:var(--cyan)">3+ horas por dia</span> = <span style="color:var(--cyan)">66 horas por mes</span></p>
     </div>
   </div>
 </section>
 
-<!-- WHAT IT DOES — CONCRETE TASKS -->
-<section class="section" id="tudo-que-faz">
+<!-- ============================================================ -->
+<!-- 9. 30-DAY EVOLUTION -->
+<!-- ============================================================ -->
+<section class="section" id="evolucao" style="background:var(--bg3)">
   <div class="section-inner">
-    <div class="section-label">105+ tarefas automaticas</div>
-    <h2 class="section-title">Tudo o que o Orchestrator faz por si. Automaticamente.</h2>
-    <p class="section-sub">Nao e so "gerir tarefas". E um sistema completo que cobre todas as areas do seu negocio. Veja o que pode pedir:</p>
+    <div class="section-label">Evolucao em 30 dias</div>
+    <h2 class="section-title">Da instalacao a operacao autonoma em 4 semanas</h2>
+    <p class="section-sub">Cada semana adiciona uma camada de automacao. Ao final do mes, o sistema gere-se sozinho.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg></div>
-        <h3>Marketing e Vendas</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Cria o posicionamento da minha marca"<br>
-          "Monta uma oferta irresistivel com 3 opcoes de preco"<br>
-          "Escreve uma carta de vendas para o meu servico"<br>
-          "Planeia campanhas de anuncios para Facebook e Google"<br>
-          "Monta um funil de vendas completo"<br>
-          "Cria sequencias de email automatizadas"<br>
-          "Prepara-me para uma negociacao com um cliente dificil"<br>
-          "Faz uma proposta comercial profissional"
-        </p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-week">Semana 1 — Instalacao e Descoberta</div>
+        <h4>Instala em 60 segundos. Explora as 99 skills.</h4>
+        <p>npx orchestrator-ai-framework init. Taskboard activo. Primeiras tarefas criadas. Descobre os comandos do seu sector. Testa /diagnose, /audit, /brand.</p>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-        <h3>Website e SEO</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Audita o site do meu cliente por completo"<br>
-          "Descobre porque o site esta lento e corrige"<br>
-          "Faz auditoria SEO com relatorio de prioridades"<br>
-          "Optimiza o Google Business Profile"<br>
-          "Cria estrategia de conteudo para 3 meses"<br>
-          "Verifica se a loja online tem problemas no checkout"<br>
-          "Testa a seguranca do site"<br>
-          "Gera schema markup para rich results"
-        </p>
+      <div class="tl-item">
+        <div class="tl-week">Semana 2 — Quality Scoring Activo</div>
+        <h4>Comeca a confiar nas entregas sem revisar manualmente.</h4>
+        <p>Quality gate calibrado ao seu padrao. Rejeicao automatica abaixo de 60/100. Primeiros projectos entregues com confianca. Budget tracking por projecto activo.</p>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-        <h3>Aceleracao de Negocios</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Descobre os melhores nichos para montar empresa"<br>
-          "Pesquisa tudo sobre este prospect antes da reuniao"<br>
-          "Cria uma landing page para o meu servico"<br>
-          "Monta um plano go-to-market de 90 dias"<br>
-          "Prepara o pitch deck para apresentar amanha"<br>
-          "Cria um playbook de vendas com respostas a objecoes"<br>
-          "Faz follow-up automatico de todos os meus leads"<br>
-          "Gera case studies dos projectos concluidos"
-        </p>
+      <div class="tl-item">
+        <div class="tl-week">Semana 3 — Execucao em Paralelo</div>
+        <h4>3 tarefas a correr ao mesmo tempo. Sem a sua intervencao.</h4>
+        <p>Autopilot activado. Heartbeat engine a monitorar. SLA enforcement com escalation. Comeca a sentir as 3 horas poupadas por dia.</p>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-        <h3>Gestao e Financas</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Cria um modelo financeiro P&L para a minha agencia"<br>
-          "Calcula quanto devo cobrar por hora"<br>
-          "Mostra os KPIs do meu SaaS (MRR, churn, LTV)"<br>
-          "Cria procedimentos operacionais para a equipa"<br>
-          "Gera contratos para os meus clientes"<br>
-          "Planeia a capacidade da equipa para o proximo mes"<br>
-          "Faz um plano de conteudo para redes sociais"<br>
-          "Monta um programa de onboarding para novos clientes"
-        </p>
+      <div class="tl-item">
+        <div class="tl-week">Semana 4 — Operacao Autonoma</div>
+        <h4>O sistema gere-se sozinho. Voce foca no negocio.</h4>
+        <p>Loop mode activo: scan, dispatch, execute, score, repeat. Domain playbooks optimizados. Quality score medio acima de 85/100. Onboarding de novos clientes em 45 minutos.</p>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
-        <h3>Arquitectura e Design</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Analisa a planta deste apartamento e sugere melhorias"<br>
-          "Cria um moodboard para a remodelacao"<br>
-          "Calcula o orcamento da obra com precos portugueses"<br>
-          "Gera um cronograma de obra com dependencias"<br>
-          "Verifica a conformidade com o RGEU"<br>
-          "Especifica materiais com fornecedores portugueses"<br>
-          "Prepara o processo de licenciamento camarario"<br>
-          "Cria um roadmap visual do projecto completo"
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
-        <h3>E muito mais...</h3>
-        <p style="color:var(--white);font-size:.88rem;line-height:1.8;">
-          "Faz uma analise de concorrentes"<br>
-          "Cria um programa de fidelizacao de clientes"<br>
-          "Monta press releases e media kits"<br>
-          "Cria documentacao legal (RGPD, T&C)"<br>
-          "Planeia campanhas de email marketing"<br>
-          "Faz keyword clustering para estrategia de conteudo"<br>
-          "Gera imagens optimizadas para SEO"<br>
-          <strong style="color:var(--cyan);">+ 50 outras tarefas especializadas</strong>
-        </p>
-      </div>
-
     </div>
 
-    <div style="text-align:center;margin-top:48px;padding:24px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:16px;">
-      <p style="font-size:1.2rem;font-weight:700;margin-bottom:8px;">Voce pede em linguagem normal. O Orchestrator executa, verifica, e entrega.</p>
-      <p style="color:var(--gray);font-size:.95rem;">Nao precisa de saber nomes tecnicos. Basta descrever o que precisa como falaria com um colega.</p>
+    <div class="section-cta">
+      <p>Em 30 dias passa de "gerir a IA" a "gerir o negocio".</p>
+      <a href="#pricing" class="btn-cta">QUERO COMECAR ESTA SEMANA</a>
     </div>
   </div>
 </section>
 
-<!-- DEMO — REAL EXAMPLE -->
-<section class="section" id="demo">
-  <div class="section-inner">
-    <div class="section-label">Exemplo real</div>
-    <h2 class="section-title">Voce diz: "Audita o site do meu cliente". Isto e o que acontece:</h2>
-    <p class="section-sub">Um exemplo concreto, passo a passo, do que o sistema faz por si.</p>
-    <div class="demo-steps">
-      <div class="demo-step">
-        <h4>O sistema analisa o seu pedido</h4>
-        <p>Entende que precisa de uma auditoria web. Identifica que precisa de verificar performance, SEO, seguranca, conteudo, e conformidade legal.</p>
-      </div>
-      <div class="demo-step">
-        <h4>Divide em 5 tarefas automaticamente</h4>
-        <p>Cria uma tarefa para cada area. Atribui cada tarefa a ferramenta especializada certa. Tudo organizado num quadro de tarefas.</p>
-      </div>
-      <div class="demo-step">
-        <h4>Executa tudo em paralelo</h4>
-        <p>3 tarefas correm ao mesmo tempo. Em 10 minutos faz o trabalho que lhe levava 3 horas. Sem a sua intervencao.</p>
-      </div>
-      <div class="demo-step">
-        <h4>Verifica qualidade antes de mostrar</h4>
-        <p>Cada resultado e avaliado. Se a qualidade estiver abaixo do minimo, refaz automaticamente. Voce so ve o trabalho aprovado.</p>
-      </div>
-      <div class="demo-step">
-        <h4>Entrega o relatorio completo</h4>
-        <p>Recebe um diagnostico organizado por prioridade: critico, importante, e optimizacao. Com accoes concretas. Pronto para enviar ao cliente.</p>
-      </div>
-    </div>
-    <div class="demo-summary">Tempo total: <span>15 minutos</span>. Sem a sua intervencao. O mesmo trabalho manual: <span>3-4 horas</span>.</div>
-
-    <h3 style="margin-top:48px;margin-bottom:24px;font-size:1.2rem;">Mais exemplos do dia-a-dia:</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div style="padding:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;">
-        <p style="color:var(--cyan);font-weight:700;margin-bottom:8px;">"Prepara-me para a reuniao de amanha com a Clinica X"</p>
-        <p style="color:var(--gray);font-size:.9rem;line-height:1.7;">O sistema pesquisa a empresa, o decisor, 3 concorrentes, prepara perguntas SPIN, monta um briefing de 2 paginas, cria o pitch deck personalizado, e prepara um cheat-sheet com objecoes provaveis e como responder. <strong style="color:var(--white);">Tudo em 20 minutos. Voce chega preparado como nunca.</strong></p>
-      </div>
-      <div style="padding:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;">
-        <p style="color:var(--cyan);font-weight:700;margin-bottom:8px;">"Novo cliente: restaurante em Cascais. Monta tudo."</p>
-        <p style="color:var(--gray);font-size:.9rem;line-height:1.7;">O sistema detecta o sector, carrega o playbook de restaurantes, cria posicionamento de marca, estrategia SEO local, plano de conteudo 3 meses, configura Google Business Profile, gera schema markup, e entrega um roadmap visual. <strong style="color:var(--white);">6 entregas profissionais. Uma tarde. Zero improviso.</strong></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="how-it-works" style="background:var(--bg2)">
-  <div class="section-inner">
-    <div class="section-label">Como funciona</div>
-    <h2 class="section-title">A funcionar em 5 minutos. Sem conhecimento tecnico.</h2>
-    <p class="section-sub">Nao precisa de programar. Nao precisa de configurar nada. So precisa de saber o que quer.</p>
-    <div class="steps">
-      <div class="step">
-        <h3>Receba a sua chave gratis</h3>
-        <p>Coloque o seu email na seccao de planos abaixo. Recebe uma chave de activacao em 10 segundos. Sem cartao de credito.</p>
-        <code>14 dias gratis, acesso completo</code>
-        <div class="step-result">Activacao instantanea</div>
-      </div>
-      <div class="step">
-        <h3>Instale com um clique</h3>
-        <p>Abra o Claude Code e cole a sua chave. Tudo se instala em 60 segundos. Nada para configurar. Nada para aprender antes de comecar.</p>
-        <code>1 clique = tudo pronto</code>
-        <div class="step-result">Pronto em menos de 60 segundos</div>
-      </div>
-      <div class="step">
-        <h3>Diga o que precisa e veja acontecer</h3>
-        <p>Diga: "audita o site do cliente", "cria uma estrategia de conteudo", "prepara a reuniao de amanha". O orquestrador divide em passos, executa, verifica qualidade, e entrega. Voce so revisa o resultado final.</p>
-        <code>Voce pede. Ele entrega.</code>
-        <div class="step-result">Voce gere estrategia. Ele gere a execucao.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SOCIAL PROOF -->
+<!-- ============================================================ -->
+<!-- 10. SOCIAL PROOF -->
+<!-- ============================================================ -->
 <section class="proof" id="proof">
   <div class="proof-inner">
-    <div class="section-label">Construido na pratica</div>
-    <h2 class="proof-headline">Isto nao e um projecto de garagem. E como gerimos a nossa agencia todos os dias.</h2>
-    <p class="proof-sub">Construimos o Orchestrator porque estavamos a afogar no caos. 6 meses de uso diario, clientes reais, prazos reais.</p>
+    <div class="section-label">Construido na pratica. Testado na realidade.</div>
+    <h2 class="proof-headline">Estes numeros nao sao projectados. Sao medidos.</h2>
+    <p class="proof-sub">6+ meses de uso diario em producao. Clientes reais. Prazos reais. Dinheiro real.</p>
     <div class="proof-stats">
       <div class="proof-stat">
-        <strong>105</strong>
-        <span>Ferramentas criadas</span>
-      </div>
-      <div class="proof-stat">
         <strong>131</strong>
-        <span>Processos automatizados</span>
+        <span>Entidades IA activas</span>
       </div>
       <div class="proof-stat">
-        <strong>6 meses</strong>
-        <span>Uso diario em producao</span>
+        <strong>89</strong>
+        <span>Skills instaladas</span>
+      </div>
+      <div class="proof-stat">
+        <strong>88.3/100</strong>
+        <span>Quality Score medio</span>
       </div>
       <div class="proof-stat">
         <strong>0</strong>
-        <span>Prazos falhados</span>
+        <span>Falhas em producao</span>
+      </div>
+      <div class="proof-stat">
+        <strong>5</strong>
+        <span>Divisoes especializadas</span>
+      </div>
+      <div class="proof-stat">
+        <strong>13</strong>
+        <span>Paginas de dashboard</span>
       </div>
     </div>
     <div class="proof-quote">
-      <p>"Nao construimos isto para vender. Construimos para sobreviver. A nossa agencia corria no caos ate montarmos este sistema. Agora gere-se sozinha. E agora pode gerir a sua tambem."</p>
-      <cite>— BARDA Digital Agency, Portugal</cite>
+      <p>"Construimos o DARIO Orchestrator porque estavamos a afogar no caos. Tinhamos 100+ projectos com IA e nenhum sistema para os gerir. Agora temos 131 entidades organizadas em 5 divisoes, quality scoring em cada entrega, e budget tracking por projecto. O caos acabou. A agencia cresceu. E agora voce pode ter o mesmo sistema."</p>
+      <cite>— BARDA Digital Agency, Portugal | 6+ meses em producao</cite>
     </div>
   </div>
 </section>
 
-<!-- VALUE — ROI MATH -->
-<section class="value-section" id="value" style="background:var(--bg2)">
+
+<!-- ============================================================ -->
+<!-- 12. BONUSES -->
+<!-- ============================================================ -->
+<section class="section" id="bonus" style="background:var(--bg2)">
   <div class="section-inner">
-    <div class="section-label">Quanto vale o seu tempo?</div>
-    <div class="value-line">Se a sua hora vale<strong>&euro;50</strong></div>
-    <div class="value-line">E o Orchestrator poupa 3 horas por dia...<strong>&euro;150/dia</strong></div>
-    <div class="value-line">Isso sao<strong>&euro;3.000/mes</strong></div>
-    <div class="value-line">O plano Pro custa<strong>&euro;29/mes</strong></div>
-    <div class="value-result">ROI: 100x no primeiro mes</div>
-  </div>
-</section>
+    <div class="section-label">Incluido em todos os planos pagos</div>
+    <h2 class="section-title">5 bonus que valem mais que o plano inteiro</h2>
+    <p class="section-sub">Tudo isto vem incluido. Sem custo extra. Sem upsell.</p>
 
-<!-- COST OF NOT ACTING + GUARANTEE -->
-<section class="section" id="custo" style="background:var(--bg2);">
-  <div class="section-inner" style="max-width:800px;text-align:center;">
-    <div class="section-label">O custo de nao agir</div>
-    <h2 class="section-title">Cada dia sem Orchestrator custa-lhe €150.</h2>
-    <p style="color:var(--gray);font-size:1.05rem;line-height:1.8;margin-bottom:32px;">Sao 3 horas perdidas. Tarefas esquecidas. Entregas sem revisao. Clientes insatisfeitos. Orcamento sem controlo. Multiplique isso por 22 dias uteis: <strong style="color:var(--white);">€3.300 por mes</strong> em produtividade desperdicada. Em 3 meses sao quase <strong style="color:var(--white);">€10.000</strong>. Quanto mais espera, mais perde.</p>
-
-    <div style="padding:28px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.2);border-radius:16px;margin-bottom:32px;">
-      <h3 style="color:var(--cyan);margin-bottom:12px;font-size:1.15rem;">Comparacao honesta</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center;">
-        <div>
-          <p style="font-size:1.4rem;font-weight:800;color:#ff6b6b;">€1.500+/mes</p>
-          <p style="color:var(--gray);font-size:.85rem;">Contratar um assistente</p>
-        </div>
-        <div>
-          <p style="font-size:1.4rem;font-weight:800;color:#ffa500;">€3.300/mes</p>
-          <p style="color:var(--gray);font-size:.85rem;">Perda de produtividade</p>
-        </div>
-        <div>
-          <p style="font-size:1.4rem;font-weight:800;color:var(--cyan);">€29/mes</p>
-          <p style="color:var(--gray);font-size:.85rem;">Orchestrator Pro</p>
-        </div>
+    <div class="bonus-grid">
+      <div class="bonus-card">
+        <h4>Domain Playbooks (5 sectores)</h4>
+        <p>Processos comprovados para restaurante, agencia digital, e-commerce, SaaS, e arquitectura. Nao improvisa — executa um processo testado.</p>
+        <div class="bonus-value">Valor percebido: &euro;2.000</div>
+      </div>
+      <div class="bonus-card">
+        <h4>RAG Knowledge Base Completa</h4>
+        <p>88 fontes indexadas com 1.215 chunks. Frameworks de Hormozi, Brunson, Voss, Kapferer, Schwartz, e mais. O "cerebro" por detras das skills.</p>
+        <div class="bonus-value">Valor percebido: &euro;3.000</div>
+      </div>
+      <div class="bonus-card">
+        <h4>Mission Control Dashboard</h4>
+        <p>15 paginas de visualizacao. Taskboard, quality, budget, agent health, SLA monitor. Tudo num browser local. Sem dependencias externas.</p>
+        <div class="bonus-value">Valor percebido: &euro;2.500</div>
+      </div>
+      <div class="bonus-card">
+        <h4>CLI Orchestrator OS</h4>
+        <p>Interface de linha de comando completa. orch status, orch tasks, orch budget, orch pulse. Controle total do sistema sem sair do terminal.</p>
+        <div class="bonus-value">Valor percebido: &euro;3.000</div>
+      </div>
+      <div class="bonus-card">
+        <h4>Actualizacoes Permanentes</h4>
+        <p>Novas skills adicionadas regularmente. Melhorias de quality scoring. Novos playbooks de sector. Tudo incluido enquanto for subscritor.</p>
+        <div class="bonus-value">Valor percebido: &euro;1.500/ano</div>
       </div>
     </div>
 
-    <div style="padding:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;">
-      <h3 style="margin-bottom:8px;font-size:1.1rem;">A nossa garantia</h3>
-      <p style="color:var(--gray);font-size:.95rem;line-height:1.7;">Se nos primeiros 14 dias nao sentir diferenca na sua produtividade — nao paga nada. O trial e completamente gratis. Sem cartao. Sem compromisso. Sem risco. <strong style="color:var(--white);">Se nao funcionar para si, simplesmente pare de usar. Sem perguntas.</strong></p>
+    <div style="text-align:center;margin-top:32px;padding:20px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:var(--radius)">
+      <p style="font-size:1.1rem;font-weight:700">Valor total dos bonus: <span style="color:var(--cyan)">&euro;12.000+</span>. Incluido gratis em qualquer plano pago.</p>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
+<!-- ============================================================ -->
+<!-- 13. ROI MATH -->
+<!-- ============================================================ -->
+<section class="value-section" id="roi" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label">A matematica e simples</div>
+    <div class="value-line">Se a sua hora vale<strong>&euro;50</strong></div>
+    <div class="value-line">E o Orchestrator poupa 3 horas por dia...<strong>&euro;150/dia</strong></div>
+    <div class="value-line">Em 22 dias uteis...<strong>&euro;3.300/mes</strong></div>
+    <div class="value-line">O plano Pro custa<strong>&euro;29/mes</strong></div>
+    <div class="value-result">ROI: 113x no primeiro mes</div>
+    <div style="margin-top:24px">
+      <a href="#pricing" class="btn-cta">QUERO POUPAR &euro;3.300/MES</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 14. PRICING -->
+<!-- ============================================================ -->
 <section class="section" id="pricing">
   <div class="section-inner">
     <div class="section-label">Planos</div>
-    <h2 class="section-title">Experimente 14 dias. So paga se fizer sentido.</h2>
-    <p class="section-sub">Acesso completo desde o primeiro dia. Sem limitacoes no trial. So faz upgrade quando tiver a certeza de que vale a pena.</p>
+    <h2 class="section-title">Comece gratis. So paga quando fizer sentido.</h2>
+    <p class="section-sub">14 dias de trial completo. Sem cartao. Sem limitacoes. Depois escolha o plano certo.</p>
+
+    <div style="text-align:center;margin-bottom:24px;padding:16px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:var(--radius-sm)">
+      <p style="font-size:.9rem;color:var(--gray)">Custo operacional transparente: Claude Code API (~&euro;5-20/mes dependendo do uso) + plano Orchestrator abaixo.</p>
+    </div>
+
     <div class="pricing-grid">
 
       <!-- Trial -->
       <div class="price-card">
         <h3>Trial Gratis</h3>
         <div class="price-amount">Gratis</div>
-        <div class="price-note">14 dias. Coloque o seu email para receber a chave.</div>
+        <div class="price-note">14 dias. Acesso completo.</div>
         <ul class="price-features">
-          <li>Gestao completa de tarefas</li>
-          <li>Verificacao de qualidade</li>
-          <li>Controlo de orcamento</li>
-          <li>Execucao automatica</li>
-          <li>Tudo incluido</li>
+          <li>99 skills completas</li>
+          <li>131 entidades IA</li>
+          <li>Quality scoring 5D</li>
+          <li>Budget tracking</li>
+          <li>Dashboard completo</li>
+          <li>1 domain playbook</li>
         </ul>
         <div id="trial-form">
-          <input type="email" id="trial-email" placeholder="O seu melhor email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
-          <button class="price-btn" id="trial-btn">Receber Chave Gratis</button>
+          <input type="email" id="trial-email" placeholder="O seu melhor email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em">
+          <button class="price-btn" id="trial-btn">QUERO A MINHA CHAVE GRATIS</button>
         </div>
-        <div id="trial-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all;"></div>
+        <div id="trial-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all"></div>
         <div class="price-fine">Sem cartao de credito. Sem compromisso.</div>
       </div>
 
@@ -632,14 +909,15 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
         <div class="price-note">Mensal. Cancele quando quiser.</div>
         <ul class="price-features">
           <li>Tudo do trial, mais:</li>
-          <li>Processos por sector (restaurante, agencia, e-commerce)</li>
-          <li>Relatorios avancados</li>
-          <li>Execucao mais rapida</li>
+          <li>5 domain playbooks</li>
           <li>3 tarefas em paralelo</li>
+          <li>White-label framework</li>
+          <li>RAG completa (88 fontes)</li>
+          <li>Actualizacoes permanentes</li>
           <li>Suporte prioritario</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Pro&body=Quero%20subscrever%20o%20plano%20Pro%20(%E2%82%AC29/mes).%0A%0AO%20meu%20email:%20%0AEmpresa:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscrever — &euro;29/mes</a>
-        <div class="price-fine">Pague primeiro, receba a chave instantaneamente. Cancele quando quiser.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Pro%20-%20%E2%82%AC29/mes&body=Quero%20subscrever%20o%20plano%20Pro.%0A%0ANome:%0AEmail:%0AEmpresa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">QUERO O PRO — &euro;29/mes</a>
+        <div class="price-fine">Pague, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
       <!-- Team -->
@@ -650,95 +928,136 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
         <ul class="price-features">
           <li>Tudo do Pro, mais:</li>
           <li>Ate 5 pessoas</li>
-          <li>Orcamento partilhado</li>
-          <li>Dashboard de equipa</li>
           <li>5 tarefas em paralelo</li>
+          <li>Budget partilhado</li>
+          <li>Dashboard de equipa</li>
           <li>Gestao de acessos</li>
+          <li>Onboarding dedicado</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Team&body=Quero%20subscrever%20o%20plano%20Team%20(%E2%82%AC99/mes).%0A%0AO%20meu%20email:%20%0AEmpresa:%20%0ATamanho%20da%20equipa:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscrever — &euro;99/mes</a>
-        <div class="price-fine">Pague primeiro, receba a chave instantaneamente. Cancele quando quiser.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Team%20-%20%E2%82%AC99/mes&body=Quero%20subscrever%20o%20plano%20Team.%0A%0ANome:%0AEmail:%0AEmpresa:%0ATamanho%20equipa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">SUBSCREVER TEAM — &euro;99/mes</a>
+        <div class="price-fine">Pague, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
       <!-- Enterprise -->
       <div class="price-card">
         <h3>Enterprise</h3>
-        <div class="price-amount">Personalizado</div>
+        <div class="price-amount">Custom</div>
         <div class="price-note">Preco sob consulta.</div>
         <ul class="price-features">
           <li>Tudo do Team, mais:</li>
-          <li>Integracoes personalizadas</li>
-          <li>Garantias de servico</li>
-          <li>Onboarding dedicado</li>
           <li>10+ tarefas em paralelo</li>
+          <li>Integracoes custom</li>
+          <li>SLA garantido</li>
+          <li>Onboarding dedicado</li>
           <li>Versao com a sua marca</li>
           <li>50+ pessoas</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Enterprise" class="price-btn">Fale Connosco</a>
-        <div class="price-fine">Adaptado as necessidades da sua organizacao.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Enterprise" class="price-btn" style="display:block;text-align:center;text-decoration:none">FALAR COM A EQUIPA</a>
+        <div class="price-fine">Adaptado a sua organizacao.</div>
       </div>
 
+    </div>
+
+    <div style="text-align:center;margin-top:32px">
+      <p style="color:var(--gray);font-size:.88rem">Garantia: se nos primeiros 14 dias nao sentir diferenca — nao paga nada. Sem perguntas.</p>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- ============================================================ -->
+<!-- 15. FAQ -->
+<!-- ============================================================ -->
 <section class="section" id="faq" style="background:var(--bg2)">
   <div class="section-inner">
     <div class="section-label">Perguntas frequentes</div>
     <h2 class="section-title">Tudo o que precisa de saber antes de comecar.</h2>
-    <p class="section-sub">Sem letras pequenas. Sem surpresas.</p>
+    <p class="section-sub">Sem letras pequenas. Sem surpresas. Sem bullshit.</p>
     <div class="faq-list">
       <div class="faq-item">
-        <button class="faq-q">Preciso de ser tecnico para usar?</button>
-        <div class="faq-a"><p>Nao. Se sabe escrever "audita o site do meu cliente" ou "prepara a reuniao de amanha", sabe usar isto. O orquestrador entende linguagem natural. Voce diz o que quer, ele faz.</p></div>
+        <button class="faq-q">Preciso de ser tecnico ou programador para usar?</button>
+        <div class="faq-a"><p>Nao. Se sabe escrever "audita o site do meu cliente" ou "prepara a reuniao de amanha", sabe usar. O sistema entende linguagem natural em portugues. Voce diz o que quer, ele divide em passos, executa, verifica, e entrega. A instalacao e um unico comando: npx orchestrator-ai-framework init.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">O trial e mesmo gratis?</button>
-        <div class="faq-a"><p>Sim. 14 dias com acesso completo. Sem cartao de credito. Sem compromisso. Se nao gostar, simplesmente pare de usar. Os seus dados ficam guardados para sempre.</p></div>
+        <button class="faq-q">O que e que preciso ter para isto funcionar?</button>
+        <div class="faq-a"><p>Precisa de: (1) Claude Code instalado (a CLI oficial da Anthropic), (2) uma conta na Anthropic com API key, e (3) um computador com Node.js. O custo do Claude Code API e separado (tipicamente &euro;5-20/mes dependendo do uso). O Orchestrator funciona localmente no seu computador — os seus dados nunca saem da sua maquina.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">O que acontece depois dos 14 dias?</button>
-        <div class="faq-a"><p>O sistema pausa. O seu trabalho fica guardado — tarefas, dados, configuracoes, tudo intacto. Quando quiser, faz upgrade para Pro (29€/mes) e continua exactamente de onde parou. Nada e apagado. Nunca.</p></div>
+        <button class="faq-q">O trial e mesmo gratis? Qual e a catch?</button>
+        <div class="faq-a"><p>Sim. 14 dias com acesso completo a todas as 99 skills, 131 entidades, dashboard, quality scoring, tudo. Sem cartao de credito. Sem compromisso. A unica coisa que paga e o uso do Claude Code API da Anthropic (que ja pagaria de qualquer forma). Se nao gostar, simplesmente pare de usar. Sem perguntas.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">Como e que isto e diferente de usar o ChatGPT ou outras IAs?</button>
-        <div class="faq-a"><p>O ChatGPT faz uma coisa de cada vez. Voce pede, ele responde, e acabou. O Orchestrator pega num projecto inteiro, divide em tarefas, executa cada uma na ordem certa, verifica qualidade, controla orcamento, e entrega tudo organizado. E como ter um gestor de projecto que nunca dorme.</p></div>
+        <button class="faq-q">Como e diferente de usar ChatGPT, Cursor, ou outras ferramentas de IA?</button>
+        <div class="faq-a"><p>O ChatGPT faz uma coisa de cada vez — voce pede, ele responde, acabou. O Cursor edita codigo. O Orchestrator e uma camada acima: pega num objectivo inteiro ("audita este site"), divide em 5 tarefas, atribui a workers especializados, executa em paralelo, verifica qualidade em 5 dimensoes, controla budget, e entrega tudo organizado. E como ter um gestor de projecto + equipa de 131 pessoas que nunca dormem.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q">Os meus dados estao seguros?</button>
-        <div class="faq-a"><p>Tudo fica no seu computador. Nos nunca vemos os seus ficheiros, os seus clientes, ou o seu trabalho. A unica coisa online e a sua chave de licenca. Os seus dados sao seus. Ponto final.</p></div>
+        <div class="faq-a"><p>Tudo corre no seu computador. Os seus ficheiros, dados de clientes, e trabalho nunca passam pelos nossos servidores. A unica coisa online e a validacao da licenca. Os dados do Claude Code API passam pela Anthropic (a mesma empresa que ja usa). Os seus dados sao seus. Ponto final.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">E se eu parar de pagar?</button>
-        <div class="faq-a"><p>Tem 7 dias de graca. Depois, o sistema pausa a execucao mas os seus dados ficam intactos. Reactive quando quiser e continue de onde parou. Sem penalizacoes. Sem perda de dados.</p></div>
+        <button class="faq-q">E se eu ja usar Claude Code? Posso adicionar o Orchestrator?</button>
+        <div class="faq-a"><p>Sim, e exactamente para isso que foi feito. O Orchestrator e um framework que se instala sobre o Claude Code existente. As suas configuracoes, projectos, e workflows continuam a funcionar. O Orchestrator adiciona a camada de orquestracao, quality scoring, e budget tracking por cima do que ja tem.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Como funciona o quality scoring?</button>
+        <div class="faq-a"><p>Cada output e avaliado automaticamente em 5 dimensoes: Specificity (menciona dados especificos?), Actionability (proximos passos claros?), Completeness (todos os requisitos cobertos?), Accuracy (factos correctos?), e Tone (tom adequado?). Cada dimensao vale 0-20 pontos, total 0-100. Abaixo de 60 = re-execucao automatica. Media actual: 88.3/100.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Posso usar para o meu sector especifico?</button>
+        <div class="faq-a"><p>Sim. O Orchestrator inclui domain playbooks para: restaurantes, agencias digitais, e-commerce, SaaS, e arquitectura/design. Cada playbook tem processos testados para o sector. Se o seu sector nao esta na lista, as skills genericas (diagnostico, proposta, conteudo, vendas) funcionam para qualquer negocio. E novos playbooks sao adicionados regularmente.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">O que acontece se eu parar de pagar?</button>
+        <div class="faq-a"><p>7 dias de graca apos o fim da subscricao. Depois, o sistema pausa a execucao mas os seus dados ficam intactos — tarefas, configuracoes, historico de quality, tudo preservado. Reactive quando quiser e continue exactamente de onde parou. Sem penalizacoes. Sem perda de dados. Nunca.</p></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ============================================================ -->
 <!-- CTA FINAL -->
+<!-- ============================================================ -->
 <section class="cta-final">
-  <h2>Ainda nao tem a certeza?</h2>
-  <p>Comece gratis. 14 dias. Sem cartao. Sem risco.</p>
-  <a href="#pricing" class="btn btn-primary">Testar Gratis Agora</a>
+  <h2>Cada dia sem Orchestrator custa-lhe &euro;150.</h2>
+  <p>Sao 3 horas perdidas. Entregas sem revisao. Budget sem controlo. Comece hoje. Gratis. 14 dias. Sem cartao.</p>
+  <a href="#pricing" class="btn btn-primary">QUERO COMECAR AGORA — GRATIS</a>
 </section>
 
-<!-- FOOTER -->
+<!-- ============================================================ -->
+<!-- 16. EMAIL CAPTURE MODAL -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <h3>Receba a sua chave de trial gratis</h3>
+    <p>14 dias de acesso completo. 99 skills. 131 entidades. Dashboard completo. Sem cartao.</p>
+    <input type="text" id="modal-name" placeholder="O seu nome">
+    <input type="email" id="modal-email" placeholder="O seu melhor email">
+    <input type="tel" id="modal-whatsapp" placeholder="WhatsApp (opcional, com indicativo)">
+    <button class="btn btn-primary" id="modal-btn" style="width:100%;justify-content:center;margin-top:8px">ENVIAR A MINHA CHAVE GRATIS</button>
+    <p style="font-size:.78rem;color:var(--gray2);text-align:center;margin-top:12px;margin-bottom:0">Sem spam. So a chave e instrucoes de instalacao.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 17. FOOTER -->
+<!-- ============================================================ -->
 <footer class="footer">
   <div class="footer-links">
-    <a href="#features">O Problema</a>
-    <a href="#how-it-works">Como Funciona</a>
-    <a href="#demo">Veja em Accao</a>
+    <a href="#problema">O Problema</a>
+    <a href="#demo">Demo</a>
+    <a href="#architecture">Arquitectura</a>
+    <a href="#skills">Skills</a>
     <a href="#pricing">Planos</a>
-    <a href="#faq">Perguntas</a>
-    <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20-%20Contacto">Contacte-nos</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20-%20Contacto">Contacto</a>
   </div>
-  <p>Construido pela BARDA Digital Agency — Portugal</p>
+  <p>DARIO Orchestrator AI — Construido pela BARDA Digital Agency, Portugal</p>
   <p>Duvidas? hello@barda.agency</p>
+  <p style="margin-top:8px;font-size:.75rem">&copy; 2024-2026 BARDA Agency. Todos os direitos reservados.</p>
 </footer>
 
 <!-- TOAST -->
-<div class="toast" id="toast">Copied to clipboard!</div>
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
@@ -774,59 +1093,73 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   var toast=document.getElementById('toast');
   var timer;
   function showToast(msg){
-    toast.textContent=msg||'Copied to clipboard!';
+    toast.textContent=msg||'Operacao concluida!';
     toast.classList.add('show');
     clearTimeout(timer);
-    timer=setTimeout(function(){toast.classList.remove('show')},2200);
+    timer=setTimeout(function(){toast.classList.remove('show')},2800);
   }
 
-  /* Trial key generation */
+  /* Modal */
+  var overlay=document.getElementById('modal-overlay');
+  var closeBtn=document.getElementById('modal-close');
+
+  /* Show modal after 45 seconds or on exit intent */
+  var modalShown=false;
+  function showModal(){
+    if(modalShown)return;
+    modalShown=true;
+    overlay.classList.add('active');
+  }
+  setTimeout(showModal,45000);
+  document.addEventListener('mouseout',function(e){
+    if(e.clientY<5) showModal();
+  });
+  closeBtn.addEventListener('click',function(){overlay.classList.remove('active')});
+  overlay.addEventListener('click',function(e){
+    if(e.target===overlay) overlay.classList.remove('active');
+  });
+
+  /* Modal form submit */
+  document.getElementById('modal-btn').addEventListener('click',function(){
+    var name=document.getElementById('modal-name').value.trim();
+    var email=document.getElementById('modal-email').value.trim();
+    var whatsapp=document.getElementById('modal-whatsapp').value.trim();
+    if(!email||!email.includes('@')){showToast('Introduza um email valido');return;}
+    this.textContent='A gerar...';this.disabled=true;
+    var self=this;
+    fetch('https://orchestrator-ai-three.vercel.app/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,name:name,whatsapp:whatsapp,days:14})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.key){
+        overlay.classList.remove('active');
+        showToast('Chave gerada! Verifique o seu email.');
+      }else{
+        showToast('Erro: '+(d.error||'Tente novamente'));
+        self.textContent='ENVIAR A MINHA CHAVE GRATIS';self.disabled=false;
+      }
+    }).catch(function(){showToast('Erro de rede. Tente novamente.');self.textContent='ENVIAR A MINHA CHAVE GRATIS';self.disabled=false;});
+  });
+
+  /* Trial form (in pricing section) */
   document.getElementById('trial-btn').addEventListener('click',function(){
     var email=document.getElementById('trial-email').value.trim();
-    if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
-    this.textContent='Generating...';this.disabled=true;
-    fetch('/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,days:14})})
+    if(!email||!email.includes('@')){showToast('Introduza um email valido');return;}
+    this.textContent='A gerar chave...';this.disabled=true;
+    fetch('https://orchestrator-ai-three.vercel.app/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,days:14})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d.key){
         document.getElementById('trial-form').style.display='none';
         var r=document.getElementById('trial-result');
         r.style.display='block';
-        r.innerHTML='<div style="color:var(--cyan);font-weight:600;margin-bottom:6px;">Your trial key:</div><code style="color:#fff;font-size:1em;">'+d.key+'</code><div style="margin-top:8px;color:#aaa;font-size:.8em;">Install: <code>npx orchestrator-ai-framework init --license '+d.key+'</code></div>';
-        showToast('Trial key generated! Check your email.');
+        r.innerHTML='<div style="color:var(--cyan);font-weight:600;margin-bottom:6px;">A sua chave de trial:</div><code style="color:#fff;font-size:1em;">'+d.key+'</code><div style="margin-top:10px;color:#aaa;font-size:.8em;">Instalar: <code>npx orchestrator-ai-framework init --license '+d.key+'</code></div>';
+        showToast('Chave gerada com sucesso!');
       }else{
-        showToast('Error: '+(d.error||'Try again'));
-        document.getElementById('trial-btn').textContent='Get Trial Key';
+        showToast('Erro: '+(d.error||'Tente novamente'));
+        document.getElementById('trial-btn').textContent='QUERO A MINHA CHAVE GRATIS';
         document.getElementById('trial-btn').disabled=false;
       }
-    }).catch(function(){showToast('Network error. Try again.');document.getElementById('trial-btn').textContent='Get Trial Key';document.getElementById('trial-btn').disabled=false;});
-  });
-
-  /* Pro + Team key generation */
-  document.querySelectorAll('.tier-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var form=this.closest('.tier-form');
-      var tier=form.dataset.tier;
-      var emailInput=form.querySelector('input[type="email"]');
-      var email=emailInput.value.trim();
-      if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
-      this.textContent='Generating...';this.disabled=true;
-      var self=this;
-      fetch('/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:tier,email:email,days:30})})
-      .then(function(r){return r.json()})
-      .then(function(d){
-        if(d.key){
-          form.style.display='none';
-          var r=form.nextElementSibling;
-          r.style.display='block';
-          r.innerHTML='<div style="color:var(--cyan);font-weight:600;margin-bottom:6px;">Your '+tier.toUpperCase()+' key:</div><code style="color:#fff;font-size:1em;">'+d.key+'</code><div style="margin-top:8px;color:#aaa;font-size:.8em;">Install: <code>npx orchestrator-ai-framework init --license '+d.key+'</code></div>';
-          showToast(tier.toUpperCase()+' key generated!');
-        }else{
-          showToast('Error: '+(d.error||'Try again'));
-          self.textContent='Get '+tier.charAt(0).toUpperCase()+tier.slice(1)+' Key';self.disabled=false;
-        }
-      }).catch(function(){showToast('Network error.');self.textContent='Get '+tier.charAt(0).toUpperCase()+tier.slice(1)+' Key';self.disabled=false;});
-    });
+    }).catch(function(){showToast('Erro de rede. Tente novamente.');document.getElementById('trial-btn').textContent='QUERO A MINHA CHAVE GRATIS';document.getElementById('trial-btn').disabled=false;});
   });
 })();
 </script>

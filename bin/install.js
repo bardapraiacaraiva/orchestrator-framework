@@ -252,13 +252,25 @@ async function init(args) {
            `License activated: ${tier} tier (30 days)`);
   }
 
+  // Step 9: Copy dashboard
+  log('Installing SaaS dashboard...');
+  const dashSrc = path.join(FRAMEWORK_ROOT, 'dashboard');
+  const dashDest = path.join(ORCH_DIR, 'dashboard');
+  if (fs.existsSync(dashSrc)) {
+    copyDir(dashSrc, dashDest);
+    success('Dashboard source installed');
+    log('To start dashboard: npx orch-dashboard');
+  } else {
+    warn('Dashboard source not found in package — skip');
+  }
+
   // Done
   console.log('\n  \x1b[1m\x1b[32mInstallation complete!\x1b[0m\n');
   console.log('  Next steps:');
-  console.log('    1. Add your own skills to ~/.claude/skills/');
-  console.log('    2. Edit ~/.claude/orchestrator/company.yaml to add workers');
-  console.log('    3. Test: type /orch-orchestrator in Claude Code');
-  console.log('    4. Run autopilot: /orch-autopilot');
+  console.log('    1. Start dashboard:  \x1b[36mnpx orch-dashboard\x1b[0m');
+  console.log('    2. Edit company:     \x1b[36m~/.claude/orchestrator/company.yaml\x1b[0m');
+  console.log('    3. Test skills:      \x1b[36m/orch-orchestrator\x1b[0m in Claude Code');
+  console.log('    4. Run autopilot:    \x1b[36m/orch-autopilot\x1b[0m');
   if (!licenseKey) {
     console.log('\n  \x1b[33mUpgrade to Pro (€29/mo):\x1b[0m');
     console.log('    npx orchestrator-ai-framework init --license PRO-YOUR-KEY');
