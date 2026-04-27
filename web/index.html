@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orchestrator AI — Stop Wasting Hours on Chaotic AI Workflows</title>
-<meta name="description" content="Turn your Claude Code into a self-managing AI team. Tracks tasks, scores quality, controls budget, executes autonomously. 14-day free trial.">
-<meta property="og:title" content="Orchestrator AI — Stop Wasting Hours on Chaotic AI Workflows">
-<meta property="og:description" content="Turn your Claude Code into a self-managing AI team that tracks tasks, scores quality, controls budget, and executes autonomously.">
+<title>Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA</title>
+<meta name="description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma. 14 dias gratis.">
+<meta property="og:title" content="Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA">
+<meta property="og:description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma.">
 <meta property="og:image" content="https://orchestrator-ai.dev/og-image.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Orchestrator AI — Stop Wasting Hours on Chaotic AI Workflows">
-<meta name="twitter:description" content="Turn your Claude Code into a self-managing AI team that tracks tasks, scores quality, controls budget, and executes autonomously.">
+<meta name="twitter:title" content="Orchestrator AI — Pare de Perder Horas a Gerir Operacoes com IA">
+<meta name="twitter:description" content="Transforme o seu trabalho com IA numa operacao que se gere sozinha. Gestao de tarefas, verificacao de qualidade, controlo de orcamento, execucao autonoma.">
 <meta name="twitter:image" content="https://orchestrator-ai.dev/og-image.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -143,6 +143,37 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 @media(max-width:900px){
   .pricing-grid{grid-template-columns:repeat(2,1fr)}
 }
+/* BEFORE-AFTER */
+.before-after-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ba-header{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:8px 16px 16px;margin-bottom:8px}
+.ba-header.ba-today{color:#ff4444}
+.ba-header.ba-after{color:var(--cyan)}
+.ba-today{border-left:3px solid #ff4444;padding:16px;color:var(--gray);font-size:.9rem;line-height:1.6;background:rgba(255,68,68,.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.ba-after{border-left:3px solid var(--cyan);padding:16px;color:var(--white);font-size:.9rem;line-height:1.6;background:rgba(0,229,255,.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+
+/* DEMO SUMMARY */
+.demo-summary{margin-top:40px;padding:24px 32px;background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(124,77,255,.08));border:1px solid rgba(0,229,255,.2);border-radius:var(--radius);text-align:center;font-size:1.05rem;font-weight:600;color:var(--white)}
+.demo-summary span{color:var(--cyan)}
+
+/* VALUE SECTION */
+.value-section{text-align:center;padding:80px 24px}
+.value-section .section-inner{max-width:700px}
+.value-line{font-size:clamp(1.1rem,2.5vw,1.4rem);color:var(--gray);margin-bottom:16px;font-weight:500}
+.value-line strong{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;background:linear-gradient(135deg,var(--cyan),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:4px}
+.value-result{font-size:clamp(1.3rem,3vw,1.8rem);font-weight:800;color:var(--cyan);margin-top:32px;padding:20px;border:2px solid var(--cyan);border-radius:var(--radius);display:inline-block}
+
+/* CTA FINAL */
+.cta-final{text-align:center;padding:80px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg))}
+.cta-final h2{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:12px}
+.cta-final p{color:var(--gray);font-size:1.05rem;max-width:520px;margin:0 auto 32px}
+
+/* DEMO STEPS (timeline-style) */
+.demo-steps{counter-reset:demo-step;max-width:720px;margin:0 auto}
+.demo-step{position:relative;padding:24px 24px 24px 72px;margin-bottom:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius)}
+.demo-step::before{counter-increment:demo-step;content:counter(demo-step);position:absolute;left:20px;top:24px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#7c4dff);color:var(--bg);font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center}
+.demo-step h4{font-size:1rem;margin-bottom:6px;color:var(--white)}
+.demo-step p{color:var(--gray);font-size:.9rem;line-height:1.6;margin:0}
+
 @media(max-width:600px){
   .section{padding:72px 20px}
   .features-grid{grid-template-columns:1fr}
@@ -150,6 +181,10 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   .steps{grid-template-columns:1fr}
   .hero-stats{flex-direction:column;gap:12px;padding:16px 20px}
   .proof-stats{flex-direction:column;gap:20px}
+  .before-after-grid{grid-template-columns:1fr}
+  .ba-header{display:none}
+  .ba-today::before{content:'HOJE: ';color:#ff4444;font-weight:700;font-size:.75rem}
+  .ba-after::before{content:'COM ORCHESTRATOR: ';color:var(--cyan);font-weight:700;font-size:.75rem}
 }
 </style>
 </head>
@@ -162,6 +197,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     <div class="nav-links">
       <a href="#features">O Problema</a>
       <a href="#how-it-works">Como Funciona</a>
+      <a href="#demo">Veja em Accao</a>
       <a href="#pricing">Planos</a>
       <a href="#faq">Perguntas</a>
       <a href="#pricing" class="nav-cta">Testar Gratis</a>
@@ -241,6 +277,66 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   </div>
 </section>
 
+<!-- BEFORE vs AFTER -->
+<section class="section" id="before-after" style="background:var(--bg2)">
+  <div class="section-inner">
+    <div class="section-label">A transformacao</div>
+    <h2 class="section-title">O seu dia hoje vs o seu dia com Orchestrator</h2>
+    <p class="section-sub">Lado a lado. Sem exageros. So a diferenca real no seu dia-a-dia.</p>
+    <div class="before-after-grid">
+      <div class="ba-header ba-today">Hoje (sem Orchestrator)</div>
+      <div class="ba-header ba-after">Com Orchestrator</div>
+
+      <div class="ba-today">Abre o computador. Tenta lembrar-se do que estava a fazer ontem. Perde 30 minutos.</div>
+      <div class="ba-after">Abre o computador. O dashboard mostra exactamente onde parou. Continua em 2 minutos.</div>
+
+      <div class="ba-today">Pede a IA para fazer algo. Recebe resultado. Envia para o cliente sem revisar. O cliente reclama.</div>
+      <div class="ba-after">Pede a IA para fazer algo. O sistema verifica automaticamente a qualidade. So mostra o que esta pronto para enviar.</div>
+
+      <div class="ba-today">Fim do mes. Fatura da IA chega. Susto. Nao sabe quanto gastou em cada cliente.</div>
+      <div class="ba-after">Sabe em tempo real quanto gastou por projecto. Aviso automatico a 80%. Nunca mais e surpreendido.</div>
+
+      <div class="ba-today">Freelancer entregou tarde. Voce so descobre 5 dias depois quando o cliente pergunta.</div>
+      <div class="ba-after">Cada tarefa tem prazo. Se atrasar, o sistema avisa automaticamente. Nada fica esquecido.</div>
+
+      <div class="ba-today">Novo cliente chega. Comeca tudo do zero. Demora 3x mais que devia.</div>
+      <div class="ba-after">Novo cliente chega. Escolhe o sector. O sistema carrega um processo completo e comeca a executar em 5 minutos.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO — REAL EXAMPLE -->
+<section class="section" id="demo">
+  <div class="section-inner">
+    <div class="section-label">Exemplo real</div>
+    <h2 class="section-title">Voce diz: "Audita o site do meu cliente". Isto e o que acontece:</h2>
+    <p class="section-sub">Um exemplo concreto, passo a passo, do que o sistema faz por si.</p>
+    <div class="demo-steps">
+      <div class="demo-step">
+        <h4>O sistema analisa o seu pedido</h4>
+        <p>Entende que precisa de uma auditoria web. Identifica que precisa de verificar performance, SEO, seguranca, conteudo, e conformidade legal.</p>
+      </div>
+      <div class="demo-step">
+        <h4>Divide em 5 tarefas automaticamente</h4>
+        <p>Cria uma tarefa para cada area. Atribui cada tarefa a ferramenta especializada certa. Tudo organizado num quadro de tarefas.</p>
+      </div>
+      <div class="demo-step">
+        <h4>Executa tudo em paralelo</h4>
+        <p>3 tarefas correm ao mesmo tempo. Em 10 minutos faz o trabalho que lhe levava 3 horas. Sem a sua intervencao.</p>
+      </div>
+      <div class="demo-step">
+        <h4>Verifica qualidade antes de mostrar</h4>
+        <p>Cada resultado e avaliado. Se a qualidade estiver abaixo do minimo, refaz automaticamente. Voce so ve o trabalho aprovado.</p>
+      </div>
+      <div class="demo-step">
+        <h4>Entrega o relatorio completo</h4>
+        <p>Recebe um diagnostico organizado por prioridade: critico, importante, e optimizacao. Com accoes concretas. Pronto para enviar ao cliente.</p>
+      </div>
+    </div>
+    <div class="demo-summary">Tempo total: <span>15 minutos</span>. Sem a sua intervencao. O mesmo trabalho manual: <span>3-4 horas</span>.</div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="section" id="how-it-works" style="background:var(--bg2)">
   <div class="section-inner">
@@ -256,8 +352,8 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
       </div>
       <div class="step">
         <h3>Instale com um clique</h3>
-        <p>Copie uma linha no seu terminal. Tudo se instala automaticamente. Nada para configurar. Nada para aprender antes de comecar.</p>
-        <code>1 comando = tudo pronto</code>
+        <p>Abra o Claude Code e cole a sua chave. Tudo se instala em 60 segundos. Nada para configurar. Nada para aprender antes de comecar.</p>
+        <code>1 clique = tudo pronto</code>
         <div class="step-result">Pronto em menos de 60 segundos</div>
       </div>
       <div class="step">
@@ -301,85 +397,97 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   </div>
 </section>
 
+<!-- VALUE — ROI MATH -->
+<section class="value-section" id="value" style="background:var(--bg2)">
+  <div class="section-inner">
+    <div class="section-label">Quanto vale o seu tempo?</div>
+    <div class="value-line">Se a sua hora vale<strong>&euro;50</strong></div>
+    <div class="value-line">E o Orchestrator poupa 3 horas por dia...<strong>&euro;150/dia</strong></div>
+    <div class="value-line">Isso sao<strong>&euro;3.000/mes</strong></div>
+    <div class="value-line">O plano Pro custa<strong>&euro;29/mes</strong></div>
+    <div class="value-result">ROI: 100x no primeiro mes</div>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section class="section" id="pricing">
   <div class="section-inner">
-    <div class="section-label">Pricing</div>
+    <div class="section-label">Planos</div>
     <h2 class="section-title">Experimente 14 dias. So paga se fizer sentido.</h2>
     <p class="section-sub">Acesso completo desde o primeiro dia. Sem limitacoes no trial. So faz upgrade quando tiver a certeza de que vale a pena.</p>
     <div class="pricing-grid">
 
       <!-- Trial -->
       <div class="price-card">
-        <h3>Free Trial</h3>
-        <div class="price-amount">Free</div>
-        <div class="price-note">14 days. Enter email to get your key.</div>
+        <h3>Trial Gratis</h3>
+        <div class="price-amount">Gratis</div>
+        <div class="price-note">14 dias. Coloque o seu email para receber a chave.</div>
         <ul class="price-features">
-          <li>8 core skills</li>
-          <li>Budget tracking</li>
-          <li>YAML taskboard</li>
-          <li>Quality scoring</li>
-          <li>2 parallel tasks</li>
+          <li>Gestao completa de tarefas</li>
+          <li>Verificacao de qualidade</li>
+          <li>Controlo de orcamento</li>
+          <li>Execucao automatica</li>
+          <li>Tudo incluido</li>
         </ul>
         <div id="trial-form">
-          <input type="email" id="trial-email" placeholder="Your best email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
-          <button class="price-btn" id="trial-btn">Get Trial Key</button>
+          <input type="email" id="trial-email" placeholder="O seu melhor email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
+          <button class="price-btn" id="trial-btn">Receber Chave Gratis</button>
         </div>
         <div id="trial-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all;"></div>
-        <div class="price-fine">No credit card required. No commitment.</div>
+        <div class="price-fine">Sem cartao de credito. Sem compromisso.</div>
       </div>
 
       <!-- Pro -->
       <div class="price-card popular">
-        <span class="price-badge">Most Popular</span>
+        <span class="price-badge">Mais Popular</span>
         <h3>Pro</h3>
-        <div class="price-amount">&euro;29<span>/mo</span></div>
-        <div class="price-note">Billed monthly. Cancel anytime.</div>
+        <div class="price-amount">&euro;29<span>/mes</span></div>
+        <div class="price-note">Mensal. Cancele quando quiser.</div>
         <ul class="price-features">
-          <li>Everything in Free Trial, plus:</li>
-          <li>Domain playbooks</li>
-          <li>Eval calibration</li>
-          <li>Advanced analytics</li>
-          <li>3 parallel tasks</li>
-          <li>Priority support</li>
+          <li>Tudo do trial, mais:</li>
+          <li>Processos por sector (restaurante, agencia, e-commerce)</li>
+          <li>Relatorios avancados</li>
+          <li>Execucao mais rapida</li>
+          <li>3 tarefas em paralelo</li>
+          <li>Suporte prioritario</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Pro%20Subscription&body=I%20want%20to%20subscribe%20to%20the%20Pro%20plan%20(€29/mo).%0A%0AMy%20email:%20%0ACompany:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscribe — €29/mo</a>
-        <div class="price-fine">Pay first, get your key instantly. Cancel anytime.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Pro&body=Quero%20subscrever%20o%20plano%20Pro%20(%E2%82%AC29/mes).%0A%0AO%20meu%20email:%20%0AEmpresa:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscrever — &euro;29/mes</a>
+        <div class="price-fine">Pague primeiro, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
       <!-- Team -->
       <div class="price-card">
         <h3>Team</h3>
-        <div class="price-amount">&euro;99<span>/mo</span></div>
-        <div class="price-note">5 seats included.</div>
+        <div class="price-amount">&euro;99<span>/mes</span></div>
+        <div class="price-note">5 pessoas incluidas.</div>
         <ul class="price-features">
-          <li>Everything in Pro</li>
-          <li>Multi-user support</li>
-          <li>Shared budgets</li>
-          <li>Team dashboards</li>
-          <li>5 parallel tasks</li>
-          <li>Role-based access</li>
+          <li>Tudo do Pro, mais:</li>
+          <li>Ate 5 pessoas</li>
+          <li>Orcamento partilhado</li>
+          <li>Dashboard de equipa</li>
+          <li>5 tarefas em paralelo</li>
+          <li>Gestao de acessos</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Team%20Subscription&body=I%20want%20to%20subscribe%20to%20the%20Team%20plan%20(€99/mo).%0A%0AMy%20email:%20%0ACompany:%20%0ATeam%20size:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscribe — €99/mo</a>
-        <div class="price-fine">Pay first, get your key instantly. Cancel anytime.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Team&body=Quero%20subscrever%20o%20plano%20Team%20(%E2%82%AC99/mes).%0A%0AO%20meu%20email:%20%0AEmpresa:%20%0ATamanho%20da%20equipa:%20" class="price-btn" style="display:block;text-align:center;text-decoration:none;">Subscrever — &euro;99/mes</a>
+        <div class="price-fine">Pague primeiro, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
       <!-- Enterprise -->
       <div class="price-card">
         <h3>Enterprise</h3>
-        <div class="price-amount">Custom</div>
-        <div class="price-note">Custom pricing available.</div>
+        <div class="price-amount">Personalizado</div>
+        <div class="price-note">Preco sob consulta.</div>
         <ul class="price-features">
-          <li>Everything in Team</li>
-          <li>Custom integrations</li>
-          <li>SLA guarantees</li>
-          <li>Dedicated onboarding</li>
-          <li>10+ parallel tasks</li>
-          <li>White-label option</li>
-          <li>50+ seats</li>
+          <li>Tudo do Team, mais:</li>
+          <li>Integracoes personalizadas</li>
+          <li>Garantias de servico</li>
+          <li>Onboarding dedicado</li>
+          <li>10+ tarefas em paralelo</li>
+          <li>Versao com a sua marca</li>
+          <li>50+ pessoas</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Enterprise" class="price-btn">Contact Us</a>
-        <div class="price-fine">Tailored to your organization's needs.</div>
+        <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20Enterprise" class="price-btn">Fale Connosco</a>
+        <div class="price-fine">Adaptado as necessidades da sua organizacao.</div>
       </div>
 
     </div>
@@ -421,11 +529,19 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   </div>
 </section>
 
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Ainda nao tem a certeza?</h2>
+  <p>Comece gratis. 14 dias. Sem cartao. Sem risco.</p>
+  <a href="#pricing" class="btn btn-primary">Testar Gratis Agora</a>
+</section>
+
 <!-- FOOTER -->
 <footer class="footer">
   <div class="footer-links">
     <a href="#features">O Problema</a>
     <a href="#how-it-works">Como Funciona</a>
+    <a href="#demo">Veja em Accao</a>
     <a href="#pricing">Planos</a>
     <a href="#faq">Perguntas</a>
     <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20-%20Contacto">Contacte-nos</a>
