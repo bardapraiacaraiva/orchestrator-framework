@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bfrfranco/orchestrator-framework"
+    "url": "https://github.com/bardapraiacaraiva/orchestrator-framework"
   },
   "engines": {
     "node": ">=18.0.0"
