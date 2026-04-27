@@ -16,10 +16,12 @@ const DEMO_LICENSES = {
   'PRO-DEMO-0000-0000': { tier: 'pro', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
   'TEAM-DEMO-0000-0000': { tier: 'team', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
   'ENT-DEMO-0000-0000': { tier: 'enterprise', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
+  'VIP-DEMO-0000-0000': { tier: 'vip', email: 'demo@test.com', status: 'active', expires_at: null, lifetime: true },
 };
 
 const TIER_FEATURES = {
-  community: { max_parallel: 2, playbooks: false, eval_calibration: false, advanced_analytics: false, multi_user: false, priority_support: false },
+  trial: { max_parallel: 2, playbooks: false, eval_calibration: false, advanced_analytics: false, multi_user: false, priority_support: false },
+  vip: { max_parallel: 999, playbooks: true, eval_calibration: true, advanced_analytics: true, multi_user: true, max_seats: 999, custom_presets: true, priority_support: true, lifetime: true },
   pro: { max_parallel: 3, playbooks: true, eval_calibration: true, advanced_analytics: true, multi_user: false, priority_support: true },
   team: { max_parallel: 5, playbooks: true, eval_calibration: true, advanced_analytics: true, multi_user: true, max_seats: 5, priority_support: true },
   enterprise: { max_parallel: 10, playbooks: true, eval_calibration: true, advanced_analytics: true, multi_user: true, max_seats: 50, custom_presets: true, priority_support: true, sla_guaranteed: true },
@@ -91,7 +93,16 @@ export default async function handler(req, res) {
     });
   }
 
-  // 4. Check expiration
+  // 4. VIP — lifetime, never expires
+  if (license.tier === 'vip' || license.lifetime) {
+    return res.status(200).json({
+      valid: true, tier: 'vip', status: 'vip', expires_at: null,
+      features: TIER_FEATURES.vip,
+      message: 'VIP Lifetime — Full access granted by BARDA Digital Agency'
+    });
+  }
+
+  // 5. Check expiration
   const now = new Date();
   const expires = new Date(license.expires_at);
   const graceEnd = new Date(expires);

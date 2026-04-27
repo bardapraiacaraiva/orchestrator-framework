@@ -218,19 +218,21 @@ async function init(args) {
 
   if (licenseKey) {
     let tier = 'pro';
-    if (licenseKey.startsWith('TEAM-')) tier = 'team';
+    if (licenseKey.startsWith('VIP-')) tier = 'vip';
+    else if (licenseKey.startsWith('TEAM-')) tier = 'team';
     else if (licenseKey.startsWith('ENT-')) tier = 'enterprise';
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 30);
+    const expires = tier === 'vip' ? null : new Date();
+    if (expires) expires.setDate(expires.getDate() + 30);
     const licenseData = {
       version: '1.0', tier, key: licenseKey, email: '',
       issued_at: new Date().toISOString(),
-      expires_at: expires.toISOString(),
+      expires_at: expires ? expires.toISOString() : null,
       last_validated: new Date().toISOString(),
-      grace_period_days: 7, status: 'active'
+      grace_period_days: tier === 'vip' ? 99999 : 7,
+      status: 'active'
     };
     fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
-    success(`License activated: ${tier} tier (30 days)`);
+    success(tier === 'vip' ? `VIP Lifetime license activated — Full access forever` : `License activated: ${tier} tier (30 days)`);
   } else {
     const trialExpires = new Date();
     trialExpires.setDate(trialExpires.getDate() + 14);

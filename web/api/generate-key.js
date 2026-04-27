@@ -30,7 +30,7 @@ async function setToKV(key, value) {
 }
 
 function generateKey(tier) {
-  const prefix = tier === 'enterprise' ? 'ENT' : tier === 'team' ? 'TEAM' : 'PRO';
+  const prefix = tier === 'vip' ? 'VIP' : tier === 'enterprise' ? 'ENT' : tier === 'team' ? 'TEAM' : 'PRO';
   const random = crypto.randomBytes(8).toString('hex').toUpperCase();
   return `${prefix}-${random.match(/.{4}/g).join('-')}`;
 }
@@ -48,13 +48,14 @@ export default async function handler(req, res) {
 
   const { tier = 'pro', email = '', days = 30 } = req.body || {};
 
-  if (!['pro', 'team', 'enterprise'].includes(tier)) {
-    return res.status(400).json({ error: 'Invalid tier. Use: pro, team, enterprise' });
+  if (!['pro', 'team', 'enterprise', 'vip'].includes(tier)) {
+    return res.status(400).json({ error: 'Invalid tier. Use: pro, team, enterprise, vip' });
   }
 
   const key = generateKey(tier);
-  const expires = new Date();
-  expires.setDate(expires.getDate() + days);
+  const isVip = tier === 'vip';
+  const expires = isVip ? null : new Date();
+  if (expires) expires.setDate(expires.getDate() + days);
 
   const license = {
     key,
@@ -62,7 +63,8 @@ export default async function handler(req, res) {
     email,
     status: 'active',
     created_at: new Date().toISOString(),
-    expires_at: expires.toISOString(),
+    expires_at: expires ? expires.toISOString() : null,
+    lifetime: isVip,
     created_by: 'admin',
     subscription_id: 'manual',
     payment_provider: 'manual'

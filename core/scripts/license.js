@@ -81,6 +81,26 @@ const TIERS = {
       priority_support: true
     }
   },
+  vip: {
+    name: 'VIP Lifetime',
+    price: 0,
+    lifetime: true,  // Never expires — granted by BARDA only
+    skills: ['*'],   // All skills, all features, forever
+    features: {
+      max_parallel: 999,
+      playbooks: true,
+      eval_calibration: true,
+      advanced_analytics: true,
+      multi_user: true,
+      max_seats: 999,
+      custom_presets: true,
+      priority_support: true,
+      dedicated_onboarding: true,
+      sla_guaranteed: true,
+      white_label: true,
+      lifetime: true
+    }
+  },
   enterprise: {
     name: 'Enterprise',
     price: 299,
@@ -146,6 +166,11 @@ function readLicense() {
 }
 
 function checkLicenseStatus(license) {
+  // VIP tier — NEVER expires, full access forever
+  if (license.tier === 'vip') {
+    return { valid: true, status: 'vip', tier: 'vip', message: 'VIP Lifetime — Full access granted by BARDA Digital Agency' };
+  }
+
   // Trial tier — expires after 14 days
   if (license.tier === 'trial') {
     if (!license.expires_at) {
