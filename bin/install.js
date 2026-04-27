@@ -94,6 +94,7 @@ async function init(args) {
   let company = args.find((_, i, a) => a[i - 1] === '--company') || '';
   let preset = args.find((_, i, a) => a[i - 1] === '--preset') || '';
   let owner = args.find((_, i, a) => a[i - 1] === '--owner') || '';
+  let licenseKey = args.find((_, i, a) => a[i - 1] === '--license') || '';
 
   // Interactive if missing
   if (!company) {
@@ -208,6 +209,38 @@ async function init(args) {
     warn(`Preset file not found: ${preset}.yaml — using defaults`);
   }
 
+  // Step 8: License setup
+  log('Setting up license...');
+  const licenseSrc = path.join(FRAMEWORK_ROOT, 'core', 'scripts', 'license.js');
+  if (fs.existsSync(licenseSrc)) {
+    fs.copyFileSync(licenseSrc, path.join(ORCH_DIR, 'license.js'));
+  }
+
+  if (licenseKey) {
+    let tier = 'pro';
+    if (licenseKey.startsWith('TEAM-')) tier = 'team';
+    else if (licenseKey.startsWith('ENT-')) tier = 'enterprise';
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 30);
+    const licenseData = {
+      version: '1.0', tier, key: licenseKey, email: '',
+      issued_at: new Date().toISOString(),
+      expires_at: expires.toISOString(),
+      last_validated: new Date().toISOString(),
+      grace_period_days: 7, status: 'active'
+    };
+    fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
+    success(`License activated: ${tier} tier (30 days)`);
+  } else {
+    const licenseData = {
+      version: '1.0', tier: 'community', key: 'COMMUNITY',
+      issued_at: new Date().toISOString(),
+      expires_at: null, status: 'active'
+    };
+    fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
+    success('Community license (free forever)');
+  }
+
   // Done
   console.log('\n  \x1b[1m\x1b[32mInstallation complete!\x1b[0m\n');
   console.log('  Next steps:');
@@ -215,7 +248,11 @@ async function init(args) {
   console.log('    2. Edit ~/.claude/orchestrator/company.yaml to add workers');
   console.log('    3. Test: type /orch-orchestrator in Claude Code');
   console.log('    4. Run autopilot: /orch-autopilot');
-  console.log(`\n  Docs: https://github.com/bfrfranco/orchestrator-framework\n`);
+  if (!licenseKey) {
+    console.log('\n  \x1b[33mUpgrade to Pro (€29/mo):\x1b[0m');
+    console.log('    npx orchestrator-ai-framework init --license PRO-YOUR-KEY');
+  }
+  console.log(`\n  Docs: https://github.com/bardapraiacaraiva/orchestrator-framework\n`);
 }
 
 function validate() {
