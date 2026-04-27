@@ -21,9 +21,10 @@ const VALIDATION_URL = process.env.ORCH_LICENSE_API || 'https://orchestrator-ai-
 
 // === TIER DEFINITIONS ===
 const TIERS = {
-  community: {
-    name: 'Community',
+  trial: {
+    name: 'Free Trial',
     price: 0,
+    trial_days: 14,  // 14-day trial, then must upgrade
     skills: [
       'orch-orchestrator', 'orch-taskboard', 'orch-dispatch', 'orch-heartbeat',
       'orch-autopilot', 'orch-quality', 'orch-analytics', 'orch-status'
@@ -35,7 +36,8 @@ const TIERS = {
       advanced_analytics: false,
       multi_user: false,
       custom_presets: false,
-      priority_support: false
+      priority_support: false,
+      is_trial: true
     }
   },
   pro: {
@@ -144,8 +146,19 @@ function readLicense() {
 }
 
 function checkLicenseStatus(license) {
-  if (license.tier === 'community') {
-    return { valid: true, status: 'active', tier: 'community' };
+  // Trial tier — expires after 14 days
+  if (license.tier === 'trial') {
+    if (!license.expires_at) {
+      return { valid: true, status: 'active', tier: 'trial' };
+    }
+    const now = new Date();
+    const expires = new Date(license.expires_at);
+    if (now < expires) {
+      const days_remaining = Math.ceil((expires - now) / 86400000);
+      return { valid: true, status: 'trial', tier: 'trial', days_remaining, message: `Free trial: ${days_remaining} days remaining. Upgrade at orchestrator-ai.com` };
+    }
+    // Trial expired — BLOCKED until they pay
+    return { valid: false, status: 'trial_expired', tier: 'expired', message: 'Free trial expired (14 days). Upgrade to Pro to continue: orchestrator-ai.com/pricing' };
   }
 
   if (!license.expires_at) {

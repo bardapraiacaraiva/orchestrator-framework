@@ -232,13 +232,16 @@ async function init(args) {
     fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
     success(`License activated: ${tier} tier (30 days)`);
   } else {
+    const trialExpires = new Date();
+    trialExpires.setDate(trialExpires.getDate() + 14);
     const licenseData = {
-      version: '1.0', tier: 'community', key: 'COMMUNITY',
+      version: '1.0', tier: 'trial', key: 'TRIAL-' + Date.now(),
       issued_at: new Date().toISOString(),
-      expires_at: null, status: 'active'
+      expires_at: trialExpires.toISOString(),
+      status: 'active'
     };
     fs.writeFileSync(path.join(ORCH_DIR, '.license'), JSON.stringify(licenseData, null, 2), 'utf8');
-    success('Community license (free forever)');
+    success(`Free trial activated (14 days — expires ${trialExpires.toISOString().split('T')[0]})`);
   }
 
   // Done
