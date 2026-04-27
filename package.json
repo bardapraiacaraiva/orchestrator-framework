@@ -1,5 +1,5 @@
 {
-  "name": "@orchestrator-ai/framework",
+  "name": "orchestrator-ai-framework",
   "version": "1.0.0",
   "description": "Paperclip-inspired AI orchestrator framework for Claude Code. Autonomous task management, quality scoring, budget tracking, and multi-agent coordination.",
   "bin": {

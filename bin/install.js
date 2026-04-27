@@ -4,10 +4,10 @@
  * Orchestrator AI Framework — One-command installer for Claude Code
  *
  * Usage:
- *   npx @orchestrator-ai/framework init                          # Interactive
- *   npx @orchestrator-ai/framework init --company "Acme" --preset agency
- *   npx @orchestrator-ai/framework validate                      # Check installation
- *   npx @orchestrator-ai/framework uninstall                     # Remove framework
+ *   npx orchestrator-ai-framework init                          # Interactive
+ *   npx orchestrator-ai-framework init --company "Acme" --preset agency
+ *   npx orchestrator-ai-framework validate                      # Check installation
+ *   npx orchestrator-ai-framework uninstall                     # Remove framework
  */
 
 const fs = require('fs');
@@ -304,9 +304,9 @@ switch (command) {
   \x1b[1mOrchestrator AI Framework\x1b[0m — v1.0.0
 
   Usage:
-    npx @orchestrator-ai/framework init [options]    Install the framework
-    npx @orchestrator-ai/framework validate          Check installation
-    npx @orchestrator-ai/framework uninstall         Remove framework
+    npx orchestrator-ai-framework init [options]    Install the framework
+    npx orchestrator-ai-framework validate          Check installation
+    npx orchestrator-ai-framework uninstall         Remove framework
 
   Options:
     --company "Name"    Company/agency name
@@ -314,8 +314,8 @@ switch (command) {
     --preset <type>     agency | saas | studio | freelancer | custom
 
   Examples:
-    npx @orchestrator-ai/framework init
-    npx @orchestrator-ai/framework init --company "Acme Agency" --preset agency
-    npx @orchestrator-ai/framework init --preset saas --owner john
+    npx orchestrator-ai-framework init
+    npx orchestrator-ai-framework init --company "Acme Agency" --preset agency
+    npx orchestrator-ai-framework init --preset saas --owner john
 `);
 }

@@ -3,7 +3,7 @@
 **Paperclip-inspired orchestration for Claude Code.** Turn your AI agent from a tool into an autonomous team.
 
 ```bash
-npx @orchestrator-ai/framework init
+npx orchestrator-ai-framework init
 ```
 
 One command. Full orchestration. Any company.
@@ -60,7 +60,7 @@ Your Request
 ### 1. Install
 
 ```bash
-npx @orchestrator-ai/framework init --company "Your Company" --preset agency
+npx orchestrator-ai-framework init --company "Your Company" --preset agency
 ```
 
 Available presets: `agency`, `saas`, `studio`, `freelancer`, `custom`
@@ -190,7 +190,7 @@ Pre-built skill chains for common project types. Auto-detected by keyword matchi
 The framework installs with your company name. No "Orchestrator AI" branding appears in outputs — only your company identity.
 
 ```bash
-npx @orchestrator-ai/framework init --company "Acme Digital" --preset agency --owner "John"
+npx orchestrator-ai-framework init --company "Acme Digital" --preset agency --owner "John"
 ```
 
 Everything generated uses "Acme Digital" as the company name.
@@ -198,7 +198,7 @@ Everything generated uses "Acme Digital" as the company name.
 ## Validation
 
 ```bash
-npx @orchestrator-ai/framework validate
+npx orchestrator-ai-framework validate
 ```
 
 Checks: directories exist, skills installed, company.yaml valid, budget tracker present.
@@ -206,7 +206,7 @@ Checks: directories exist, skills installed, company.yaml valid, budget tracker 
 ## Uninstall
 
 ```bash
-npx @orchestrator-ai/framework uninstall
+npx orchestrator-ai-framework uninstall
 ```
 
 Removes core skills. Preserves your orchestrator data (tasks, audit, budget).
