@@ -4,11 +4,14 @@
  * Manages tier-based access control for the framework.
  * License file: ~/.claude/orchestrator/.license
  *
+ * NO FREE ACCESS. Every user needs a valid license key.
+ *
  * Tiers:
- *   community  — Free forever (8 core skills)
- *   pro        — €29/mo (+ playbooks, eval, analytics)
- *   team       — €99/mo (+ multi-user, shared budget)
- *   enterprise — €299/mo (+ custom, SLA, onboarding)
+ *   trial      — 14-day trial (requires key from LP)
+ *   pro        — €29/mo (playbooks, eval, analytics, 3 parallel)
+ *   team       — €99/mo (multi-user, 5 seats, shared budget)
+ *   enterprise — €299/mo (all skills, 50 seats, SLA, custom)
+ *   vip        — Lifetime (granted by BARDA only, full access)
  */
 
 const fs = require('fs');
@@ -151,8 +154,8 @@ function createLicense(tier, key, expiresAt, email) {
 
 function readLicense() {
   if (!fs.existsSync(LICENSE_PATH)) {
-    // No license = community tier
-    return createLicense('community');
+    // No license = BLOCKED. Must install with a valid key.
+    return { version: '1.0', tier: 'none', key: null, status: 'missing', expires_at: null, features: {} };
   }
 
   try {
@@ -160,12 +163,17 @@ function readLicense() {
     const license = JSON.parse(raw);
     return license;
   } catch (e) {
-    console.error('License file corrupt. Resetting to community.');
-    return createLicense('community');
+    console.error('License file corrupt. Please reinstall with a valid key.');
+    return { version: '1.0', tier: 'none', key: null, status: 'corrupt', expires_at: null, features: {} };
   }
 }
 
 function checkLicenseStatus(license) {
+  // No license = BLOCKED
+  if (!license.tier || license.tier === 'none' || !license.key) {
+    return { valid: false, status: 'no_license', tier: 'none', message: 'No license found. Install with: npx orchestrator-ai-framework init --license YOUR-KEY. Get your key at orchestrator-ai-three.vercel.app' };
+  }
+
   // VIP tier — NEVER expires, full access forever
   if (license.tier === 'vip') {
     return { valid: true, status: 'vip', tier: 'vip', message: 'VIP Lifetime — Full access granted by BARDA Digital Agency' };
@@ -204,8 +212,8 @@ function checkLicenseStatus(license) {
     return { valid: true, status: 'grace', tier: license.tier, grace_days_left, message: `License expired. Grace period: ${grace_days_left} days remaining.` };
   }
 
-  // Expired past grace
-  return { valid: false, status: 'expired', tier: 'community', message: 'License expired. Downgraded to Community tier. Renew at orchestrator-ai.com' };
+  // Expired past grace — BLOCKED until renewal
+  return { valid: false, status: 'expired', tier: 'none', message: 'License expired. All access blocked. Renew at orchestrator-ai-three.vercel.app/#pricing' };
 }
 
 // === FEATURE GATING ===
@@ -215,8 +223,8 @@ function canAccessFeature(featureName) {
   const status = checkLicenseStatus(license);
 
   if (!status.valid) {
-    // Expired — community features only
-    return TIERS.community.features[featureName] || false;
+    // No valid license = NO access to any feature
+    return false;
   }
 
   const tier = TIERS[status.tier];
@@ -229,11 +237,11 @@ function canAccessSkill(skillName) {
   const license = readLicense();
   const status = checkLicenseStatus(license);
 
-  const tier = status.valid ? status.tier : 'community';
-  const tierConfig = TIERS[tier];
+  if (!status.valid) return false; // No license = no skills
 
+  const tierConfig = TIERS[status.tier];
   if (!tierConfig) return false;
-  if (tierConfig.skills[0] === '*') return true; // Enterprise = all
+  if (tierConfig.skills[0] === '*') return true; // Enterprise/VIP = all
 
   return tierConfig.skills.includes(skillName);
 }
@@ -241,14 +249,14 @@ function canAccessSkill(skillName) {
 function getMaxParallel() {
   const license = readLicense();
   const status = checkLicenseStatus(license);
-  const tier = status.valid ? status.tier : 'community';
-  return TIERS[tier]?.features?.max_parallel || 2;
+  if (!status.valid) return 0; // No license = 0 parallel tasks
+  return TIERS[status.tier]?.features?.max_parallel || 0;
 }
 
 // === ONLINE VALIDATION ===
 
 async function validateOnline(license) {
-  if (license.tier === 'community') return { valid: true, status: 'active' };
+  if (!license.tier || license.tier === 'none') return { valid: false, status: 'no_license' };
 
   try {
     const https = require('https');
@@ -325,7 +333,7 @@ function reactivateLicense(newExpiresAt) {
 function printStatus() {
   const license = readLicense();
   const status = checkLicenseStatus(license);
-  const tier = TIERS[license.tier] || TIERS.community;
+  const tier = TIERS[license.tier] || { name: 'No License', price: 0, features: {} };
 
   console.log('\n  Orchestrator AI — License Status\n');
   console.log(`  Tier:       ${tier.name} (€${tier.price}/mo)`);
