@@ -16,7 +16,7 @@ const DEMO_LICENSES = {
   'PRO-DEMO-0000-0000': { tier: 'pro', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
   'TEAM-DEMO-0000-0000': { tier: 'team', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
   'ENT-DEMO-0000-0000': { tier: 'enterprise', email: 'demo@test.com', status: 'active', expires_at: '2026-12-31T23:59:59Z' },
-  'VIP-DEMO-0000-0000': { tier: 'vip', email: 'demo@test.com', status: 'active', expires_at: null, lifetime: true },
+  // VIP keys are NEVER hardcoded. Only generated via admin API with ADMIN_SECRET.
 };
 
 const TIER_FEATURES = {
