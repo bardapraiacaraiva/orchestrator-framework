@@ -9,7 +9,7 @@
  * Returns: { key, tier, expires_at }
  */
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 async function setToKV(key, value) {
   const kvUrl = process.env.KV_REST_API_URL;

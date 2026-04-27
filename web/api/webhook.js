@@ -15,7 +15,7 @@
  *   NOTIFY_EMAIL — Email to notify on new sales (optional)
  */
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // === KV HELPERS ===
 async function setToKV(key, value) {
