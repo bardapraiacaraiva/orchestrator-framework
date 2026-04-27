@@ -96,6 +96,14 @@ async function init(args) {
   let owner = args.find((_, i, a) => a[i - 1] === '--owner') || '';
   let licenseKey = args.find((_, i, a) => a[i - 1] === '--license') || '';
 
+  // LICENSE CHECK FIRST — no key, no install
+  if (!licenseKey) {
+    error('License key required to install.');
+    console.log('\n  Get your key at: \x1b[36mhttps://orchestrator-ai-three.vercel.app/#pricing\x1b[0m');
+    console.log('  Then run: \x1b[33mnpx orchestrator-ai-framework init --license YOUR-KEY\x1b[0m\n');
+    process.exit(1);
+  }
+
   // Interactive if missing
   if (!company) {
     company = await ask('Company/agency name:');
