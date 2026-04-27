@@ -9,7 +9,11 @@
  * Returns: { key, tier, expires_at }
  */
 
-import crypto from 'crypto';
+function randomHex(bytes) {
+  let result = '';
+  for (let i = 0; i < bytes; i++) result += Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+  return result;
+}
 
 async function setToKV(key, value) {
   const kvUrl = process.env.KV_REST_API_URL;
@@ -31,7 +35,7 @@ async function setToKV(key, value) {
 
 function generateKey(tier) {
   const prefix = tier === 'vip' ? 'VIP' : tier === 'enterprise' ? 'ENT' : tier === 'team' ? 'TEAM' : tier === 'trial' ? 'TRIAL' : 'PRO';
-  const random = crypto.randomBytes(8).toString('hex').toUpperCase();
+  const random = randomHex(8).toUpperCase();
   return `${prefix}-${random.match(/.{4}/g).join('-')}`;
 }
 
