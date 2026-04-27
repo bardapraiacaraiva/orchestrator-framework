@@ -17,7 +17,7 @@ const crypto = require('crypto');
 
 const HOME = process.env.HOME || process.env.USERPROFILE;
 const LICENSE_PATH = path.join(HOME, '.claude', 'orchestrator', '.license');
-const VALIDATION_URL = process.env.ORCH_LICENSE_API || 'https://orchestrator-api.vercel.app/api/validate';
+const VALIDATION_URL = process.env.ORCH_LICENSE_API || 'https://orchestrator-ai-three.vercel.app/api/validate';
 
 // === TIER DEFINITIONS ===
 const TIERS = {
