@@ -343,7 +343,11 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>3 parallel tasks</li>
           <li>Priority support</li>
         </ul>
-        <a href="#checkout-pro" class="price-btn">Get Pro</a>
+        <div class="tier-form" data-tier="pro">
+          <input type="email" placeholder="Your best email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
+          <button class="price-btn tier-btn">Get Pro Key</button>
+        </div>
+        <div class="tier-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all;"></div>
         <div class="price-fine">No long-term contracts. Cancel anytime.</div>
       </div>
 
@@ -360,7 +364,11 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>5 parallel tasks</li>
           <li>Role-based access</li>
         </ul>
-        <a href="#checkout-team" class="price-btn">Get Team</a>
+        <div class="tier-form" data-tier="team">
+          <input type="email" placeholder="Your best email" style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--bg);color:#fff;margin-bottom:8px;font-size:.9em;">
+          <button class="price-btn tier-btn">Get Team Key</button>
+        </div>
+        <div class="tier-result" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--bg);font-size:.85em;word-break:break-all;"></div>
         <div class="price-fine">No long-term contracts. Cancel anytime.</div>
       </div>
 
@@ -497,6 +505,33 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
         document.getElementById('trial-btn').disabled=false;
       }
     }).catch(function(){showToast('Network error. Try again.');document.getElementById('trial-btn').textContent='Get Trial Key';document.getElementById('trial-btn').disabled=false;});
+  });
+
+  /* Pro + Team key generation */
+  document.querySelectorAll('.tier-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var form=this.closest('.tier-form');
+      var tier=form.dataset.tier;
+      var emailInput=form.querySelector('input[type="email"]');
+      var email=emailInput.value.trim();
+      if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
+      this.textContent='Generating...';this.disabled=true;
+      var self=this;
+      fetch('/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:tier,email:email,days:30})})
+      .then(function(r){return r.json()})
+      .then(function(d){
+        if(d.key){
+          form.style.display='none';
+          var r=form.nextElementSibling;
+          r.style.display='block';
+          r.innerHTML='<div style="color:var(--cyan);font-weight:600;margin-bottom:6px;">Your '+tier.toUpperCase()+' key:</div><code style="color:#fff;font-size:1em;">'+d.key+'</code><div style="margin-top:8px;color:#aaa;font-size:.8em;">Install: <code>npx orchestrator-ai-framework init --license '+d.key+'</code></div>';
+          showToast(tier.toUpperCase()+' key generated!');
+        }else{
+          showToast('Error: '+(d.error||'Try again'));
+          self.textContent='Get '+tier.charAt(0).toUpperCase()+tier.slice(1)+' Key';self.disabled=false;
+        }
+      }).catch(function(){showToast('Network error.');self.textContent='Get '+tier.charAt(0).toUpperCase()+tier.slice(1)+' Key';self.disabled=false;});
+    });
   });
 })();
 </script>
