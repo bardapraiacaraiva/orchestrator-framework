@@ -1,0 +1,70 @@
+# Notification Protocol — Orchestrator AI Framework
+# Defines events, channels, and message templates.
+
+channels:
+  pulse_report:
+    type: "inline"
+    description: "Shown in heartbeat/autopilot output."
+    always_on: true
+  audit_log:
+    type: "file"
+    description: "Appended to ~/.claude/orchestrator/audit/YYYY-MM-DD.yaml"
+    always_on: true
+  task_note:
+    type: "task_yaml"
+    description: "Appended to task.notes[] array"
+    always_on: true
+
+events:
+  task_completed:
+    severity: "info"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[DONE] {task.id}: {task.title} — score {quality_score}/100"
+  task_revision:
+    severity: "warning"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[REVISION] {task.id}: score {score}/100 — {feedback}"
+  task_escalated:
+    severity: "critical"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[ESCALATED] {task.id}: {reason}"
+  sla_warning:
+    severity: "warning"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[SLA WARNING] {task.id}: {age_hours:.1f}h in progress, SLA is {sla_hours}h"
+  sla_breach:
+    severity: "critical"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[SLA BREACH] {task.id}: {age_hours:.1f}h — task blocked"
+  budget_warning:
+    severity: "warning"
+    channels: [pulse_report, audit_log]
+    template: "[BUDGET WARNING] {percentage}% used. Limiting to 1 parallel worker."
+  budget_critical:
+    severity: "critical"
+    channels: [pulse_report, audit_log]
+    template: "[BUDGET CRITICAL] {percentage}% used. EXECUTION STOPPED."
+  quality_low:
+    severity: "warning"
+    channels: [pulse_report, audit_log]
+    template: "[QUALITY LOW] {skill}: avg {avg_score}/100, revision rate {revision_rate}%"
+  playbook_detected:
+    severity: "info"
+    channels: [pulse_report, audit_log]
+    template: "[PLAYBOOK] Domain: {domain} — {skill_count} skills auto-decomposed"
+  stale_task:
+    severity: "warning"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[STALE] {task.id}: in_progress for {age_hours:.0f}h. Escalating."
+  circular_dependency_detected:
+    severity: "critical"
+    channels: [pulse_report, audit_log]
+    template: "[CIRCULAR DEP] Cycle detected: {chain}. ABORTED."
+  task_retry:
+    severity: "warning"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[RETRY] {task.id}: attempt {attempt}/{max_retries}"
+  dead_letter:
+    severity: "critical"
+    channels: [pulse_report, audit_log, task_note]
+    template: "[DEAD LETTER] {task.id}: failed after {max_retries} retries. Blocked."

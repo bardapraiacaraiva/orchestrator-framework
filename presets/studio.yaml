@@ -1,0 +1,20 @@
+# Preset: Design/Architecture Studio
+
+divisions:
+  - name: "Design"
+    id: "dir-design"
+    typical_skills: ["moodboard", "materials", "floor-plan", "render", "briefing"]
+  - name: "Production"
+    id: "dir-production"
+    typical_skills: ["budget", "timeline", "inspection", "contract"]
+  - name: "Regulatory"
+    id: "dir-regulatory"
+    typical_skills: ["licensing", "energy", "compliance"]
+
+squads:
+  - "Design Squad"
+  - "Construction Squad"
+
+budget:
+  monthly_limit_tokens: 30000000
+  typical_usage: "5-20% for small studio"

@@ -1,0 +1,31 @@
+# Example Domain Playbook
+# Add playbooks like this to quality/skill-metrics.yaml under domain_playbooks:
+
+example-domain:
+  projects_analyzed: 0
+  avg_quality: null
+  optimal_skill_chain:
+    - skill: "your-diagnostic-skill"
+      order: 1
+      parallel: false
+      notes: "Always start with diagnostic — understand before prescribing."
+    - skill: "your-audit-skill"
+      order: 2
+      parallel: true
+      notes: "Can run in parallel with other audits."
+    - skill: "your-strategy-skill"
+      order: 3
+      parallel: false
+      notes: "Depends on audit results."
+    - skill: "your-execution-skill"
+      order: 4
+      parallel: false
+      notes: "Execute the strategy."
+  rag_context_needed:
+    - "Industry benchmarks for your domain"
+    - "Competitor data for the specific market"
+  avoid:
+    - "Running execution before diagnostic — wastes effort on wrong problems"
+    - "Skipping the audit — you need data before strategy"
+  estimated_tokens: 30000
+  estimated_time: "15-20 minutes for full pipeline"

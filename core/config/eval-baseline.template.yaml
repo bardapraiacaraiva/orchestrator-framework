@@ -1,0 +1,27 @@
+# Eval Baseline — Quality Scoring Calibration
+# Add your own test cases to calibrate the quality scorer.
+# Run monthly to check for scorer drift.
+
+version: "1.0"
+last_calibrated: "{{DATE}}"
+calibrated_by: "{{OWNER}}"
+drift_threshold: 15  # max acceptable deviation from baseline
+
+test_cases:
+
+  - id: "EVAL-001"
+    skill: "your-first-skill"
+    domain: "your-domain"
+    task_description: "Describe a representative task for this skill"
+    expected_output_signals:
+      - "What makes a good output? (specificity)"
+      - "What action items should it include? (actionability)"
+      - "What sections must be present? (completeness)"
+    expected_score: 85
+    dimensions: {specificity: 18, actionability: 18, completeness: 16, accuracy: 16, tone: 17}
+    notes: "Adapt this template to your most-used skills"
+
+# Add more test cases for your key skills:
+# - Top 3 most-used skills (expected score 85-95)
+# - 2-3 mid-tier skills (expected score 75-84)
+# - 1-2 weak skills you want to improve (expected score 60-74)

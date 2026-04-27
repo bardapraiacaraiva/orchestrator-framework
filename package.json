@@ -1,0 +1,35 @@
+{
+  "name": "@orchestrator-ai/framework",
+  "version": "1.0.0",
+  "description": "Paperclip-inspired AI orchestrator framework for Claude Code. Autonomous task management, quality scoring, budget tracking, and multi-agent coordination.",
+  "bin": {
+    "orchestrator-ai": "./bin/install.js"
+  },
+  "keywords": [
+    "claude-code",
+    "orchestrator",
+    "ai-agents",
+    "task-management",
+    "multi-agent",
+    "paperclip",
+    "automation",
+    "quality-scoring"
+  ],
+  "author": "BARDA Digital Agency",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bfrfranco/orchestrator-framework"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "bin/",
+    "core/",
+    "presets/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ]
+}

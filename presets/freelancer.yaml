@@ -1,0 +1,12 @@
+# Preset: Solo Freelancer/Consultant
+
+divisions:
+  - name: "Delivery"
+    id: "dir-delivery"
+    typical_skills: ["your-main-skill", "diagnose", "proposal"]
+
+squads: []
+
+budget:
+  monthly_limit_tokens: 10000000
+  typical_usage: "2-10% for solo use"

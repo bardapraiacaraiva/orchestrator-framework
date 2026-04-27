@@ -1,0 +1,29 @@
+# Preset: Digital Agency
+# Typical structure for a web/marketing/SEO agency
+
+divisions:
+  - name: "Marketing & Growth"
+    id: "dir-marketing"
+    typical_skills: ["brand", "offer", "copy", "ads", "funnel", "email"]
+  - name: "Technical"
+    id: "dir-technical"
+    typical_skills: ["web-audit", "performance", "security", "automation"]
+  - name: "SEO"
+    id: "dir-seo"
+    typical_skills: ["seo-audit", "seo-technical", "seo-content", "seo-local"]
+  - name: "Client Success"
+    id: "dir-client-success"
+    typical_skills: ["client-onboard", "diagnose", "project-switch"]
+  - name: "Finance"
+    id: "dir-finance"
+    typical_skills: ["financial-model", "pricing", "proposal"]
+
+squads:
+  - "Copy Squad"
+  - "Brand Squad"
+  - "SEO Squad"
+  - "CRO Squad"
+
+budget:
+  monthly_limit_tokens: 50000000
+  typical_usage: "5-15% for small agency, 15-40% for active agency"

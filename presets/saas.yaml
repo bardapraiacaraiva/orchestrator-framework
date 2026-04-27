@@ -1,0 +1,23 @@
+# Preset: SaaS Product Company
+
+divisions:
+  - name: "Engineering"
+    id: "dir-engineering"
+    typical_skills: ["backend", "frontend", "database", "api"]
+  - name: "Product"
+    id: "dir-product"
+    typical_skills: ["prd", "user-stories", "sprint-planning", "roadmap"]
+  - name: "Growth"
+    id: "dir-growth"
+    typical_skills: ["funnel", "ads", "content", "seo"]
+  - name: "Support"
+    id: "dir-support"
+    typical_skills: ["tickets", "faq", "health-score"]
+
+squads:
+  - "Product Squad"
+  - "Growth Squad"
+
+budget:
+  monthly_limit_tokens: 50000000
+  typical_usage: "10-30% for early-stage, 30-60% for growth-stage"
