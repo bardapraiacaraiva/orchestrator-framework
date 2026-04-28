@@ -251,6 +251,68 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
   .timeline{padding-left:32px}
   .dash-grid{grid-template-columns:1fr}
 }
+
+/* Scroll animations */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s ease,transform .8s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .8s ease,transform .8s ease}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(.9);transition:opacity .6s ease,transform .6s ease}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* Animated counter */
+.counter{display:inline-block;min-width:2ch}
+
+/* Neon glow */
+.neon-glow{text-shadow:0 0 20px rgba(0,229,255,.4),0 0 40px rgba(0,229,255,.2),0 0 80px rgba(0,229,255,.1)}
+
+/* Aurora background */
+.hero::after{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(124,77,255,.06) 0%,transparent 70%);bottom:-200px;right:-200px;pointer-events:none;animation:auroraFloat 8s ease-in-out infinite alternate}
+@keyframes auroraFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-40px,30px) scale(1.1)}}
+
+/* Card hover glow */
+.feature-card,.arch-layer,.skill-cat,.price-card,.bonus-card{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.feature-card:hover,.skill-cat:hover{box-shadow:0 8px 40px rgba(0,229,255,.08);border-color:rgba(0,229,255,.3)}
+
+/* Floating badge */
+.hero-badge{animation:floatBadge 3s ease-in-out infinite}
+@keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* Button pulse on CTA */
+.btn-cta{position:relative;overflow:hidden}
+.btn-cta::after{content:'';position:absolute;inset:-2px;border-radius:inherit;background:linear-gradient(135deg,var(--cyan),#7c4dff);opacity:0;z-index:-1;transition:opacity .3s}
+.btn-cta:hover::after{opacity:1}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(0,229,255,.2)}50%{box-shadow:0 0 40px rgba(0,229,255,.4),0 0 60px rgba(0,229,255,.15)}}
+
+/* Typing cursor */
+.typing-cursor::after{content:'|';animation:blink 1s step-end infinite;color:var(--cyan)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Staggered children */
+.stagger>*{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+.stagger.visible>*:nth-child(1){transition-delay:.1s}
+.stagger.visible>*:nth-child(2){transition-delay:.2s}
+.stagger.visible>*:nth-child(3){transition-delay:.3s}
+.stagger.visible>*:nth-child(4){transition-delay:.4s}
+.stagger.visible>*:nth-child(5){transition-delay:.5s}
+.stagger.visible>*:nth-child(6){transition-delay:.6s}
+.stagger.visible>*:nth-child(7){transition-delay:.7s}
+.stagger.visible>*:nth-child(8){transition-delay:.8s}
+.stagger.visible>*:nth-child(9){transition-delay:.9s}
+.stagger.visible>*:nth-child(10){transition-delay:1s}
+.stagger.visible>*:nth-child(11){transition-delay:1.1s}
+.stagger.visible>*:nth-child(12){transition-delay:1.2s}
+.stagger.visible>*{opacity:1;transform:translateY(0)}
+
+/* Skill accordion */
+.skill-more{cursor:pointer}
+.skill-toggle{color:var(--cyan);font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:4px 0;transition:color .2s}
+.skill-toggle:hover{color:#fff}
+.skill-hidden{max-height:0;overflow:hidden;transition:max-height .4s ease;opacity:0}
+.skill-more.open .skill-hidden{max-height:600px;opacity:1;transition:max-height .4s ease,opacity .3s ease .1s}
+.skill-more.open .skill-toggle{color:#fff}
 </style>
 </head>
 <body>
@@ -276,17 +338,17 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <section class="hero" id="hero">
   <div>
     <div class="hero-badge">6+ meses em producao — 0 falhas — usado diariamente na BARDA Agency</div>
-    <h1>11 agentes IA. 200+ skills. <span>Zero caos.</span></h1>
+    <h1>11 agentes IA. 200+ skills. <span class="neon-glow">Zero caos.</span></h1>
     <p>Voce gasta 3 horas por dia a gerir IA em vez de gerir o negocio. O DARIO Orchestrator transforma o Claude Code numa operacao autonoma com 30 agentes, 101 workers, quality scoring, e budget tracking. Voce da a ordem. Ele executa, verifica, e entrega.</p>
     <div class="hero-actions">
       <a href="#pricing" class="btn btn-primary">QUERO ACABAR COM O CAOS</a>
       <a href="#demo" class="btn btn-secondary">Ver em accao (2 min)</a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><strong>11</strong>Agentes IA</div>
-      <div class="hero-stat"><strong>202</strong>Skills instaladas</div>
-      <div class="hero-stat"><strong>88.3/100</strong>Quality Score medio</div>
-      <div class="hero-stat"><strong>0</strong>Falhas em 6+ meses</div>
+      <div class="hero-stat"><strong class="counter" data-target="11">0</strong>Agentes IA</div>
+      <div class="hero-stat"><strong class="counter" data-target="202">0</strong>Skills instaladas</div>
+      <div class="hero-stat"><strong class="counter" data-target="88" data-suffix=".3/100">0</strong>Quality Score medio</div>
+      <div class="hero-stat"><strong class="counter" data-target="0">0</strong>Falhas em 6+ meses</div>
     </div>
   </div>
 </section>
@@ -295,11 +357,11 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 2. O PROBLEMA — 6 pain points -->
 <!-- ============================================================ -->
 <section class="section" id="problema">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Isto soa familiar?</div>
     <h2 class="section-title">6 problemas que lhe roubam 3 horas por dia</h2>
     <p class="section-sub">Cada um destes problemas custa-lhe tempo, dinheiro e clientes. O Orchestrator resolve todos — automaticamente.</p>
-    <div class="features-grid">
+    <div class="features-grid stagger">
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="22" height="22" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -354,7 +416,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 3. LIVE DEMO — Real command -->
 <!-- ============================================================ -->
 <section class="section" id="demo" style="background:var(--bg2)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Exemplo real em tempo real</div>
     <h2 class="section-title">Voce escreve 1 comando. O sistema faz o resto.</h2>
     <p class="section-sub">Veja exactamente o que acontece quando pede uma auditoria de site.</p>
@@ -402,12 +464,12 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 4. ARCHITECTURE — 6-layer -->
 <!-- ============================================================ -->
 <section class="section" id="architecture">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Arquitectura Paperclip-Inspired</div>
     <h2 class="section-title">6 camadas. Da estrategia a execucao.</h2>
     <p class="section-sub">Hierarquia empresarial aplicada a IA. Cada camada tem responsabilidades claras.</p>
 
-    <div class="arch-grid">
+    <div class="arch-grid stagger">
       <div class="arch-layer">
         <span class="arch-emoji">&#x1F451;</span>
         <div class="arch-text">
@@ -462,12 +524,12 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 5. MISSION CONTROL -->
 <!-- ============================================================ -->
 <section class="section" id="mission-control" style="background:var(--bg3)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Centro de comando</div>
     <h2 class="section-title">15 paginas de dashboard. Visibilidade total.</h2>
     <p class="section-sub">Mission Control com visualizacao orbital. Veja tudo o que esta a acontecer em tempo real.</p>
 
-    <div class="dash-grid">
+    <div class="dash-grid stagger">
       <div class="dash-item">
         <h4>Mission Control</h4>
         <p>Visualizacao orbital do ecossistema. Estado de cada agente e worker em tempo real.</p>
@@ -513,12 +575,12 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 6. SKILLS LIBRARY -->
 <!-- ============================================================ -->
 <section class="section" id="skills">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">202 skills instaladas — 11 agentes</div>
     <h2 class="section-title">Uma biblioteca inteira de comandos. Cada um faz algo concreto.</h2>
     <p class="section-sub">Agrupados por agente. Cada skill e um processo comprovado, nao uma improvisacao.</p>
 
-    <div class="skills-grid">
+    <div class="skills-grid stagger">
       <div class="skill-cat">
         <h4>DARIO — Marketing &amp; Digital <span class="skill-count">47 skills</span></h4>
         <div class="skill-list">
@@ -531,7 +593,49 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/content</span> producao a escala<br>
           <span>/c-level</span> advisory C-Suite<br>
           <span>/ai-engineering</span> RAG + agents<br>
-          <span>+ 38 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')">
+            <span class="skill-toggle">+ 38 mais... &#x25BE;</span>
+            <div class="skill-hidden">
+              <span>/funnel</span> funil de vendas<br>
+              <span>/email-seq</span> sequencias email<br>
+              <span>/proposal</span> proposta 3 opcoes<br>
+              <span>/social</span> redes sociais<br>
+              <span>/hr</span> recursos humanos<br>
+              <span>/legal</span> compliance legal<br>
+              <span>/pr</span> relacoes publicas<br>
+              <span>/support</span> suporte cliente<br>
+              <span>/product</span> desenvolvimento produto<br>
+              <span>/product-mgmt</span> gestao produto<br>
+              <span>/sop</span> procedimentos<br>
+              <span>/naming</span> naming marcas<br>
+              <span>/negotiation</span> negociacao Voss<br>
+              <span>/pitch</span> pitch deck<br>
+              <span>/pricing-calculator</span> calculadora precos<br>
+              <span>/financial-model</span> modelo financeiro<br>
+              <span>/saas-metrics</span> metricas SaaS<br>
+              <span>/ads-blueprint</span> campanhas ads<br>
+              <span>/kw-cluster</span> clusters keywords<br>
+              <span>/make-blueprint</span> automacao Make<br>
+              <span>/wp-audit</span> auditoria WordPress<br>
+              <span>/woo-audit</span> auditoria WooCommerce<br>
+              <span>/cwv-fix</span> Core Web Vitals<br>
+              <span>/ios-hig</span> iOS guidelines<br>
+              <span>/pentest-checklist</span> seguranca web<br>
+              <span>/story-circle</span> narrativa marca<br>
+              <span>/movement</span> brand movement<br>
+              <span>/layout-visual</span> design visual<br>
+              <span>/data</span> analytics dados<br>
+              <span>/cro</span> optimizacao conversao<br>
+              <span>/c-level</span> advisory executivo<br>
+              <span>/ai-engineering</span> engenharia IA<br>
+              <span>/offer</span> oferta irresistivel<br>
+              <span>/client-onboard</span> onboarding cliente<br>
+              <span>/projeto</span> context switcher<br>
+              <span>/obsidian-save</span> guardar Obsidian<br>
+              <span>/rag-ingest</span> ingestao RAG<br>
+              <span>/taskboard</span> gestao tarefas<br>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -546,7 +650,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/diva-landscape</span> paisagismo<br>
           <span>/diva-accessibility</span> DL 163/2006<br>
           <span>/diva-render</span> visualizacoes 3D<br>
-          <span>+ 23 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 23 mais... &#x25BE;</span><div class="skill-hidden"><span>/diva-calc</span> calculadora orcamento<br><span>/diva-timeline</span> cronograma Gantt<br><span>/diva-licensing</span> licenciamento RJUE<br><span>/diva-materials</span> materiais PT<br><span>/diva-inspection</span> fiscalizacao obra<br><span>/diva-contract</span> contratos empreitada<br><span>/diva-comparador</span> comparar propostas<br><span>/diva-bim</span> BIM Revit/ArchiCAD<br><span>/diva-smart-home</span> domotica KNX<br><span>/diva-energy</span> certificacao SCE<br><span>/diva-ffe</span> mobiliario FF&amp;E<br><span>/diva-portfolio</span> case study<br><span>/diva-vision</span> analise fotos<br><span>/diva-moodboard</span> conceito visual<br><span>/diva-planradar</span> inspeccao digital<br><span>/diva-client-onboard</span> onboarding<br><span>/diva-projeto</span> context switcher<br><span>/diva-obsidian-save</span> guardar vault<br><span>/diva-rag-ingest</span> ingestao RAG<br><span>/diva-status</span> health check<br><span>/diva-briefing</span> briefing cliente<br><span>/diva-roadmap</span> roadmap visual<br><span>/diva-render-brief</span> brief 3D<br></div></div>
         </div>
       </div>
 
@@ -559,7 +663,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/conta-facturacao</span> e-Fatura AT<br>
           <span>/conta-relatorios</span> DR + Balanco SNC<br>
           <span>/conta-encerramento</span> fecho de contas<br>
-          <span>+ 12 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 12 mais... &#x25BE;</span><div class="skill-hidden"><span>/conta-lancamentos</span> lancamentos<br><span>/conta-conciliacao</span> reconciliacao bancaria<br><span>/conta-ap</span> contas a pagar<br><span>/conta-tesouraria</span> tesouraria<br><span>/conta-irs</span> retencoes IRS<br><span>/conta-ss</span> Seguranca Social<br><span>/conta-ativos</span> ativos fixos<br><span>/conta-consolidacao</span> consolidacao grupo<br><span>/conta-orcamento</span> orcamento anual<br><span>/conta-custos</span> contabilidade custos<br><span>/conta-auditoria</span> dossier fiscal<br><span>/conta-plano</span> plano contas SNC<br></div></div>
         </div>
       </div>
 
@@ -572,7 +676,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/pessoa-sucessao</span> 9-box grid + HiPo<br>
           <span>/pessoa-labor-pt</span> Codigo Trabalho<br>
           <span>/pessoa-dei</span> diversidade + inclusao<br>
-          <span>+ 6 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 6 mais... &#x25BE;</span><div class="skill-hidden"><span>/pessoa-orgdesign</span> design organizacional<br><span>/pessoa-workforce</span> workforce planning<br><span>/pessoa-wellbeing</span> bem-estar<br><span>/pessoa-analytics</span> people analytics<br><span>/pessoa-compensacao</span> compensacao<br><span>/pessoa-engagement</span> engagement eNPS<br></div></div>
         </div>
       </div>
 
@@ -584,7 +688,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/client-renewal</span> gestao renovacoes<br>
           <span>/client-recovery</span> churn recovery<br>
           <span>/client-voc</span> NPS/CSAT/CES<br>
-          <span>+ 5 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 5 mais... &#x25BE;</span><div class="skill-hidden"><span>/client-expansion</span> upsell/cross-sell<br><span>/client-journey</span> journey mapping<br><span>/client-qbr</span> QBR + success plans<br><span>/client-community</span> comunidade<br><span>/client-education</span> academia cliente<br></div></div>
         </div>
       </div>
 
@@ -596,7 +700,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/risco-esg</span> ESG + CSRD<br>
           <span>/risco-aml</span> AML/KYC<br>
           <span>/risco-bcp</span> continuidade negocio<br>
-          <span>+ 9 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 9 mais... &#x25BE;</span><div class="skill-hidden"><span>/risco-matrix</span> risk matrix<br><span>/risco-audit</span> auditoria interna<br><span>/risco-etica</span> codigo conduta<br><span>/risco-whistleblowing</span> denuncias DL 93<br><span>/risco-seguros</span> gestao seguros<br><span>/risco-contractual</span> compliance contratual<br><span>/risco-regulatorio</span> monitoring legal<br><span>/risco-terceiros</span> risco terceiros<br><span>/risco-reporting</span> KRI dashboards<br></div></div>
         </div>
       </div>
 
@@ -608,7 +712,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/nexus-security</span> SIEM + patching<br>
           <span>/nexus-cicd</span> GitHub Actions<br>
           <span>/nexus-cloud</span> FinOps + cost<br>
-          <span>+ 7 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 7 mais... &#x25BE;</span><div class="skill-hidden"><span>/nexus-backup</span> backup + DR<br><span>/nexus-iam</span> IAM + SSO<br><span>/nexus-network</span> VPC + DNS + VPN<br><span>/nexus-database</span> DBA + tuning<br><span>/nexus-runbook</span> incident response<br><span>/nexus-capacity</span> capacity planning<br><span>/nexus-compliance</span> SOC2 + ISO<br></div></div>
         </div>
       </div>
 
@@ -620,7 +724,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/a360-lancamento</span> sequencia de launch<br>
           <span>/a360-growth</span> growth engine<br>
           <span>/a360-scale</span> scaling 0→1M<br>
-          <span>+ 7 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 7 mais... &#x25BE;</span><div class="skill-hidden"><span>/a360-avatar</span> customer avatar<br><span>/a360-validacao</span> idea validation<br><span>/a360-modelo</span> business model<br><span>/a360-funil</span> acquisition funnel<br><span>/a360-metricas</span> KPI dashboard<br><span>/a360-pitch</span> investor pitch<br><span>/a360-case-study</span> case study<br></div></div>
         </div>
       </div>
 
@@ -632,7 +736,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/adriana-procurement</span> fornecedores<br>
           <span>/adriana-onboarding</span> on/offboarding<br>
           <span>/adriana-policies</span> politicas internas<br>
-          <span>+ 10 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 10 mais... &#x25BE;</span><div class="skill-hidden"><span>/adriana-travel</span> viagens + despesas<br><span>/adriana-facilities</span> facilities<br><span>/adriana-comms</span> comms internas<br><span>/adriana-calendar</span> calendario corp<br><span>/adriana-archive</span> arquivo + RGPD<br><span>/adriana-reception</span> recepcao + visitas<br><span>/adriana-fleet</span> frota + ativos<br><span>/adriana-inventory</span> stock escritorio<br><span>/adriana-sop</span> SOPs admin<br><span>/adriana-reporting</span> reporting KPIs<br></div></div>
         </div>
       </div>
 
@@ -643,7 +747,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/suply-inventory</span> ABC/XYZ + EOQ<br>
           <span>/suply-logistics</span> routing + 3PL<br>
           <span>/suply-quality</span> inspecao + 8D<br>
-          <span>+ 4 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 4 mais... &#x25BE;</span><div class="skill-hidden"><span>/suply-procurement</span> strategic sourcing<br><span>/suply-warehouse</span> warehouse mgmt<br><span>/suply-supplier</span> supplier mgmt<br><span>/suply-cost</span> cost optimization<br></div></div>
         </div>
       </div>
 
@@ -666,7 +770,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <span>/seo-local</span> Google Business<br>
           <span>/seo-geo</span> AI Overviews + GEO<br>
           <span>/seo-schema</span> JSON-LD<br>
-          <span>+ 11 mais...</span>
+          <div class="skill-more" onclick="this.classList.toggle('open')"><span class="skill-toggle">+ 11 mais... &#x25BE;</span><div class="skill-hidden"><span>/seo-content</span> E-E-A-T analysis<br><span>/seo-images</span> image optimization<br><span>/seo-hreflang</span> internacional<br><span>/seo-sitemap</span> XML sitemaps<br><span>/seo-page</span> single-page analysis<br><span>/seo-plan</span> estrategia SEO<br><span>/seo-programmatic</span> pages at scale<br><span>/seo-competitor-pages</span> vs pages<br><span>/seo-image-gen</span> AI image gen<br><span>/seo-dataforseo</span> dados ao vivo<br><span>/seo-local</span> Google Business<br></div></div>
         </div>
       </div>
     </div>
@@ -682,12 +786,12 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 7. ANTI-FRAGILITY — Guardrails -->
 <!-- ============================================================ -->
 <section class="section" id="guardrails" style="background:var(--bg2)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Anti-fragilidade</div>
     <h2 class="section-title">6 guardrails que impedem o sistema de falhar</h2>
     <p class="section-sub">Monitoramento em 3 camadas. Recuperacao automatica. O sistema protege-se a si mesmo.</p>
 
-    <div class="guard-grid">
+    <div class="guard-grid stagger">
       <div class="guard-card">
         <h4>Quality Gate (score &lt; 60 = reject)</h4>
         <p>5 dimensoes: Specificity, Actionability, Completeness, Accuracy, Tone. Output abaixo de 60 e automaticamente re-executado. Sem intervencao sua.</p>
@@ -725,7 +829,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 8. BEFORE/AFTER TABLE -->
 <!-- ============================================================ -->
 <section class="section" id="before-after">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">A transformacao</div>
     <h2 class="section-title">O seu dia hoje vs com Orchestrator</h2>
     <p class="section-sub">Numeros reais. Sem exageros. So a diferenca concreta no dia-a-dia.</p>
@@ -804,7 +908,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 9. 30-DAY EVOLUTION -->
 <!-- ============================================================ -->
 <section class="section" id="evolucao" style="background:var(--bg3)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Evolucao em 30 dias</div>
     <h2 class="section-title">Da instalacao a operacao autonoma em 4 semanas</h2>
     <p class="section-sub">Cada semana adiciona uma camada de automacao. Ao final do mes, o sistema gere-se sozinho.</p>
@@ -843,33 +947,33 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 10. SOCIAL PROOF -->
 <!-- ============================================================ -->
 <section class="proof" id="proof">
-  <div class="proof-inner">
+  <div class="proof-inner reveal">
     <div class="section-label">Construido na pratica. Testado na realidade.</div>
     <h2 class="proof-headline">Estes numeros nao sao projectados. Sao medidos.</h2>
     <p class="proof-sub">6+ meses de uso diario em producao. Clientes reais. Prazos reais. Dinheiro real.</p>
     <div class="proof-stats">
       <div class="proof-stat">
-        <strong>11</strong>
+        <strong class="counter" data-target="11">0</strong>
         <span>Agentes IA especializados</span>
       </div>
       <div class="proof-stat">
-        <strong>202</strong>
+        <strong class="counter" data-target="202">0</strong>
         <span>Skills instaladas</span>
       </div>
       <div class="proof-stat">
-        <strong>88.3/100</strong>
+        <strong class="counter" data-target="88" data-suffix=".3/100">0</strong>
         <span>Quality Score medio</span>
       </div>
       <div class="proof-stat">
-        <strong>0</strong>
+        <strong class="counter" data-target="0">0</strong>
         <span>Falhas em producao</span>
       </div>
       <div class="proof-stat">
-        <strong>11</strong>
+        <strong class="counter" data-target="11">0</strong>
         <span>Agentes C-Suite</span>
       </div>
       <div class="proof-stat">
-        <strong>15</strong>
+        <strong class="counter" data-target="15">0</strong>
         <span>Paginas de dashboard</span>
       </div>
     </div>
@@ -885,12 +989,12 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 12. BONUSES -->
 <!-- ============================================================ -->
 <section class="section" id="bonus" style="background:var(--bg2)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Incluido em todos os planos pagos</div>
     <h2 class="section-title">5 bonus que valem mais que o plano inteiro</h2>
     <p class="section-sub">Tudo isto vem incluido. Sem custo extra. Sem upsell.</p>
 
-    <div class="bonus-grid">
+    <div class="bonus-grid stagger">
       <div class="bonus-card">
         <h4>Domain Playbooks (5 sectores)</h4>
         <p>Processos comprovados para restaurante, agencia digital, e-commerce, SaaS, e arquitectura. Nao improvisa — executa um processo testado.</p>
@@ -928,7 +1032,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 13. ROI MATH -->
 <!-- ============================================================ -->
 <section class="value-section" id="roi" style="background:var(--bg)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">A matematica e simples</div>
     <div class="value-line">Se a sua hora vale<strong>&euro;50</strong></div>
     <div class="value-line">E o Orchestrator poupa 3 horas por dia...<strong>&euro;150/dia</strong></div>
@@ -945,7 +1049,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 14. PRICING -->
 <!-- ============================================================ -->
 <section class="section" id="pricing">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Planos</div>
     <h2 class="section-title">Comece gratis. So paga quando fizer sentido.</h2>
     <p class="section-sub">14 dias de trial completo. Sem cartao. Sem limitacoes. Depois escolha o plano certo.</p>
@@ -954,7 +1058,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
       <p style="font-size:.9rem;color:var(--gray)">Custo operacional transparente: Claude Code API (~&euro;5-20/mes dependendo do uso) + plano Orchestrator abaixo.</p>
     </div>
 
-    <div class="pricing-grid">
+    <div class="pricing-grid stagger">
 
       <!-- Trial -->
       <div class="price-card">
@@ -1044,7 +1148,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
 <!-- 15. FAQ -->
 <!-- ============================================================ -->
 <section class="section" id="faq" style="background:var(--bg2)">
-  <div class="section-inner">
+  <div class="section-inner reveal">
     <div class="section-label">Perguntas frequentes</div>
     <h2 class="section-title">Tudo o que precisa de saber antes de comecar.</h2>
     <p class="section-sub">Sem letras pequenas. Sem surpresas. Sem bullshit.</p>
@@ -1238,6 +1342,31 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     }).catch(function(){showToast('Erro de rede. Tente novamente.');document.getElementById('trial-btn').textContent='QUERO A MINHA CHAVE GRATIS';document.getElementById('trial-btn').disabled=false;});
   });
 })();
+
+// === SCROLL REVEAL ===
+const revealObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale,.stagger').forEach(el=>revealObs.observe(el));
+
+// === ANIMATED COUNTERS ===
+function animateCounter(el){
+  const target=parseInt(el.dataset.target);
+  const suffix=el.dataset.suffix||'';
+  const duration=1500;
+  const start=performance.now();
+  function update(now){
+    const p=Math.min((now-start)/duration,1);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*eased)+suffix;
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const counterObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){animateCounter(e.target);counterObs.unobserve(e.target)}});
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>counterObs.observe(el));
 </script>
 </body>
 </html>
