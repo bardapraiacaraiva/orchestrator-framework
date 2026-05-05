@@ -637,17 +637,234 @@ body::after {
   100% { background-position: -200% 0; }
 }
 
+/* TAB 4: HIVE MAP */
+#hive-map {
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+#hive-map::-webkit-scrollbar { width: 5px; }
+#hive-map::-webkit-scrollbar-track { background: #060611; }
+#hive-map::-webkit-scrollbar-thumb { background: #1a1a3e; border-radius: 3px; }
+
+.hive-division {
+  background: #0a0a14;
+  border: 1px solid #1a1a3e;
+  border-radius: 8px;
+  padding: 10px;
+  border-left: 3px solid #1a1a3e;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.hive-division:hover {
+  border-color: #2a2a4e;
+  background: #0c0c18;
+  box-shadow: 0 0 12px rgba(0,0,0,0.4);
+}
+
+.hive-division.hive-selected {
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0,212,255,0.15);
+}
+
+.hive-division-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.hive-division-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #c8d0e0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.hive-division-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(74,90,112,0.2);
+  color: #4a5a70;
+  border: 1px solid rgba(74,90,112,0.3);
+}
+
+.hive-division-badge.has-active {
+  background: rgba(0,212,255,0.12);
+  color: #00d4ff;
+  border-color: rgba(0,212,255,0.3);
+}
+
+.hive-workers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.hive-cell {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: #12121f;
+  border: 1px solid #1a1a2e;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.hive-cell.status-active {
+  background: #00d4ff;
+  border-color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0,212,255,0.6), 0 0 16px rgba(0,212,255,0.3);
+  animation: hivePulseActive 2s ease-in-out infinite;
+}
+
+.hive-cell.status-executing {
+  background: #ffaa00;
+  border-color: #ffaa00;
+  box-shadow: 0 0 8px rgba(255,170,0,0.6), 0 0 16px rgba(255,170,0,0.3);
+  animation: hivePulseExecuting 1.2s ease-in-out infinite;
+}
+
+.hive-cell.status-done {
+  background: #00ff88;
+  border-color: #00ff88;
+  box-shadow: 0 0 8px rgba(0,255,136,0.5);
+  animation: hiveFadeDone 3s ease-out forwards;
+}
+
+.hive-cell.status-blocked {
+  background: #ff3344;
+  border-color: #ff3344;
+  box-shadow: 0 0 6px rgba(255,51,68,0.5);
+}
+
+@keyframes hivePulseActive {
+  0%, 100% { box-shadow: 0 0 6px rgba(0,212,255,0.4), 0 0 12px rgba(0,212,255,0.2); }
+  50% { box-shadow: 0 0 12px rgba(0,212,255,0.8), 0 0 24px rgba(0,212,255,0.4); }
+}
+
+@keyframes hivePulseExecuting {
+  0%, 100% { box-shadow: 0 0 6px rgba(255,170,0,0.4), 0 0 12px rgba(255,170,0,0.2); }
+  50% { box-shadow: 0 0 12px rgba(255,170,0,0.8), 0 0 24px rgba(255,170,0,0.4); }
+}
+
+@keyframes hiveFadeDone {
+  0% { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.5); }
+  100% { background: #12121f; border-color: #1a1a2e; box-shadow: none; }
+}
+
+/* Hive tooltip */
+.hive-cell-tooltip {
+  position: absolute;
+  display: none;
+  background: #0a0a1a;
+  border: 1px solid #1a1a3e;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #c8d0e0;
+  pointer-events: none;
+  z-index: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  line-height: 1.6;
+}
+
+.hive-cell-tooltip .tooltip-name { color: #00d4ff; font-weight: 600; }
+.hive-cell-tooltip .tooltip-task { color: #ffaa00; }
+.hive-cell-tooltip .tooltip-score { color: #00ff88; }
+.hive-cell-tooltip .tooltip-idle { color: #4a5a70; }
+
+/* VP color accents for division blocks */
+.hive-division[data-vp="DARIO"] { border-left-color: #ffaa00; }
+.hive-division[data-vp="DIVA"] { border-left-color: #aa66ff; }
+.hive-division[data-vp="LUCAS"] { border-left-color: #00d4ff; }
+.hive-division[data-vp="A360"] { border-left-color: #00ff88; }
+.hive-division[data-vp="ATLAS"] { border-left-color: #ff6b9d; }
+
+/* VP background tints */
+.hive-division[data-vp="DARIO"] { background: rgba(255,170,0,0.02); }
+.hive-division[data-vp="DIVA"] { background: rgba(170,102,255,0.02); }
+.hive-division[data-vp="LUCAS"] { background: rgba(0,212,255,0.02); }
+.hive-division[data-vp="A360"] { background: rgba(0,255,136,0.02); }
+.hive-division[data-vp="ATLAS"] { background: rgba(255,107,157,0.02); }
+
+/* Hive legend */
+.hive-legend {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #0a0a14;
+  border: 1px solid #1a1a3e;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+
+.hive-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4a5a70;
+}
+
+.hive-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Hive stats bar */
+.hive-stats {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 10px 14px;
+  background: #0a0a14;
+  border: 1px solid #1a1a3e;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.hive-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hive-stat-label { color: #4a5a70; }
+.hive-stat-value { font-weight: 600; }
+
 /* Responsive */
 @media (max-width: 900px) {
   #sidebar { width: 200px; }
   #main-wrapper { right: 200px; }
   .header-title { font-size: 11px; }
   .header-badges { gap: 8px; }
+  #hive-map { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
 
 @media (max-width: 700px) {
   #sidebar { display: none; }
   #main-wrapper { right: 0; }
+  #hive-map { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
 </style>
 </head>
@@ -660,6 +877,7 @@ body::after {
     <button class="tab-btn active" data-tab="tab-command">CMD CENTER</button>
     <button class="tab-btn" data-tab="tab-taskboard">TASK BOARD</button>
     <button class="tab-btn" data-tab="tab-analytics">ANALYTICS</button>
+    <button class="tab-btn" data-tab="tab-hive">HIVE MAP</button>
   </div>
   <div class="header-badges">
     <span class="badge badge-state" id="badge-state">IDLE</span>
@@ -778,6 +996,12 @@ body::after {
         <div class="engine-grid" id="engine-grid"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Tab 4: Hive Map -->
+  <div class="tab-content" id="tab-hive" style="position:relative;">
+    <div id="hive-map"></div>
+    <div class="hive-cell-tooltip" id="hive-tooltip"></div>
   </div>
 </div>
 
@@ -1606,6 +1830,288 @@ canvas.addEventListener('wheel', () => { setTimeout(updateNodeCount, 50); });
 // Start animation
 updateNodeCount();
 drawFrame();
+
+// ============================================================
+// TAB 4: HIVE MAP
+// ============================================================
+const HIVE_DATA = [
+  // VP: DARIO (direct CEO reports)
+  { dir: 'Marketing', vp: 'DARIO', vpColor: '#ffaa00', workers: ['brand','offer','sales-letter','ads','funnel','pipeline','email-seq','naming','story-circle','pitch','proposal','negotiation'] },
+  { dir: 'Technical', vp: 'DARIO', vpColor: '#ffaa00', workers: ['wp-audit','woo-audit','cwv-fix','pentest','make-blueprint','ios-hig','sop'] },
+  { dir: 'SEO', vp: 'DARIO', vpColor: '#ffaa00', workers: ['seo-audit','seo-technical','seo-content','seo-schema','seo-local','seo-geo','seo-plan','seo-page','seo-sitemap','seo-images','seo-hreflang','seo-programmatic','seo-competitor','seo-dataforseo','seo-image-gen','kw-cluster'] },
+  { dir: 'Finance', vp: 'DARIO', vpColor: '#ffaa00', workers: ['financial-model','pricing-calculator','saas-metrics'] },
+  { dir: 'Client Success', vp: 'DARIO', vpColor: '#ffaa00', workers: ['client-onboard','diagnose','projeto'] },
+  { dir: 'Content', vp: 'DARIO', vpColor: '#ffaa00', workers: ['social','content'] },
+  { dir: 'Legal', vp: 'DARIO', vpColor: '#ffaa00', workers: ['legal'] },
+  { dir: 'HR', vp: 'DARIO', vpColor: '#ffaa00', workers: ['hr'] },
+  { dir: 'Support', vp: 'DARIO', vpColor: '#ffaa00', workers: ['support'] },
+  { dir: 'Product', vp: 'DARIO', vpColor: '#ffaa00', workers: ['product'] },
+  { dir: 'PR', vp: 'DARIO', vpColor: '#ffaa00', workers: ['pr'] },
+  // VP: DIVA
+  { dir: 'Design', vp: 'DIVA', vpColor: '#aa66ff', workers: ['moodboard','materials','floor-plan','render','render-brief','vision','portfolio','smart-home','briefing','diva-onboard'] },
+  { dir: 'Construction', vp: 'DIVA', vpColor: '#aa66ff', workers: ['diva-budget','calc','timeline','inspection','contract','comparador','planradar','bim','diva-diagnose','roadmap'] },
+  { dir: 'Regulatory', vp: 'DIVA', vpColor: '#aa66ff', workers: ['licensing','energy'] },
+  // VP: LUCAS
+  { dir: 'Cost Control', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['budget-tracker','model-router','cost-alerts','cost-optimizer'] },
+  { dir: 'Quality', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['quality-scorer','feedback-loop','skill-evaluator','revision-analyst'] },
+  { dir: 'Monitoring', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['heartbeat','stale-detect','health-mon','alert-dispatch'] },
+  { dir: 'Analytics', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['cross-project','skill-dashboard','revenue-tracker','knowledge-graph'] },
+  { dir: 'SaaS Eng', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['backend','frontend','ai-agents','database'] },
+  { dir: 'Accounting', vp: 'LUCAS', vpColor: '#00d4ff', workers: ['tax','compliance','reporting'] },
+  // VP: A360
+  { dir: 'Research', vp: 'A360', vpColor: '#00ff88', workers: ['nicho-explorer','mapear-nicho','cliente-radar'] },
+  { dir: 'A360 Production', vp: 'A360', vpColor: '#00ff88', workers: ['lp-builder','pitch-deck','gtm','playbook-vendas','meeting-prep'] },
+  // VP: ATLAS
+  { dir: 'Planning', vp: 'ATLAS', vpColor: '#ff6b9d', workers: ['ev-briefing','venue','ev-timeline','ev-budget','checklist','post-event'] },
+  { dir: 'Logistics', vp: 'ATLAS', vpColor: '#ff6b9d', workers: ['vendor','catering','transport','accommodation','staff','warehouse'] },
+  { dir: 'AV Production', vp: 'ATLAS', vpColor: '#ff6b9d', workers: ['av','staging','decor','entertainment','photo-video'] },
+  { dir: 'Guest Experience', vp: 'ATLAS', vpColor: '#ff6b9d', workers: ['guest','seating','protocol','ev-tech','hybrid'] },
+  { dir: 'Event Business', vp: 'ATLAS', vpColor: '#ff6b9d', workers: ['ev-marketing','sponsor','crm','risk','ev-compliance','sustainability'] },
+];
+
+// Track worker statuses for hive
+let hiveWorkerStatus = {}; // workerName -> { status, task, score }
+
+function buildHiveMap() {
+  const container = document.getElementById('hive-map');
+  if (!container) return;
+
+  // Count totals
+  const totalWorkers = HIVE_DATA.reduce((sum, d) => sum + d.workers.length, 0);
+  let activeCount = 0, executingCount = 0, idleCount = 0, doneCount = 0, blockedCount = 0;
+  HIVE_DATA.forEach(div => {
+    div.workers.forEach(w => {
+      const ws = hiveWorkerStatus[w];
+      if (!ws || ws.status === 'idle') idleCount++;
+      else if (ws.status === 'active') activeCount++;
+      else if (ws.status === 'executing') executingCount++;
+      else if (ws.status === 'done') doneCount++;
+      else if (ws.status === 'blocked') blockedCount++;
+    });
+  });
+
+  let html = '';
+
+  // Stats bar
+  html += `<div class="hive-stats">
+    <div class="hive-stat"><span class="hive-stat-label">TOTAL</span><span class="hive-stat-value" style="color:#c8d0e0">${totalWorkers}</span></div>
+    <div class="hive-stat"><span class="hive-stat-label">ACTIVE</span><span class="hive-stat-value" style="color:#00d4ff">${activeCount}</span></div>
+    <div class="hive-stat"><span class="hive-stat-label">EXEC</span><span class="hive-stat-value" style="color:#ffaa00">${executingCount}</span></div>
+    <div class="hive-stat"><span class="hive-stat-label">DONE</span><span class="hive-stat-value" style="color:#00ff88">${doneCount}</span></div>
+    <div class="hive-stat"><span class="hive-stat-label">BLOCKED</span><span class="hive-stat-value" style="color:#ff3344">${blockedCount}</span></div>
+    <div class="hive-stat"><span class="hive-stat-label">IDLE</span><span class="hive-stat-value" style="color:#4a5a70">${idleCount}</span></div>
+  </div>`;
+
+  // Legend
+  html += `<div class="hive-legend">
+    <div class="hive-legend-item"><span class="hive-legend-dot" style="background:#12121f;border:1px solid #1a1a2e"></span>Idle</div>
+    <div class="hive-legend-item"><span class="hive-legend-dot" style="background:#00d4ff;box-shadow:0 0 6px rgba(0,212,255,0.5)"></span>Active</div>
+    <div class="hive-legend-item"><span class="hive-legend-dot" style="background:#ffaa00;box-shadow:0 0 6px rgba(255,170,0,0.5)"></span>Executing</div>
+    <div class="hive-legend-item"><span class="hive-legend-dot" style="background:#00ff88;box-shadow:0 0 6px rgba(0,255,136,0.5)"></span>Done</div>
+    <div class="hive-legend-item"><span class="hive-legend-dot" style="background:#ff3344;box-shadow:0 0 6px rgba(255,51,68,0.5)"></span>Blocked</div>
+  </div>`;
+
+  // Division blocks
+  HIVE_DATA.forEach(div => {
+    const divActiveCount = div.workers.filter(w => {
+      const ws = hiveWorkerStatus[w];
+      return ws && ws.status !== 'idle';
+    }).length;
+    const badgeClass = divActiveCount > 0 ? ' has-active' : '';
+
+    html += `<div class="hive-division" data-vp="${div.vp}" data-dir="${div.dir}">
+      <div class="hive-division-header">
+        <span class="hive-division-name">${div.dir}</span>
+        <span class="hive-division-badge${badgeClass}">${divActiveCount}/${div.workers.length}</span>
+      </div>
+      <div class="hive-workers-grid">`;
+
+    div.workers.forEach(w => {
+      const ws = hiveWorkerStatus[w] || { status: 'idle' };
+      const statusClass = ws.status !== 'idle' ? ` status-${ws.status}` : '';
+      html += `<div class="hive-cell${statusClass}" data-worker="${w}" data-div="${div.dir}" title="${w}"></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Attach hover events for tooltips
+  attachHiveTooltips();
+  attachHiveDivisionClicks();
+}
+
+function attachHiveTooltips() {
+  const tooltip = document.getElementById('hive-tooltip');
+  const cells = document.querySelectorAll('.hive-cell');
+
+  cells.forEach(cell => {
+    cell.addEventListener('mouseenter', (e) => {
+      const workerName = cell.dataset.worker;
+      const divName = cell.dataset.div;
+      const ws = hiveWorkerStatus[workerName] || {};
+      const status = ws.status || 'idle';
+      const task = ws.task || 'None';
+      const score = ws.score != null ? ws.score : '-';
+
+      let tooltipHTML = `<div class="tooltip-name">${workerName}</div>`;
+      tooltipHTML += `<div>Division: ${divName}</div>`;
+      if (status === 'idle') {
+        tooltipHTML += `<div class="tooltip-idle">Status: IDLE</div>`;
+      } else {
+        tooltipHTML += `<div>Status: <span style="color:${status === 'active' ? '#00d4ff' : status === 'executing' ? '#ffaa00' : status === 'done' ? '#00ff88' : '#ff3344'}">${status.toUpperCase()}</span></div>`;
+      }
+      tooltipHTML += `<div class="tooltip-task">Task: ${task}</div>`;
+      tooltipHTML += `<div class="tooltip-score">Score: ${score}</div>`;
+
+      tooltip.innerHTML = tooltipHTML;
+      tooltip.style.display = 'block';
+
+      const rect = cell.getBoundingClientRect();
+      const parentRect = cell.closest('#tab-hive').getBoundingClientRect();
+      tooltip.style.left = (rect.left - parentRect.left + rect.width + 8) + 'px';
+      tooltip.style.top = (rect.top - parentRect.top - 10) + 'px';
+    });
+
+    cell.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+}
+
+function attachHiveDivisionClicks() {
+  const divisions = document.querySelectorAll('.hive-division');
+  divisions.forEach(div => {
+    div.addEventListener('click', () => {
+      // Toggle selection
+      const wasSelected = div.classList.contains('hive-selected');
+      divisions.forEach(d => d.classList.remove('hive-selected'));
+      if (!wasSelected) {
+        div.classList.add('hive-selected');
+        // Show details in sidebar
+        const dirName = div.dataset.dir;
+        const vpName = div.dataset.vp;
+        const divData = HIVE_DATA.find(d => d.dir === dirName);
+        if (divData) {
+          showHiveDivisionDetails(divData);
+        }
+      }
+    });
+  });
+}
+
+function showHiveDivisionDetails(divData) {
+  const el = document.getElementById('node-details');
+  const activeWorkers = divData.workers.filter(w => {
+    const ws = hiveWorkerStatus[w];
+    return ws && ws.status !== 'idle';
+  });
+
+  let workerList = divData.workers.map(w => {
+    const ws = hiveWorkerStatus[w] || {};
+    const color = !ws.status || ws.status === 'idle' ? '#4a5a70' :
+                  ws.status === 'active' ? '#00d4ff' :
+                  ws.status === 'executing' ? '#ffaa00' :
+                  ws.status === 'done' ? '#00ff88' : '#ff3344';
+    return `<span style="color:${color}">${w}</span>`;
+  }).join(', ');
+
+  el.innerHTML = `
+    <div class="detail-title" style="color:${divData.vpColor}">${divData.dir}</div>
+    <div class="detail-role">VP: ${divData.vp} | ${activeWorkers.length}/${divData.workers.length} active</div>
+    <div class="detail-info" style="font-size:10px;line-height:1.6;word-wrap:break-word">${workerList}</div>`;
+}
+
+// Update hive worker statuses from task data
+function updateHiveFromTasks() {
+  // Reset all to idle
+  HIVE_DATA.forEach(div => {
+    div.workers.forEach(w => {
+      if (!hiveWorkerStatus[w]) hiveWorkerStatus[w] = { status: 'idle', task: 'None', score: null };
+      // Only reset if not in "done" fade state (keep done for a few seconds)
+      if (hiveWorkerStatus[w].status !== 'done') {
+        hiveWorkerStatus[w].status = 'idle';
+        hiveWorkerStatus[w].task = 'None';
+      }
+    });
+  });
+
+  // Map tasks to workers
+  state.tasks.forEach(t => {
+    const assignee = (t.assignee || t.assigned_to || '').toLowerCase().replace('worker-', '');
+    if (!assignee) return;
+
+    const statusRaw = (t.status || '').toLowerCase();
+    let workerStatus = 'idle';
+    if (statusRaw === 'in_progress' || statusRaw === 'executing') {
+      workerStatus = 'executing';
+    } else if (statusRaw === 'active' || statusRaw === 'assigned' || statusRaw === 'queued') {
+      workerStatus = 'active';
+    } else if (statusRaw === 'done' || statusRaw === 'completed') {
+      workerStatus = 'done';
+    } else if (statusRaw === 'blocked' || statusRaw === 'failed') {
+      workerStatus = 'blocked';
+    }
+
+    // Find matching worker across all divisions
+    HIVE_DATA.forEach(div => {
+      div.workers.forEach(w => {
+        // Match by exact name or partial match
+        if (w === assignee || assignee.includes(w) || w.includes(assignee)) {
+          hiveWorkerStatus[w] = {
+            status: workerStatus,
+            task: t.title || t.description || 'Assigned',
+            score: t.score != null ? t.score : null,
+          };
+        }
+      });
+    });
+
+    // Also try matching by skill
+    const skill = (t.skill || '').toLowerCase();
+    if (skill) {
+      HIVE_DATA.forEach(div => {
+        div.workers.forEach(w => {
+          if (w === skill || skill.includes(w) || w.includes(skill)) {
+            if (!hiveWorkerStatus[w] || hiveWorkerStatus[w].status === 'idle') {
+              hiveWorkerStatus[w] = {
+                status: workerStatus,
+                task: t.title || t.description || 'Assigned',
+                score: t.score != null ? t.score : null,
+              };
+            }
+          }
+        });
+      });
+    }
+  });
+
+  // Rebuild hive if tab is active
+  const hiveTab = document.getElementById('tab-hive');
+  if (hiveTab && hiveTab.classList.contains('active')) {
+    buildHiveMap();
+  }
+}
+
+// Hook into the existing refreshData to update hive
+const originalRefreshData = refreshData;
+refreshData = async function() {
+  await originalRefreshData();
+  updateHiveFromTasks();
+};
+
+// Build initial hive map
+buildHiveMap();
+
+// Also rebuild when switching to hive tab
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.tab === 'tab-hive') {
+      updateHiveFromTasks();
+    }
+  });
+});
 
 // ============================================================
 // DATA REFRESH LOOP
