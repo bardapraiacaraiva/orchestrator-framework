@@ -1,371 +1,2914 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DARIO v9.0 — Durable AI Execution Engine for Claude Code</title>
-<meta name="description" content="The only orchestrator that self-executes, self-corrects, and self-evolves. 26 engines, 45 API endpoints, SQLite persistence, FastAPI runtime.">
+<title>DARIO Orchestrator v9.0 — 236 Skills. Um Comando.</title>
+<meta name="description" content="Uma equipa inteira de IA com 236 skills, 26 engines Python e 45 endpoints. O DARIO trabalha, corrige-se e evolui — enquanto dormes.">
+<meta name="keywords" content="DARIO, orchestrator, IA, agência digital, automação, skills, Claude, Portugal">
+<meta property="og:title" content="DARIO Orchestrator v9.0 — 236 Skills. Um Comando.">
+<meta property="og:description" content="Uma equipa inteira de IA com 236 skills, 26 engines Python e 45 endpoints.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════
+   DARIO v9.0 Landing — Navy + Amber/Gold
+   ═══════════════════════════════════════════ */
 :root {
-  --bg: #050510;
-  --surface: #0c0c1d;
-  --border: rgba(99,102,241,0.15);
-  --text: #e2e8f0;
-  --muted: #64748b;
-  --accent: #818cf8;
-  --accent2: #6366f1;
-  --accent3: #a78bfa;
-  --glow: rgba(129,140,248,0.3);
-  --success: #34d399;
-  --warn: #fbbf24;
-  --danger: #f87171;
+  --navy: #0f172a;
+  --navy-deep: #020617;
+  --navy-mid: #1e293b;
+  --navy-light: #334155;
+  --amber: #f59e0b;
+  --amber-light: #fbbf24;
+  --gold: #eab308;
+  --gold-soft: rgba(234,179,8,0.15);
+  --teal: #14b8a6;
+  --teal-soft: rgba(20,184,166,0.15);
+  --white: #f8fafc;
+  --white-dim: #e2e8f0;
+  --muted: #94a3b8;
+  --glass-bg: rgba(30,41,59,0.45);
+  --glass-border: rgba(248,250,252,0.08);
+  --glass-border-hover: rgba(245,158,11,0.3);
+  --glow-amber: rgba(245,158,11,0.2);
+  --glow-teal: rgba(20,184,166,0.2);
+  --red: #ef4444;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; overflow-x:hidden; }
-/* fonts loaded via <link> in head */
 
-/* === NOISE TEXTURE === */
-body::before {
-  content:''; position:fixed; inset:0; z-index:-1;
-  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior:smooth; scroll-padding-top: 80px; }
+
+body {
+  background: var(--navy-deep);
+  color: var(--white);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* === GLOW ORBS === */
-.orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:-1; }
-.orb-1 { width:600px; height:600px; background:rgba(99,102,241,0.08); top:-200px; right:-200px; animation:float 20s infinite; }
-.orb-2 { width:500px; height:500px; background:rgba(139,92,246,0.06); bottom:-200px; left:-200px; animation:float 25s infinite reverse; }
-.orb-3 { width:400px; height:400px; background:rgba(52,211,153,0.04); top:50%; left:50%; animation:float 30s infinite; }
-@keyframes float { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-30px)} 66%{transform:translate(-20px,20px)} }
+/* ── Scroll Progress Bar ── */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--amber), var(--gold), var(--teal));
+  z-index: 10000;
+  width: 0%;
+  transition: width 0.1s linear;
+}
 
-/* === NAV === */
-nav { position:fixed; top:0; width:100%; z-index:100; backdrop-filter:blur(20px); background:rgba(5,5,16,0.8); border-bottom:1px solid var(--border); }
-nav .inner { max-width:1200px; margin:0 auto; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; }
-nav .logo { font-weight:800; font-size:20px; letter-spacing:-0.5px; }
-nav .logo span { color:var(--accent); }
-nav .cta-nav { padding:8px 20px; background:var(--accent2); color:#fff; border:none; border-radius:8px; font-weight:600; font-size:14px; cursor:pointer; transition:all 0.3s; }
-nav .cta-nav:hover { background:var(--accent3); transform:translateY(-1px); box-shadow:0 4px 20px var(--glow); }
+/* ── Animated Gradient Mesh Backgrounds ── */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.4;
+  animation: meshFloat 20s ease-in-out infinite;
+}
+.mesh-blob:nth-child(1) {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(245,158,11,0.15), transparent 70%);
+  top: -10%; right: -5%;
+  animation-duration: 25s;
+}
+.mesh-blob:nth-child(2) {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(20,184,166,0.1), transparent 70%);
+  bottom: 10%; left: -10%;
+  animation-duration: 30s;
+  animation-direction: reverse;
+}
+.mesh-blob:nth-child(3) {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(234,179,8,0.08), transparent 70%);
+  top: 40%; left: 30%;
+  animation-duration: 22s;
+  animation-delay: -5s;
+}
+@keyframes meshFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -50px) scale(1.05); }
+  50% { transform: translate(-20px, 40px) scale(0.95); }
+  75% { transform: translate(40px, 20px) scale(1.02); }
+}
 
-/* === HERO === */
-.hero { min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:120px 24px 80px; position:relative; }
-.hero h1 { font-size:clamp(36px,6vw,72px); font-weight:900; line-height:1.05; letter-spacing:-2px; margin-bottom:24px; }
-.hero h1 .gradient { background:linear-gradient(135deg,var(--accent),var(--accent3),var(--success)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.hero p { font-size:clamp(16px,2vw,20px); color:var(--muted); max-width:640px; margin:0 auto 40px; line-height:1.6; }
-.hero .cmd { display:inline-block; background:var(--surface); border:1px solid var(--border); padding:14px 28px; border-radius:12px; font-family:'JetBrains Mono',monospace; font-size:15px; cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden; }
-.hero .cmd:hover { border-color:var(--accent); box-shadow:0 0 30px var(--glow); }
-.hero .cmd .cursor { animation:blink 1s infinite; }
-@keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+/* ── Navigation ── */
+nav {
+  position: fixed;
+  top: 3px;
+  width: 100%;
+  z-index: 1000;
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  background: rgba(2,6,23,0.8);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 0.3s;
+}
+nav.scrolled { background: rgba(2,6,23,0.95); }
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-logo {
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  color: var(--white);
+}
+.nav-logo span { color: var(--amber); }
+.nav-logo small {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.nav-links { display: flex; gap: 8px; align-items: center; }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+.nav-links a:hover { color: var(--white); background: rgba(248,250,252,0.05); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--amber), var(--gold)) !important;
+  color: var(--navy-deep) !important;
+  font-weight: 700 !important;
+  padding: 10px 22px !important;
+  border-radius: 10px !important;
+  transition: all 0.3s !important;
+  box-shadow: 0 4px 20px var(--glow-amber);
+}
+.nav-cta:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 30px var(--glow-amber) !important;
+}
+.nav-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 24px;
+  cursor: pointer;
+}
 
-/* === STATS BAR === */
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border-radius:16px; overflow:hidden; margin:60px auto; max-width:900px; }
-.stat { background:var(--surface); padding:28px 16px; text-align:center; }
-.stat .num { font-size:32px; font-weight:800; color:var(--accent); font-family:'JetBrains Mono',monospace; }
-.stat .label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: var(--navy-deep);
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 24px var(--glow-amber);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px var(--glow-amber);
+}
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 4px 24px var(--glow-amber); }
+  50% { box-shadow: 0 4px 40px rgba(245,158,11,0.4); }
+}
+.btn-pulse { animation: pulse-btn 2s ease-in-out infinite; }
 
-/* === SECTIONS === */
-section { padding:100px 24px; max-width:1200px; margin:0 auto; }
-.section-title { font-size:clamp(28px,4vw,48px); font-weight:800; letter-spacing:-1px; margin-bottom:16px; }
-.section-sub { color:var(--muted); font-size:18px; margin-bottom:48px; max-width:600px; }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--white);
+  font-weight: 600;
+  font-size: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-outline:hover {
+  border-color: var(--amber);
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+}
 
-/* === BENTO GRID === */
-.bento { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
-.bento .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; transition:all 0.4s; position:relative; overflow:hidden; }
-.bento .card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-.bento .card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(99,102,241,0.05),transparent); opacity:0; transition:opacity 0.4s; }
-.bento .card:hover::before { opacity:1; }
-.bento .c-wide { grid-column:span 8; }
-.bento .c-narrow { grid-column:span 4; }
-.bento .c-half { grid-column:span 6; }
-.bento .c-third { grid-column:span 4; }
-.bento .c-full { grid-column:span 12; }
-@media(max-width:768px) { .bento .card { grid-column:span 12 !important; } }
+/* ── Section Base ── */
+.section {
+  padding: 120px 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.section-full {
+  padding: 120px 28px;
+  position: relative;
+}
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: var(--gold-soft);
+  color: var(--amber);
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(245,158,11,0.15);
+}
+.section-title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+.section-title .highlight {
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-subtitle {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 640px;
+  line-height: 1.7;
+}
 
-.card .icon { font-size:32px; margin-bottom:16px; }
-.card h3 { font-size:20px; font-weight:700; margin-bottom:8px; }
-.card p { color:var(--muted); font-size:14px; line-height:1.6; }
-.card .tag { display:inline-block; padding:4px 10px; background:rgba(99,102,241,0.1); color:var(--accent); border-radius:6px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; }
+/* ── Glass Card ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 8px 40px rgba(245,158,11,0.08);
+}
 
-/* === COMPARISON TABLE === */
-.compare { overflow-x:auto; margin:48px 0; }
-.compare table { width:100%; border-collapse:collapse; font-size:14px; }
-.compare th { padding:14px 20px; text-align:left; background:var(--surface); color:var(--accent); font-weight:600; border-bottom:2px solid var(--border); position:sticky; top:0; }
-.compare td { padding:12px 20px; border-bottom:1px solid rgba(99,102,241,0.08); }
-.compare tr:hover td { background:rgba(99,102,241,0.03); }
-.compare .yes { color:var(--success); font-weight:600; }
-.compare .no { color:var(--danger); }
-.compare .partial { color:var(--warn); }
+/* ── Card Tilt Effect ── */
+.tilt-card {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+.tilt-card:hover {
+  transform: rotateY(2deg) rotateX(2deg);
+}
 
-/* === ARCHITECTURE === */
-.arch-diagram { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:40px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.8; overflow-x:auto; white-space:pre; color:var(--muted); }
-.arch-diagram .hl { color:var(--accent); font-weight:600; }
-.arch-diagram .g { color:var(--success); }
-.arch-diagram .w { color:var(--warn); }
+/* ── Reveal Animation ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
 
-/* === PRICING === */
-.pricing { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; margin-top:48px; }
-.price-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:40px 32px; text-align:center; transition:all 0.3s; }
-.price-card.featured { border-color:var(--accent); position:relative; }
-.price-card.featured::before { content:'POPULAR'; position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent2); color:#fff; padding:4px 16px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:1px; }
-.price-card h3 { font-size:24px; font-weight:700; margin-bottom:8px; }
-.price-card .price { font-size:48px; font-weight:900; color:var(--accent); margin:16px 0; }
-.price-card .price span { font-size:16px; color:var(--muted); font-weight:400; }
-.price-card ul { list-style:none; text-align:left; margin:24px 0; }
-.price-card li { padding:8px 0; color:var(--muted); font-size:14px; border-bottom:1px solid rgba(99,102,241,0.06); }
-.price-card li::before { content:'✓ '; color:var(--success); font-weight:700; }
-.price-btn { display:block; width:100%; padding:14px; background:var(--accent2); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:15px; cursor:pointer; transition:all 0.3s; }
-.price-btn:hover { background:var(--accent3); transform:translateY(-2px); box-shadow:0 8px 30px var(--glow); }
+/* ═══════════════════════════════════════════
+   1. HERO SECTION
+   ═══════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 140px 28px 80px;
+  position: relative;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: var(--gold-soft);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--amber-light);
+  margin-bottom: 32px;
+  animation: fadeInDown 0.8s ease-out;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero h1 {
+  font-size: clamp(48px, 7vw, 84px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -3px;
+  margin-bottom: 12px;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+.hero h1 .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--amber), var(--gold), var(--amber-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(18px, 2.5vw, 22px);
+  color: var(--muted);
+  max-width: 600px;
+  margin: 20px auto 40px;
+  line-height: 1.6;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+.hero-counter .number {
+  font-size: clamp(56px, 8vw, 96px);
+  font-weight: 900;
+  font-family: var(--font-mono);
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.hero-counter .label {
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 700;
+  color: var(--white-dim);
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+.hero-install {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(30,41,59,0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+.hero-install:hover {
+  border-color: var(--amber);
+  color: var(--white);
+}
+.hero-install code { color: var(--amber-light); }
+.hero-install .copy-icon { font-size: 16px; opacity: 0.5; transition: opacity 0.3s; }
+.hero-install:hover .copy-icon { opacity: 1; }
+.hero-install.copied { border-color: var(--teal); }
+.hero-install.copied code { color: var(--teal); }
 
-/* === CTA === */
-.cta-section { text-align:center; padding:120px 24px; position:relative; }
-.cta-section h2 { font-size:clamp(32px,5vw,56px); font-weight:900; letter-spacing:-1.5px; margin-bottom:24px; }
-.cta-section .big-cmd { display:inline-block; background:var(--surface); border:2px solid var(--accent); padding:20px 40px; border-radius:14px; font-family:'JetBrains Mono',monospace; font-size:18px; transition:all 0.3s; cursor:pointer; }
-.cta-section .big-cmd:hover { background:var(--accent2); color:#fff; box-shadow:0 0 60px var(--glow); }
+/* ═══════════════════════════════════════════
+   2. SOCIAL PROOF BAR
+   ═══════════════════════════════════════════ */
+.proof-bar {
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(10px);
+  padding: 32px 28px;
+}
+.proof-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.proof-item {
+  text-align: center;
+}
+.proof-item .proof-num {
+  font-size: 36px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--amber);
+  line-height: 1;
+}
+.proof-item .proof-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-/* === FOOTER === */
-footer { text-align:center; padding:40px 24px; color:var(--muted); font-size:13px; border-top:1px solid var(--border); }
+/* ═══════════════════════════════════════════
+   3. TERMINAL DEMO SECTION
+   ═══════════════════════════════════════════ */
+.terminal-section {
+  padding: 120px 28px;
+  background: linear-gradient(180deg, transparent, rgba(15,23,42,0.3), transparent);
+}
+.terminal-section .section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.terminal-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.terminal-window {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(2,6,23,0.9);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: rgba(30,41,59,0.5);
+  border-bottom: 1px solid var(--glass-border);
+}
+.terminal-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+.terminal-dot.red { background: #ef4444; }
+.terminal-dot.yellow { background: #eab308; }
+.terminal-dot.green { background: #22c55e; }
+.terminal-bar-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 12px;
+}
+.terminal-body {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.8;
+  min-height: 360px;
+  color: var(--muted);
+}
+.terminal-line { margin-bottom: 4px; white-space: pre-wrap; word-break: break-all; }
+.terminal-line .prompt { color: var(--teal); }
+.terminal-line .cmd { color: var(--white); }
+.terminal-line .amber { color: var(--amber); }
+.terminal-line .teal { color: var(--teal); }
+.terminal-line .gold { color: var(--gold); }
+.terminal-line .dim { color: var(--muted); }
+.terminal-line .green { color: #22c55e; }
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--amber);
+  animation: cursorBlink 1s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 
-/* === SCROLL ANIMATIONS === */
-[data-animate] { opacity:0; transform:translateY(30px); transition:all 0.8s cubic-bezier(0.16,1,0.3,1); }
-[data-animate].visible { opacity:1; transform:translateY(0); }
+/* ═══════════════════════════════════════════
+   4. PROBLEM SECTION
+   ═══════════════════════════════════════════ */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+.problem-card {
+  padding: 36px 28px;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  transition: all 0.4s;
+}
+.problem-card:hover {
+  border-color: rgba(239,68,68,0.3);
+  transform: translateY(-4px);
+}
+.problem-icon {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+.problem-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--white);
+}
+.problem-card p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.problem-stat {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--glass-border);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.problem-stat .stat-bad { color: var(--red); font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   5. SOLUTION / PIPELINE SECTION
+   ═══════════════════════════════════════════ */
+.pipeline-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 48px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+.pipeline-step {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 28px 24px;
+  min-width: 170px;
+}
+.pipeline-step .pipe-icon {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 14px;
+  background: var(--gold-soft);
+  border: 1px solid rgba(245,158,11,0.2);
+  transition: all 0.3s;
+}
+.pipeline-step:hover .pipe-icon {
+  background: rgba(245,158,11,0.25);
+  transform: scale(1.1);
+  box-shadow: 0 8px 30px var(--glow-amber);
+}
+.pipeline-step h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.pipeline-step p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.pipeline-arrow {
+  flex: 0 0 auto;
+  color: var(--amber);
+  font-size: 24px;
+  opacity: 0.4;
+}
+
+/* ═══════════════════════════════════════════
+   6. DIVISIONS HORIZONTAL CAROUSEL
+   ═══════════════════════════════════════════ */
+.divisions-section {
+  padding: 120px 0;
+  position: relative;
+  overflow: hidden;
+}
+.divisions-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+  margin-bottom: 48px;
+}
+.divisions-track-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.divisions-track {
+  display: flex;
+  gap: 24px;
+  padding: 0 28px 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--amber) transparent;
+  cursor: grab;
+}
+.divisions-track:active { cursor: grabbing; }
+.divisions-track::-webkit-scrollbar { height: 6px; }
+.divisions-track::-webkit-scrollbar-track { background: transparent; }
+.divisions-track::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 3px; }
+
+.division-card {
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+  padding: 32px 28px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+.division-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--amber), var(--gold));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.division-card:hover::before { opacity: 1; }
+.division-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 48px rgba(245,158,11,0.1);
+}
+.division-card .div-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+.division-card h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.division-card .div-full-name {
+  font-size: 13px;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.division-card .div-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--gold-soft);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 16px;
+}
+.division-card .div-skills {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.division-card .div-skills strong { color: var(--white-dim); }
+.division-card .div-example {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(2,6,23,0.5);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--amber-light);
+  border: 1px solid rgba(245,158,11,0.1);
+}
+
+.divisions-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+.divisions-nav button {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--white);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.divisions-nav button:hover {
+  border-color: var(--amber);
+  background: var(--gold-soft);
+}
+
+/* ═══════════════════════════════════════════
+   7. HOW IT WORKS — 5 STEPS
+   ═══════════════════════════════════════════ */
+.steps-container {
+  position: relative;
+  margin-top: 64px;
+}
+.steps-line {
+  position: absolute;
+  left: 32px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--amber), var(--teal), var(--gold));
+  opacity: 0.3;
+}
+.step-item {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 48px;
+  position: relative;
+}
+.step-num {
+  flex: 0 0 64px;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  background: var(--gold-soft);
+  border: 2px solid var(--amber);
+  color: var(--amber);
+  z-index: 1;
+}
+.step-content {
+  flex: 1;
+  padding-top: 12px;
+}
+.step-content h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.step-content p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 520px;
+}
+.step-content .step-detail {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: rgba(2,6,23,0.4);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--amber-light);
+  border-left: 3px solid var(--amber);
+}
+
+/* ═══════════════════════════════════════════
+   8. LIVE METRICS DASHBOARD
+   ═══════════════════════════════════════════ */
+.dashboard-mock {
+  margin-top: 48px;
+  padding: 32px;
+  background: rgba(2,6,23,0.8);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+}
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.dash-title {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dash-title .live-dot {
+  width: 8px; height: 8px;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+.dash-timestamp {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.dash-card {
+  padding: 20px;
+  background: rgba(30,41,59,0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  text-align: center;
+}
+.dash-card .dash-value {
+  font-size: 32px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.dash-card .dash-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.dash-card.health .dash-value { color: var(--teal); }
+.dash-card.tasks .dash-value { color: var(--amber); }
+.dash-card.budget .dash-value { color: var(--gold); }
+.dash-card.quality .dash-value { color: #22c55e; }
+
+.dash-activity {
+  padding: 16px 20px;
+  background: rgba(30,41,59,0.3);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+.dash-activity h4 {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.dash-activity-line {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+}
+.dash-activity-line .time { color: var(--muted); flex: 0 0 54px; }
+.dash-activity-line .status { flex: 0 0 10px; margin-top: 5px; }
+.dash-activity-line .status .dot-green { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+.dash-activity-line .status .dot-amber { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+.dash-activity-line .status .dot-teal { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+.dash-activity-line .msg { color: var(--white-dim); }
+.dash-activity-line .msg span { color: var(--amber); }
+
+/* ═══════════════════════════════════════════
+   9. SKILL CHAINS VISUAL
+   ═══════════════════════════════════════════ */
+.chain-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 48px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.chain-node {
+  flex: 0 0 auto;
+  padding: 18px 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  text-align: center;
+  min-width: 140px;
+  transition: all 0.3s;
+  backdrop-filter: blur(12px);
+}
+.chain-node:hover {
+  border-color: var(--amber);
+  background: rgba(245,158,11,0.08);
+  transform: translateY(-4px);
+}
+.chain-node .node-icon { font-size: 24px; margin-bottom: 8px; }
+.chain-node h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.chain-node p { font-size: 11px; color: var(--muted); }
+.chain-arrow {
+  flex: 0 0 auto;
+  padding: 0 6px;
+  color: var(--amber);
+  font-size: 20px;
+  opacity: 0.4;
+}
+.chain-output {
+  flex: 0 0 auto;
+  padding: 18px 28px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(234,179,8,0.1));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 14px;
+  text-align: center;
+  min-width: 160px;
+}
+.chain-output .node-icon { font-size: 24px; margin-bottom: 8px; }
+.chain-output h4 { font-size: 14px; font-weight: 700; color: var(--amber); }
+.chain-output p { font-size: 11px; color: var(--amber-light); }
+
+/* ═══════════════════════════════════════════
+   10. BEFORE/AFTER
+   ═══════════════════════════════════════════ */
+.ba-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  margin-top: 48px;
+  align-items: stretch;
+}
+.ba-card {
+  padding: 40px 32px;
+  border-radius: 20px;
+}
+.ba-card.before {
+  background: rgba(239,68,68,0.05);
+  border: 1px solid rgba(239,68,68,0.15);
+}
+.ba-card.after {
+  background: rgba(20,184,166,0.05);
+  border: 1px solid rgba(20,184,166,0.15);
+}
+.ba-card .ba-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+}
+.ba-card.before .ba-label { color: var(--red); }
+.ba-card.after .ba-label { color: var(--teal); }
+.ba-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+.ba-divider span {
+  font-size: 32px;
+  color: var(--amber);
+}
+.ba-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.ba-item .ba-icon { font-size: 18px; flex: 0 0 24px; text-align: center; margin-top: 2px; }
+.ba-item .ba-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.ba-item .ba-text p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.ba-card.before .ba-icon { color: var(--red); }
+.ba-card.after .ba-icon { color: var(--teal); }
+
+/* ═══════════════════════════════════════════
+   11. USE CASES
+   ═══════════════════════════════════════════ */
+.usecase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+.usecase-card {
+  padding: 36px 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  transition: all 0.4s;
+}
+.usecase-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(245,158,11,0.08);
+}
+.usecase-card .uc-icon { font-size: 36px; margin-bottom: 16px; }
+.usecase-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+.usecase-card p { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
+.usecase-card .uc-stats {
+  display: flex;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--glass-border);
+}
+.usecase-card .uc-stat {
+  text-align: center;
+}
+.usecase-card .uc-stat .uc-num {
+  font-size: 20px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--amber);
+}
+.usecase-card .uc-stat .uc-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════════
+   12. COMPARISON TABLE
+   ═══════════════════════════════════════════ */
+.comparison-table {
+  margin-top: 48px;
+  width: 100%;
+  overflow-x: auto;
+}
+.comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+.comparison-table th, .comparison-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 14px;
+}
+.comparison-table th {
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.comparison-table td:first-child {
+  color: var(--white-dim);
+  font-weight: 600;
+}
+.comparison-table .col-dario {
+  background: rgba(245,158,11,0.05);
+  color: var(--amber) !important;
+  font-weight: 700 !important;
+}
+.comparison-table .col-dario.header-cell {
+  background: rgba(245,158,11,0.1);
+  color: var(--amber);
+  font-size: 14px;
+  font-weight: 800;
+}
+.comparison-table .check { color: var(--teal); }
+.comparison-table .cross { color: var(--red); opacity: 0.5; }
+.comparison-table .partial { color: var(--amber); }
+
+/* ═══════════════════════════════════════════
+   13. EVOLUTION ENGINE
+   ═══════════════════════════════════════════ */
+.evo-loop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+.evo-step {
+  text-align: center;
+  padding: 24px 20px;
+  min-width: 140px;
+}
+.evo-step .evo-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 12px;
+  background: var(--gold-soft);
+  border: 2px solid rgba(245,158,11,0.2);
+  transition: all 0.3s;
+}
+.evo-step:hover .evo-circle {
+  border-color: var(--amber);
+  background: rgba(245,158,11,0.2);
+  transform: scale(1.1);
+}
+.evo-step h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.evo-step p { font-size: 12px; color: var(--muted); }
+.evo-arrow {
+  font-size: 22px;
+  color: var(--amber);
+  opacity: 0.4;
+}
+.evo-loop-label {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+.evo-loop-label span { color: var(--teal); }
+
+/* ═══════════════════════════════════════════
+   14. TESTIMONIAL
+   ═══════════════════════════════════════════ */
+.testimonial-card {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: 48px 40px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  text-align: center;
+  backdrop-filter: blur(16px);
+  position: relative;
+}
+.testimonial-card .quote-mark {
+  font-size: 64px;
+  color: var(--amber);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.testimonial-card blockquote {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: var(--white-dim);
+  font-style: italic;
+  margin-bottom: 24px;
+}
+.testimonial-card .author {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--amber);
+}
+.testimonial-card .author span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════
+   15. PRICING
+   ═══════════════════════════════════════════ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+.pricing-card {
+  padding: 40px 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  text-align: center;
+  transition: all 0.4s;
+  position: relative;
+}
+.pricing-card.featured {
+  border-color: var(--amber);
+  background: linear-gradient(180deg, rgba(245,158,11,0.08), var(--glass-bg));
+  transform: scale(1.03);
+}
+.pricing-card.featured::before {
+  content: 'MAIS POPULAR';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 16px;
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: var(--navy-deep);
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+.pricing-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 16px 48px rgba(245,158,11,0.08);
+}
+.pricing-card.featured:hover { transform: scale(1.03) translateY(-6px); }
+.pricing-card .price-name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.pricing-card .price-value {
+  font-size: 48px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.pricing-card .price-value span {
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.pricing-card .price-desc {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.pricing-card .price-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 32px;
+}
+.pricing-card .price-features li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--white-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(248,250,252,0.04);
+}
+.pricing-card .price-features li .pf-check { color: var(--teal); font-weight: 700; }
+.pricing-card .price-features li .pf-cross { color: var(--muted); opacity: 0.3; }
+
+/* ═══════════════════════════════════════════
+   16. FAQ ACCORDION
+   ═══════════════════════════════════════════ */
+.faq-list {
+  max-width: 760px;
+  margin: 48px auto 0;
+}
+.faq-item {
+  border-bottom: 1px solid var(--glass-border);
+}
+.faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-sans);
+  transition: color 0.3s;
+}
+.faq-question:hover { color: var(--amber); }
+.faq-question .faq-toggle {
+  font-size: 20px;
+  transition: transform 0.3s;
+  color: var(--amber);
+  flex: 0 0 auto;
+}
+.faq-item.open .faq-toggle { transform: rotate(45deg); }
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s;
+}
+.faq-item.open .faq-answer {
+  max-height: 300px;
+  padding-bottom: 20px;
+}
+.faq-answer p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════
+   17. FINAL CTA
+   ═══════════════════════════════════════════ */
+.cta-section {
+  text-align: center;
+  padding: 120px 28px;
+  position: relative;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(245,158,11,0.06), transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 {
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+.cta-section h2 .highlight {
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cta-section p {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 40px;
+}
+.cta-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--glass-border);
+  padding: 40px 28px;
+  text-align: center;
+}
+footer p {
+  color: var(--muted);
+  font-size: 13px;
+}
+footer a { color: var(--amber); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   26 ENGINES GRID
+   ═══════════════════════════════════════════ */
+.engines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 32px;
+}
+.engine-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(30,41,59,0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+.engine-chip:hover {
+  border-color: var(--amber);
+  background: var(--gold-soft);
+}
+.engine-chip .ec-icon { font-size: 18px; }
+.engine-chip .ec-name { font-weight: 600; color: var(--white-dim); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .dash-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .pricing-card.featured { transform: none; }
+  .pricing-card.featured:hover { transform: translateY(-6px); }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-mobile-toggle { display: block; }
+  nav.mobile-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(2,6,23,0.97);
+    backdrop-filter: blur(20px);
+    padding: 20px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .hero h1 { letter-spacing: -1.5px; }
+  .proof-bar-inner { gap: 24px; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .ba-grid { grid-template-columns: 1fr; gap: 20px; }
+  .ba-divider { transform: rotate(90deg); padding: 10px 0; }
+  .usecase-grid { grid-template-columns: 1fr; }
+  .step-item { flex-direction: column; align-items: center; text-align: center; }
+  .steps-line { display: none; }
+  .step-content .step-detail { text-align: left; }
+  .comparison-table { font-size: 13px; }
+  .section { padding: 80px 20px; }
+  .section-full { padding: 80px 20px; }
+  .evo-loop { flex-direction: column; }
+  .evo-arrow { transform: rotate(90deg); }
+}
+
+@media (max-width: 480px) {
+  .hero-counter .number { font-size: 56px; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .proof-bar-inner { gap: 16px; }
+  .proof-item .proof-num { font-size: 28px; }
+  .engines-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
 
-<nav>
-<div class="inner">
-  <div class="logo">DARIO<span> v9.0</span></div>
-  <button class="cta-nav" onclick="document.querySelector('.cta-section').scrollIntoView({behavior:'smooth'})">Install Now</button>
+<!-- Animated Mesh Background -->
+<div class="mesh-bg">
+  <div class="mesh-blob"></div>
+  <div class="mesh-blob"></div>
+  <div class="mesh-blob"></div>
 </div>
+
+<!-- ═══════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">D<span>.</span>A<span>.</span>R<span>.</span>I<span>.</span>O<span>.</span><small>v9.0</small></a>
+    <div class="nav-links" id="nav-links">
+      <a href="#divisoes">Divisoes</a>
+      <a href="#como-funciona">Como Funciona</a>
+      <a href="#engines">Engines</a>
+      <a href="#pricing">Precos</a>
+      <a href="#faq">FAQ</a>
+      <a href="#cta" class="nav-cta">Comecar Agora</a>
+    </div>
+    <button class="nav-mobile-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
+  </div>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-<div>
-  <h1>The AI That<br><span class="gradient">Manages Itself</span></h1>
-  <p>DARIO is the first durable execution engine for Claude Code. It doesn't just plan tasks — it dispatches, executes, scores, learns, and evolves. Autonomously.</p>
-  <div class="cmd" onclick="navigator.clipboard.writeText('npx github:bardapraiacaraiva/dario-orchestrator-installer --upgrade')">
-    <span style="color:var(--success)">$</span> npx github:bardapraiacaraiva/dario-orchestrator-installer<span class="cursor">|</span>
+<!-- ═══════════════════════════════════════════
+     1. HERO
+     ═══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    v9.0 — Self-Evolving Orchestrator
   </div>
-  <p style="font-size:12px;color:var(--muted);margin-top:12px">One command. Full orchestrator. Any company.</p>
 
-  <div class="stats" data-animate>
-    <div class="stat"><div class="num" data-count="26">0</div><div class="label">Python Engines</div></div>
-    <div class="stat"><div class="num" data-count="45">0</div><div class="label">API Endpoints</div></div>
-    <div class="stat"><div class="num" data-count="48">0</div><div class="label">Tests (100%)</div></div>
-    <div class="stat"><div class="num" data-count="11031">0</div><div class="label">Lines of Code</div></div>
-    <div class="stat"><div class="num" data-count="16">0</div><div class="label">Adaptive Rubrics</div></div>
-    <div class="stat"><div class="num" data-count="3">0</div><div class="label">RBAC Roles</div></div>
-  </div>
-</div>
-</div>
+  <h1>
+    Uma Equipa Inteira de IA.
+    <span class="line2">Um Comando.</span>
+  </h1>
 
-<!-- WHAT IT DOES -->
-<section>
-<h2 class="section-title" data-animate>What DARIO Does</h2>
-<p class="section-sub" data-animate>Everything an AI team needs to work autonomously — in one install.</p>
+  <div class="hero-counter">
+    <span class="number" id="skill-counter">0</span>
+    <span class="label">skills prontas a executar</span>
+  </div>
 
-<div class="bento">
-  <div class="card c-wide" data-animate>
-    <div class="icon">⚡</div>
-    <h3>Durable Execution Engine</h3>
-    <p>Tasks go through a 12-step pipeline: guardrails validate, context is injected, rubric is generated, trace starts, Claude API executes with optimal model routing (Haiku/Sonnet/Opus), LLM-as-Judge scores, replanner handles failures, state advances atomically in SQLite.</p>
-    <div class="tag">Core</div>
+  <p class="hero-sub">
+    Imagina 236 especialistas que trabalham enquanto dormes, corrigem-se sozinhos,
+    aprendem com cada tarefa e custam menos que um estagiario.
+    Isto e o DARIO.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary btn-pulse">
+      Experimentar Gratis
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <a href="#demo" class="btn-outline">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Ver Demonstracao
+    </a>
   </div>
-  <div class="card c-narrow" data-animate>
-    <div class="icon">🧠</div>
-    <h3>Self-Evolving</h3>
-    <p>Learning journals capture patterns. Synaptic weights evolve. High-performing skill pairs get dispatch priority. The system literally rewrites its own routing logic.</p>
-    <div class="tag">AI-Native</div>
+
+  <div class="hero-install" id="install-cmd" title="Clica para copiar">
+    <code>pip install dario-orchestrator</code>
+    <span class="copy-icon">&#128203;</span>
   </div>
-  <div class="card c-narrow" data-animate>
-    <div class="icon">🔄</div>
-    <h3>Auto-Recovery</h3>
-    <p>Task fails? Replanner retries with same worker, tries a sibling, falls back to alternative skill, or escalates. Pipeline never stops.</p>
-    <div class="tag">Resilient</div>
-  </div>
-  <div class="card c-wide" data-animate>
-    <div class="icon">🛡️</div>
-    <h3>7 Pre-Execution Guardrails</h3>
-    <p>Before ANY task executes: required fields verified, skill exists in hierarchy, budget sufficient, dependencies met, assignee valid, state allows execution, no double-execution. Blocks if FAIL.</p>
-    <div class="tag">Safety</div>
-  </div>
-  <div class="card c-half" data-animate>
-    <div class="icon">📊</div>
-    <h3>Adaptive Quality Scoring</h3>
-    <p>16 skill-specific rubric profiles. Brand tasks scored on creativity (30%), financials on accuracy (35%). LLM-as-Judge via Haiku at $0.001/score. Not fixed 5 dimensions — contextual.</p>
-    <div class="tag">Intelligence</div>
-  </div>
-  <div class="card c-half" data-animate>
-    <div class="icon">🔮</div>
-    <h3>Predictive Dispatch</h3>
-    <p>Before executing: "This task will score ~84/100, cost ~$0.02, 0% revision risk. Recommend Haiku model." Uses historical data for estimates.</p>
-    <div class="tag">Intelligence</div>
-  </div>
-  <div class="card c-third" data-animate>
-    <div class="icon">🗄️</div>
-    <h3>SQLite ACID</h3>
-    <p>No more YAML race conditions. WAL mode, CAS checkout, atomic transactions. Crash recovery via write-ahead log.</p>
-    <div class="tag">Persistence</div>
-  </div>
-  <div class="card c-third" data-animate>
-    <div class="icon">🌐</div>
-    <h3>45 REST Endpoints</h3>
-    <p>FastAPI runtime on :8422. Tasks, dispatch, state, audit, budget, scores, chains, templates, plugins, compliance, metrics, NL queries.</p>
-    <div class="tag">API</div>
-  </div>
-  <div class="card c-third" data-animate>
-    <div class="icon">🔗</div>
-    <h3>DAG Chains</h3>
-    <p>Skill chains with parallel waves, per-step checkpoints, structured artifact validation. Resume from any point after crash.</p>
-    <div class="tag">Workflow</div>
-  </div>
-</div>
 </section>
 
-<!-- COMPARISON -->
-<section>
-<h2 class="section-title" data-animate>DARIO vs The Competition</h2>
-<p class="section-sub" data-animate>How we compare against every major AI orchestrator in 2026.</p>
-
-<div class="compare" data-animate>
-<table>
-<tr>
-  <th>Feature</th><th>DARIO v9</th><th>Paperclip</th><th>LangGraph</th><th>CrewAI</th><th>Raw Claude</th>
-</tr>
-<tr><td>Durable execution</td><td class="yes">SQLite ACID + WAL</td><td class="yes">PostgreSQL</td><td class="yes">Checkpoints</td><td class="no">In-memory</td><td class="no">None</td></tr>
-<tr><td>Self-evolution</td><td class="yes">Synaptic weights + crystallization</td><td class="no">Static</td><td class="no">Static</td><td class="no">Static</td><td class="no">None</td></tr>
-<tr><td>Pre-exec guardrails</td><td class="yes">7 checks + block</td><td class="partial">Basic</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
-<tr><td>Adaptive scoring</td><td class="yes">16 profiles + LLM-Judge</td><td class="no">None</td><td class="no">None</td><td class="partial">Fixed rubric</td><td class="no">None</td></tr>
-<tr><td>DAG workflows</td><td class="yes">Waves + conditions</td><td class="partial">Linear</td><td class="yes">Full DAG</td><td class="partial">Sequential</td><td class="no">None</td></tr>
-<tr><td>Auto-recovery</td><td class="yes">Retry→sibling→fallback→escalate</td><td class="partial">Retry only</td><td class="partial">Retry</td><td class="no">None</td><td class="no">None</td></tr>
-<tr><td>API runtime</td><td class="yes">45 endpoints</td><td class="yes">Full API</td><td class="partial">SDK only</td><td class="no">None</td><td class="no">None</td></tr>
-<tr><td>Multi-tenancy</td><td class="yes">Per-tenant isolation</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
-<tr><td>Compliance (RGPD/SOC2)</td><td class="yes">Audit engine</td><td class="partial">Audit log</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
-<tr><td>Claude Code native</td><td class="yes">Built for it</td><td class="no">Generic</td><td class="no">Generic</td><td class="no">Generic</td><td class="yes">Native</td></tr>
-<tr><td>One-command install</td><td class="yes">npx install</td><td class="no">Complex</td><td class="no">pip + config</td><td class="no">pip + config</td><td class="yes">Built-in</td></tr>
-</table>
-</div>
-</section>
-
-<!-- ARCHITECTURE -->
-<section>
-<h2 class="section-title" data-animate>Architecture</h2>
-<div class="arch-diagram" data-animate><span class="hl">Runtime Engine v9.0</span> (FastAPI :8422)
-┌──────────────────────────────────────────────────────┐
-│  <span class="g">Scheduler</span>  │  <span class="g">45 REST</span>  │  <span class="g">SQLite</span>  │  <span class="g">Auth</span>  │
-│  (30min)    │  endpoints │  ACID    │  RBAC  │
-├──────────────────────────────────────────────────────┤
-│              <span class="hl">26 Python Engines</span>                      │
-│  <span class="w">dispatch</span> · <span class="w">state</span> · <span class="w">executor</span> · <span class="w">chain_dag</span> ·         │
-│  <span class="w">quality</span> · <span class="w">evolution</span> · <span class="w">autodiag</span> · <span class="w">guardrails</span> ·      │
-│  <span class="w">tracer</span> · <span class="w">replanner</span> · <span class="w">context</span> · <span class="w">rubrics</span> ·         │
-│  <span class="w">llm_judge</span> · <span class="w">predictor</span> · <span class="w">meter</span> · <span class="w">templates</span> ·      │
-│  <span class="w">plugins</span> · <span class="w">federation</span> · <span class="w">compliance</span> · <span class="w">telemetry</span>    │
-├──────────────────────────────────────────────────────┤
-│              <span class="hl">YAML Configs</span> (read-only)               │
-│  company · chains · manifesto · states · webhooks    │
-└──────────────────────────────────────────────────────┘</div>
-</section>
-
-<!-- PRICING -->
-<section>
-<h2 class="section-title" data-animate>Pricing</h2>
-<p class="section-sub" data-animate>One orchestrator. Every tier of capability.</p>
-
-<div class="pricing" data-animate>
-  <div class="price-card">
-    <h3>Community</h3>
-    <div class="price">Free<span></span></div>
-    <ul>
-      <li>8 core skills (orchestrator, dispatch, taskboard, heartbeat, autopilot, quality, analytics, status)</li>
-      <li>YAML task management</li>
-      <li>Basic quality scoring</li>
-      <li>Budget tracking</li>
-      <li>Community support (GitHub Issues)</li>
-    </ul>
-    <button class="price-btn" style="background:transparent;border:1px solid var(--border);color:var(--text)">npx install</button>
-  </div>
-  <div class="price-card featured">
-    <h3>Pro</h3>
-    <div class="price">$49<span>/month</span></div>
-    <ul>
-      <li>Everything in Community</li>
-      <li>26 Python engines (SQLite, FastAPI, DAG)</li>
-      <li>Self-evolution engine</li>
-      <li>LLM-as-Judge (Haiku scoring)</li>
-      <li>Predictive dispatch</li>
-      <li>API auth + RBAC</li>
-      <li>48 pytest tests</li>
-      <li>Priority support</li>
-    </ul>
-    <button class="price-btn">Start Free Trial</button>
-  </div>
-  <div class="price-card">
-    <h3>Enterprise</h3>
-    <div class="price">Custom<span></span></div>
-    <ul>
-      <li>Everything in Pro</li>
-      <li>Multi-tenancy</li>
-      <li>Cross-instance federation</li>
-      <li>RGPD/SOC2 compliance engine</li>
-      <li>Custom skill development</li>
-      <li>White-label branding</li>
-      <li>Dedicated support</li>
-      <li>On-premise deployment</li>
-    </ul>
-    <button class="price-btn" style="background:transparent;border:1px solid var(--accent);color:var(--accent)">Contact Sales</button>
-  </div>
-</div>
-</section>
-
-<!-- CTA -->
-<div class="cta-section">
-  <h2 data-animate>Ready to <span style="color:var(--accent)">Orchestrate</span>?</h2>
-  <p style="color:var(--muted);margin-bottom:32px" data-animate>One command. Full autonomous AI team. Zero configuration.</p>
-  <div class="big-cmd" data-animate onclick="navigator.clipboard.writeText('npx github:bardapraiacaraiva/dario-orchestrator-installer')">
-    <span style="color:var(--success)">$</span> npx github:bardapraiacaraiva/dario-orchestrator-installer
+<!-- ═══════════════════════════════════════════
+     2. SOCIAL PROOF BAR
+     ═══════════════════════════════════════════ -->
+<div class="proof-bar">
+  <div class="proof-bar-inner">
+    <div class="proof-item">
+      <div class="proof-num" data-target="236" data-suffix="">0</div>
+      <div class="proof-label">Skills</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num" data-target="11" data-suffix="">0</div>
+      <div class="proof-label">Divisoes</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num" data-target="26" data-suffix="">0</div>
+      <div class="proof-label">Engines Python</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num" data-target="45" data-suffix="">0</div>
+      <div class="proof-label">API Endpoints</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num" data-target="48" data-suffix="">0</div>
+      <div class="proof-label">Testes</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num" data-target="99" data-suffix=".7%">0</div>
+      <div class="proof-label">Uptime</div>
+    </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     3. TERMINAL DEMO
+     ═══════════════════════════════════════════ -->
+<section class="terminal-section" id="demo">
+  <div class="section-inner">
+    <div class="terminal-header reveal">
+      <span class="section-tag">&#9654; LIVE DEMO</span>
+      <h2 class="section-title">Veja o DARIO a <span class="highlight">Trabalhar</span></h2>
+      <p class="section-subtitle" style="margin:0 auto;">Uma task entra. 236 skills estao prontas. O sistema decide, executa, avalia e aprende — tudo automaticamente.</p>
+    </div>
+
+    <div class="terminal-window reveal reveal-delay-2" id="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-bar-title">dario-orchestrator v9.0 -- localhost:8422</span>
+      </div>
+      <div class="terminal-body" id="terminal-body">
+        <!-- Lines injected by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     4. THE PROBLEM
+     ═══════════════════════════════════════════ -->
+<section class="section" id="problema">
+  <div class="reveal">
+    <span class="section-tag">O PROBLEMA</span>
+    <h2 class="section-title">Estas a queimar dinheiro.<br><span class="highlight">Todos os dias.</span></h2>
+    <p class="section-subtitle">A maioria das agencias e empresas ainda opera como se estivessemos em 2019. O custo da inacao e invisivel — ate que olhas para os numeros.</p>
+  </div>
+
+  <div class="problem-grid">
+    <div class="problem-card glass tilt-card reveal reveal-delay-1">
+      <div class="problem-icon">&#9203;</div>
+      <h3>40h/semana em tarefas repetitivas</h3>
+      <p>Emails, propostas, reports, copy, social media, SEO audits, faturas, onboarding. Cada task demora 2-4 horas. Multiplica por 10 clientes e tens uma equipa inteira so a fazer "busy work".</p>
+      <div class="problem-stat">
+        <span class="stat-bad">160h/mes</span> desperdicadas em tarefas automatizaveis
+      </div>
+    </div>
+
+    <div class="problem-card glass tilt-card reveal reveal-delay-2">
+      <div class="problem-icon">&#128176;</div>
+      <h3>Equipa cara, resultados inconsistentes</h3>
+      <p>Um copywriter custa 1.800EUR/mes. Um SEO specialist, 2.500EUR. Um project manager, 2.200EUR. E mesmo assim, a qualidade varia entre "excelente" e "precisa de refazer tudo".</p>
+      <div class="problem-stat">
+        <span class="stat-bad">6.500EUR+/mes</span> para cobrir 3 funcoes basicas
+      </div>
+    </div>
+
+    <div class="problem-card glass tilt-card reveal reveal-delay-3">
+      <div class="problem-icon">&#127769;</div>
+      <h3>Nada acontece fora do horario</h3>
+      <p>A tua agencia para as 18h. Os problemas nao. Projetos atrasam, clientes esperam, oportunidades passam — tudo porque o teu negocio so funciona quando TU estas la.</p>
+      <div class="problem-stat">
+        <span class="stat-bad">128h/mes</span> sem ninguem a trabalhar (noites + fins de semana)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     5. THE SOLUTION — ANIMATED PIPELINE
+     ═══════════════════════════════════════════ -->
+<section class="section" id="solucao">
+  <div class="reveal">
+    <span class="section-tag">A SOLUCAO</span>
+    <h2 class="section-title">Um pipeline inteligente que <span class="highlight">nunca para</span></h2>
+    <p class="section-subtitle">Cada task percorre um pipeline de 7 etapas. Sem intervencao humana. Com fallback, retry e quality scoring automatico.</p>
+  </div>
+
+  <div class="pipeline-flow reveal reveal-delay-2">
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#128172;</div>
+      <h4>Input</h4>
+      <p>Task em linguagem natural ou API</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#129504;</div>
+      <h4>Dispatch</h4>
+      <p>Routing inteligente para o skill certo</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#128640;</div>
+      <h4>Execute</h4>
+      <p>Skill executa com contexto injetado</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#9878;</div>
+      <h4>Score</h4>
+      <p>LLM-as-Judge avalia qualidade 0-100</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#128260;</div>
+      <h4>Self-Correct</h4>
+      <p>Retry com feedback se score &lt; 60</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#128200;</div>
+      <h4>Learn</h4>
+      <p>Evolucao: ajusta pesos e padroes</p>
+    </div>
+    <div class="pipeline-arrow">&#10132;</div>
+    <div class="pipeline-step">
+      <div class="pipe-icon">&#9989;</div>
+      <h4>Deliver</h4>
+      <p>Output entregue com score &gt; 80</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     6. 11 DIVISIONS HORIZONTAL CAROUSEL
+     ═══════════════════════════════════════════ -->
+<section class="divisions-section" id="divisoes">
+  <div class="divisions-header reveal">
+    <span class="section-tag">11 DIVISOES ESPECIALIZADAS</span>
+    <h2 class="section-title"><span class="highlight">236 skills.</span> Cada uma um especialista.</h2>
+    <p class="section-subtitle">Do branding ao compliance, da contabilidade a arquitectura. O DARIO cobre todo o espectro operacional de uma empresa.</p>
+  </div>
+
+  <div class="divisions-track-wrapper">
+    <div class="divisions-track" id="divisions-track">
+
+      <!-- DARIO -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128161;</div>
+        <h3>D.A.R.I.O.</h3>
+        <div class="div-full-name">Digital Agency & Revenue Intelligence</div>
+        <div class="div-count">&#9733; 20+ skills</div>
+        <div class="div-skills">
+          Brand positioning, Grand Slam Offers, sales letters, Facebook/Google Ads, funnels, email sequences, naming, storytelling, pitch decks, proposals, <strong>negotiation (Chris Voss)</strong>, content at scale, social media, HR, legal, PR, CRO, movement building
+        </div>
+        <div class="div-example">dario-offer → "Cria oferta irresistivel para SaaS contabilidade"</div>
+      </div>
+
+      <!-- DIVA -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#127960;</div>
+        <h3>D.I.V.A.</h3>
+        <div class="div-full-name">Design, Interior & Visual Architecture</div>
+        <div class="div-count">&#9733; 18+ skills</div>
+        <div class="div-skills">
+          Client briefing, diagnostico estrutural, floor plan optimization, moodboards, materiais + palettes, orcamento ProNIC, timeline Gantt, contratos empreitada, <strong>inspecao por fase</strong>, BIM, licenciamento RJUE, energia SCE, smart home, renders, landscape, MEP, acustica, acessibilidade
+        </div>
+        <div class="div-example">diva-budget → "Orcamento T3 Lisboa 90m2 qualidade media-alta"</div>
+      </div>
+
+      <!-- SEO -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128269;</div>
+        <h3>SEO</h3>
+        <div class="div-full-name">Search Engine Optimization Squad</div>
+        <div class="div-count">&#9733; 16 specialists</div>
+        <div class="div-skills">
+          Full audit (crawl 500+ pages), technical SEO, content + E-E-A-T, schema JSON-LD, local SEO + GBP, <strong>GEO/AI Overviews</strong>, SEO plan, page analysis, sitemaps, image optimization, hreflang, programmatic SEO, competitor analysis, DataForSEO live data, image generation, keyword clusters
+        </div>
+        <div class="div-example">seo-audit → "Audita completamente flipperboys.com"</div>
+      </div>
+
+      <!-- ATLAS -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#127915;</div>
+        <h3>A.T.L.A.S.</h3>
+        <div class="div-full-name">Advanced Tactical Logistics & Artistic Solutions</div>
+        <div class="div-count">&#9733; 25+ skills</div>
+        <div class="div-skills">
+          Event briefing, venue scoring, timeline run-of-show, orcamento, catering + F&B, AV production, staging + set build, decoracao, entertainment, guest RSVP, <strong>seating + protocolo</strong>, transporte, alojamento, staff, armazem, compliance PT, marketing, sponsors, CRM, hibrido, sustentabilidade, risco, checklists, pos-evento
+        </div>
+        <div class="div-example">atlas-venue → "Avalia 3 venues para gala 200 pessoas Lisboa"</div>
+      </div>
+
+      <!-- NEXUS -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#9881;</div>
+        <h3>N.E.X.U.S.</h3>
+        <div class="div-full-name">Network Engineering & eXpert Utility Systems</div>
+        <div class="div-count">&#9733; 12 skills</div>
+        <div class="div-skills">
+          Infrastructure as Code (Terraform/Docker/K8s), CI/CD pipelines, <strong>monitoring + alerting</strong>, security (SIEM, vuln scanning), database admin, IAM + RBAC, network (VPC, DNS, CDN), backup + DR, capacity planning, compliance (SOC2, ISO), cloud cost optimization, runbooks
+        </div>
+        <div class="div-example">nexus-cicd → "Configura GitHub Actions para deploy Next.js"</div>
+      </div>
+
+      <!-- PESSOA -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#129309;</div>
+        <h3>P.E.S.S.O.A.</h3>
+        <div class="div-full-name">People Excellence & Strategic Staff Operations</div>
+        <div class="div-count">&#9733; 13 skills</div>
+        <div class="div-skills">
+          Recrutamento full-cycle, onboarding day-1, performance + OKRs, L&D + skill gaps, <strong>compensacao + pay bands</strong>, workforce planning, sucessao + 9-box, engagement + eNPS, wellbeing, DEI, people analytics, org design, legislacao laboral PT (Codigo do Trabalho)
+        </div>
+        <div class="div-example">pessoa-recrutamento → "Job description + scorecard para dev senior"</div>
+      </div>
+
+      <!-- RISCO -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128737;</div>
+        <h3>R.I.S.C.O.</h3>
+        <div class="div-full-name">Regulatory Intelligence & Security Compliance</div>
+        <div class="div-count">&#9733; 14 skills</div>
+        <div class="div-skills">
+          <strong>RGPD/GDPR</strong> (DPIA, ROPA, DPO), AML/KYC (Lei 83/2017), ISO 27001/NIS2, ESG + CSRD, BCP (ISO 22301), etica + conflitos, seguros, regulatorio, whistleblowing (DL 93/2021), contratual, reporting KRI, terceiros, auditoria interna, matriz de risco
+        </div>
+        <div class="div-example">risco-rgpd → "Audit RGPD completo para e-commerce"</div>
+      </div>
+
+      <!-- CONTA -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128202;</div>
+        <h3>C.O.N.T.A.</h3>
+        <div class="div-full-name">Contabilidade & Obrigacoes Nacionais Tributarias</div>
+        <div class="div-count">&#9733; 17 skills</div>
+        <div class="div-skills">
+          IVA (regimes, VIES, pro-rata), IRC (Modelo 22, PEC, tributacao autonoma), IRS (Cat A/B/E/F/G), payroll (subsidios, DMR), faturacao (e-Fatura, ATCUD, SAF-T), <strong>conciliacao bancaria</strong>, orcamento, tesouraria, encerramento, consolidacao, custos, ativos fixos, auditoria, plano SNC, demonstracoes financeiras, seguranca social
+        </div>
+        <div class="div-example">conta-iva → "Declaracao periodica IVA Q1 2026"</div>
+      </div>
+
+      <!-- SUPLY -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128666;</div>
+        <h3>S.U.P.L.Y.</h3>
+        <div class="div-full-name">Supply Chain & Logistics</div>
+        <div class="div-count">&#9733; 8 skills</div>
+        <div class="div-skills">
+          Strategic sourcing + TCO, <strong>inventory (ABC/XYZ, EOQ)</strong>, logistics + 3PL, warehouse (WMS, pick/pack), supplier scorecards, quality control + sampling, cost optimization, demand forecasting + safety stock
+        </div>
+        <div class="div-example">suply-inventory → "Analise ABC/XYZ inventario 500 SKUs"</div>
+      </div>
+
+      <!-- CLIENT -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#127775;</div>
+        <h3>C.L.I.E.N.T.</h3>
+        <div class="div-full-name">Customer Lifecycle & Engagement Network</div>
+        <div class="div-count">&#9733; 10 skills</div>
+        <div class="div-skills">
+          Customer onboarding (first 90 days), health scoring + churn prediction, <strong>journey mapping</strong>, QBR templates, renewal pipeline, win-back campaigns, expansion + upsell, customer education academy, community management, Voice of Customer (NPS/CSAT/CES)
+        </div>
+        <div class="div-example">client-health → "Health score + churn risk para 20 clientes"</div>
+      </div>
+
+      <!-- ADRIANA -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128218;</div>
+        <h3>A.D.R.I.A.N.A.</h3>
+        <div class="div-full-name">Administrative Document & Resource Intelligence</div>
+        <div class="div-count">&#9733; 15 skills</div>
+        <div class="div-skills">
+          Gestao documental, reunioes + actas, travel + expense, procurement, facilities, <strong>frota/ativos</strong>, onboarding admin, politicas, SOPs, reporting admin, calendario corporativo, comunicacao interna, recepcao VIP, arquivo + retencao, inventario escritorio
+        </div>
+        <div class="div-example">adriana-meetings → "Agenda + acta reuniao trimestral equipa"</div>
+      </div>
+
+      <!-- A360 -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#128640;</div>
+        <h3>A360</h3>
+        <div class="div-full-name">Business Acceleration 360</div>
+        <div class="div-count">&#9733; 13 skills</div>
+        <div class="div-skills">
+          Niche research + TAM/SAM/SOM, client radar, <strong>landing pages</strong>, pitch decks (STRONG + Sparkline), GTM strategy, sales playbook, meeting prep, financial modelling, SaaS metrics, avatar + ICP, case studies, launch sequences, growth engine (viral loops, referrals)
+        </div>
+        <div class="div-example">a360-nicho → "Valida nicho SaaS contabilidade Portugal"</div>
+      </div>
+
+      <!-- LUCAS -->
+      <div class="division-card glass tilt-card">
+        <div class="div-icon">&#129302;</div>
+        <h3>L.U.C.A.S.</h3>
+        <div class="div-full-name">Autonomous Orchestration Engine</div>
+        <div class="div-count">&#9733; 5 core engines</div>
+        <div class="div-skills">
+          <strong>Autopilot</strong> (scan + dispatch + execute + score em loop), heartbeat engine, quality scoring com rubricas adaptativas, finance tracking (IVA/IRC, cash flow), analytics cross-project com pattern detection
+        </div>
+        <div class="div-example">lucas-autopilot → "Executa todas as tasks pendentes automaticamente"</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divisions-nav">
+    <button id="div-prev" aria-label="Anterior">&#8249;</button>
+    <button id="div-next" aria-label="Proximo">&#8250;</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     7. HOW IT WORKS — 5 STEPS
+     ═══════════════════════════════════════════ -->
+<section class="section" id="como-funciona">
+  <div class="reveal">
+    <span class="section-tag">COMO FUNCIONA</span>
+    <h2 class="section-title">5 passos. <span class="highlight">Zero fricao.</span></h2>
+    <p class="section-subtitle">Do comando a entrega, tudo acontece sem intervencao manual. O DARIO decide, executa, avalia, corrige e entrega.</p>
+  </div>
+
+  <div class="steps-container">
+    <div class="steps-line"></div>
+
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Tu pedes. Em linguagem natural.</h3>
+        <p>Escreve o que precisas como se falasses a um colega. Sem templates, sem formularios, sem menus. O dispatcher analisa a tua intencao e identifica os skills certos.</p>
+        <div class="step-detail">"Cria uma proposta comercial para o cliente Atrium com 3 opcoes de preco"</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal reveal-delay-1">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>O Dispatch Engine encaminha inteligentemente</h3>
+        <p>O motor de routing analisa 236 skills, consulta pesos de evolucao, verifica disponibilidade e selecciona o melhor skill — ou cria um DAG workflow com multiplos skills encadeados.</p>
+        <div class="step-detail">Dispatch: dario-proposal (confidence: 0.94) + chain: dario-brand → dario-offer → dario-proposal</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal reveal-delay-2">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Execucao com contexto injetado</h3>
+        <p>O Context Injector carrega a memoria do projecto, dados do cliente, historico de interacoes e padroes de sucesso. O skill executa com informacao completa, nao generica.</p>
+        <div class="step-detail">Context: Atrium Premium RE, NYC+Lisboa, HNW investors, score anterior: 182.5/200</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal reveal-delay-3">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>LLM-as-Judge avalia a qualidade</h3>
+        <p>Um segundo modelo de IA avalia o output em 5 dimensoes: Specificity, Actionability, Completeness, Accuracy e Tone. Score abaixo de 60? O sistema re-executa automaticamente com feedback.</p>
+        <div class="step-detail">Quality Score: 87/100 | Specificity: 19 | Actionability: 17 | Completeness: 18 | Accuracy: 17 | Tone: 16</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal reveal-delay-4">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Entrega + Evolucao automatica</h3>
+        <p>O output e entregue com metadata completa. O Evolution Engine regista o que funcionou, actualiza pesos de routing e guarda padroes de sucesso para tasks futuras.</p>
+        <div class="step-detail">Delivered: proposta_atrium_3opcoes.md | Evolution: +0.03 weight boost para dario-proposal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     8. LIVE METRICS DASHBOARD
+     ═══════════════════════════════════════════ -->
+<section class="section" id="dashboard">
+  <div class="reveal">
+    <span class="section-tag">DASHBOARD EM TEMPO REAL</span>
+    <h2 class="section-title">Visibilidade <span class="highlight">total</span></h2>
+    <p class="section-subtitle">Monitoriza tudo: saude do sistema, tasks em execucao, budget consumido e qualidade media. Tudo num dashboard que actualiza em tempo real via FastAPI.</p>
+  </div>
+
+  <div class="dashboard-mock reveal reveal-delay-2">
+    <div class="dash-header">
+      <div class="dash-title">
+        <span class="live-dot"></span>
+        DARIO Orchestrator — Dashboard
+      </div>
+      <div class="dash-timestamp">2026-05-05 14:32:17 UTC</div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card health">
+        <div class="dash-value">98.7<span style="font-size:16px">%</span></div>
+        <div class="dash-label">System Health</div>
+      </div>
+      <div class="dash-card tasks">
+        <div class="dash-value">142</div>
+        <div class="dash-label">Tasks Completed</div>
+      </div>
+      <div class="dash-card budget">
+        <div class="dash-value">34<span style="font-size:16px">%</span></div>
+        <div class="dash-label">Budget Used</div>
+      </div>
+      <div class="dash-card quality">
+        <div class="dash-value">86.4</div>
+        <div class="dash-label">Avg Quality Score</div>
+      </div>
+    </div>
+
+    <div class="dash-activity">
+      <h4>Actividade Recente</h4>
+      <div class="dash-activity-line">
+        <span class="time">14:32</span>
+        <span class="status"><span class="dot-green"></span></span>
+        <span class="msg"><span>dario-proposal</span> entregou proposta Atrium 3 opcoes — score 91/100</span>
+      </div>
+      <div class="dash-activity-line">
+        <span class="time">14:28</span>
+        <span class="status"><span class="dot-teal"></span></span>
+        <span class="msg"><span>seo-audit</span> completou audit flipperboys.com — 47 issues, 12 criticos</span>
+      </div>
+      <div class="dash-activity-line">
+        <span class="time">14:21</span>
+        <span class="status"><span class="dot-amber"></span></span>
+        <span class="msg"><span>lucas-autopilot</span> re-executou conta-iva (score 54 → retry com feedback)</span>
+      </div>
+      <div class="dash-activity-line">
+        <span class="time">14:15</span>
+        <span class="status"><span class="dot-green"></span></span>
+        <span class="msg"><span>diva-budget</span> gerou orcamento T3 Benfica — 287.400 EUR — score 88/100</span>
+      </div>
+      <div class="dash-activity-line">
+        <span class="time">14:09</span>
+        <span class="status"><span class="dot-green"></span></span>
+        <span class="msg"><span>atlas-venue</span> comparou 5 venues para gala anual — top pick: Patio da Galeria</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     9. SKILL CHAINS — VISUAL WORKFLOW
+     ═══════════════════════════════════════════ -->
+<section class="section" id="chains">
+  <div class="reveal">
+    <span class="section-tag">DAG WORKFLOWS</span>
+    <h2 class="section-title">Skills que se <span class="highlight">encadeiam</span></h2>
+    <p class="section-subtitle">Um comando pode disparar uma cadeia de skills com checkpoints. Se algo falha no passo 4, retoma do passo 4 — nao recomeça do zero.</p>
+  </div>
+
+  <div class="chain-flow reveal reveal-delay-1">
+    <div class="chain-node">
+      <div class="node-icon">&#128161;</div>
+      <h4>Brand</h4>
+      <p>Posicionamento + Arquetipo</p>
+    </div>
+    <div class="chain-arrow">&#10132;</div>
+    <div class="chain-node">
+      <div class="node-icon">&#127793;</div>
+      <h4>Naming</h4>
+      <p>10 nomes + scoring</p>
+    </div>
+    <div class="chain-arrow">&#10132;</div>
+    <div class="chain-node">
+      <div class="node-icon">&#128176;</div>
+      <h4>Offer</h4>
+      <p>Grand Slam Offer</p>
+    </div>
+    <div class="chain-arrow">&#10132;</div>
+    <div class="chain-node">
+      <div class="node-icon">&#9997;</div>
+      <h4>Sales Letter</h4>
+      <p>Copy long-form</p>
+    </div>
+    <div class="chain-arrow">&#10132;</div>
+    <div class="chain-node">
+      <div class="node-icon">&#128231;</div>
+      <h4>Emails</h4>
+      <p>Sequencia 7 emails</p>
+    </div>
+    <div class="chain-arrow">&#10132;</div>
+    <div class="chain-output">
+      <div class="node-icon">&#127942;</div>
+      <h4>Lancamento Completo</h4>
+      <p>Marca + oferta + copy + emails</p>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:24px;font-family:var(--font-mono);font-size:13px;color:var(--muted);" class="reveal reveal-delay-2">
+    &#128274; Checkpoint em cada passo — resume de qualquer ponto se algo falhar
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     10. BEFORE / AFTER
+     ═══════════════════════════════════════════ -->
+<section class="section" id="antes-depois">
+  <div class="reveal">
+    <span class="section-tag">IMPACTO REAL</span>
+    <h2 class="section-title">Antes vs <span class="highlight">Depois</span> do DARIO</h2>
+    <p class="section-subtitle">Numeros reais de uma agencia digital portuguesa com 8 clientes activos.</p>
+  </div>
+
+  <div class="ba-grid reveal reveal-delay-1">
+    <div class="ba-card before">
+      <div class="ba-label">&#10005; Antes</div>
+      <div class="ba-item">
+        <span class="ba-icon">&#9203;</span>
+        <div class="ba-text">
+          <h4>160h/mes em tarefas repetitivas</h4>
+          <p>Emails, propostas, reports, social media, auditorias manuais</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128176;</span>
+        <div class="ba-text">
+          <h4>6.500EUR+/mes custo equipa</h4>
+          <p>3 funcoes (copy, SEO, PM) com qualidade inconsistente</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128337;</span>
+        <div class="ba-text">
+          <h4>2-4 horas por proposta</h4>
+          <p>Research + escrita + revisao + formatacao manual</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128564;</span>
+        <div class="ba-text">
+          <h4>0 output apos as 18h</h4>
+          <p>128h/mes sem ninguem a trabalhar</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128200;</span>
+        <div class="ba-text">
+          <h4>Qualidade variavel (50-85/100)</h4>
+          <p>Depende do dia, da pessoa, da carga de trabalho</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ba-divider"><span>&#10132;</span></div>
+
+    <div class="ba-card after">
+      <div class="ba-label">&#10003; Depois</div>
+      <div class="ba-item">
+        <span class="ba-icon">&#9889;</span>
+        <div class="ba-text">
+          <h4>12h/mes (92% reducao)</h4>
+          <p>So revisao humana final — o DARIO faz o resto</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128178;</span>
+        <div class="ba-text">
+          <h4>49-199EUR/mes custo DARIO</h4>
+          <p>236 specialists por menos que 3% do custo anterior</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#9889;</span>
+        <div class="ba-text">
+          <h4>12 minutos por proposta</h4>
+          <p>Dispatch → execute → score → deliver automatico</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#127769;</span>
+        <div class="ba-text">
+          <h4>24/7 autonomo</h4>
+          <p>Lucas Autopilot executa enquanto dormes</p>
+        </div>
+      </div>
+      <div class="ba-item">
+        <span class="ba-icon">&#128200;</span>
+        <div class="ba-text">
+          <h4>Qualidade consistente (82-95/100)</h4>
+          <p>LLM-as-Judge garante minimo 80 ou re-executa</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     11. USE CASES
+     ═══════════════════════════════════════════ -->
+<section class="section" id="casos">
+  <div class="reveal">
+    <span class="section-tag">CASOS DE USO</span>
+    <h2 class="section-title">Quem usa o <span class="highlight">DARIO</span></h2>
+    <p class="section-subtitle">4 cenarios reais onde o DARIO transforma operacoes inteiras — com numeros concretos.</p>
+  </div>
+
+  <div class="usecase-grid">
+    <div class="usecase-card glass tilt-card reveal reveal-delay-1">
+      <div class="uc-icon">&#127968;</div>
+      <h3>Agencia Digital</h3>
+      <p>Propostas, SEO audits, social media copy, email sequences, funnels, landing pages — tudo automatizado. O dono da agencia foca em relacoes com clientes enquanto o DARIO produz os deliverables.</p>
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="uc-num">92%</div>
+          <div class="uc-label">Tempo poupado</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">3.2x</div>
+          <div class="uc-label">Mais clientes</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">86</div>
+          <div class="uc-label">Score medio</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="usecase-card glass tilt-card reveal reveal-delay-2">
+      <div class="uc-icon">&#127959;</div>
+      <h3>Atelier de Arquitectura</h3>
+      <p>Briefings estruturados, orcamentos ProNIC, timelines Gantt, contratos empreitada, inspecoes por fase, BIM specs e licenciamento — o DIVA cobre todo o ciclo do projecto.</p>
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="uc-num">78%</div>
+          <div class="uc-label">Menos admin</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">14 dias</div>
+          <div class="uc-label">Mais rapido</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">89</div>
+          <div class="uc-label">Score medio</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="usecase-card glass tilt-card reveal reveal-delay-3">
+      <div class="uc-icon">&#128200;</div>
+      <h3>PME / Startup SaaS</h3>
+      <p>Contabilidade (IVA, IRC, payroll), compliance (RGPD, AML), supply chain, customer success, HR — as divisoes CONTA, RISCO, SUPLY, CLIENT e PESSOA cobrem back-office inteiro.</p>
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="uc-num">6.200EUR</div>
+          <div class="uc-label">Poupanca/mes</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">5 FTEs</div>
+          <div class="uc-label">Substituidos</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">24/7</div>
+          <div class="uc-label">Operacao</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="usecase-card glass tilt-card reveal reveal-delay-4">
+      <div class="uc-icon">&#127915;</div>
+      <h3>Empresa de Eventos</h3>
+      <p>Do briefing a pos-evento: ATLAS gere venue selection, catering, AV, staff, protocolo, marketing, sponsors, compliance e post-mortem — com checklists e timelines automaticos.</p>
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="uc-num">25+</div>
+          <div class="uc-label">Skills ATLAS</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">60%</div>
+          <div class="uc-label">Menos erros</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-num">3x</div>
+          <div class="uc-label">Mais eventos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     12. COMPARISON TABLE
+     ═══════════════════════════════════════════ -->
+<section class="section" id="comparacao">
+  <div class="reveal">
+    <span class="section-tag">COMPARACAO</span>
+    <h2 class="section-title">DARIO vs <span class="highlight">Alternativas</span></h2>
+    <p class="section-subtitle">Compara o DARIO com uma equipa manual e com ferramentas genericas de IA.</p>
+  </div>
+
+  <div class="comparison-table reveal reveal-delay-1">
+    <table>
+      <thead>
+        <tr>
+          <th>Capacidade</th>
+          <th>Equipa Manual</th>
+          <th>ChatGPT / Gemini</th>
+          <th class="col-dario header-cell">DARIO v9.0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Skills especializados</td>
+          <td>3-5 por pessoa</td>
+          <td>Generalista</td>
+          <td class="col-dario">236 skills dedicados</td>
+        </tr>
+        <tr>
+          <td>Execucao autonoma 24/7</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; Autopilot</td>
+        </tr>
+        <tr>
+          <td>Self-correction automatica</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; Retry + fallback</td>
+        </tr>
+        <tr>
+          <td>Quality scoring (LLM-as-Judge)</td>
+          <td class="partial">Subjectivo</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; 5 dimensoes, 0-100</td>
+        </tr>
+        <tr>
+          <td>Evolucao com aprendizagem</td>
+          <td class="partial">Lenta (meses)</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; A cada task</td>
+        </tr>
+        <tr>
+          <td>DAG workflows + checkpoints</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; Resume de qualquer ponto</td>
+        </tr>
+        <tr>
+          <td>Contexto persistente por projecto</td>
+          <td class="partial">Parcial</td>
+          <td class="cross">&#10007; (reset por sessao)</td>
+          <td class="col-dario check">&#10003; RAG + memoria</td>
+        </tr>
+        <tr>
+          <td>Compliance (RGPD, SOC2)</td>
+          <td class="partial">Manual, caro</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; RISCO division</td>
+        </tr>
+        <tr>
+          <td>Custo mensal (8 clientes)</td>
+          <td>6.500EUR+</td>
+          <td>20-200EUR</td>
+          <td class="col-dario">49-199EUR</td>
+        </tr>
+        <tr>
+          <td>Predictive (estima antes de executar)</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="col-dario check">&#10003; Quality + cost + risk</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     26 ENGINES
+     ═══════════════════════════════════════════ -->
+<section class="section" id="engines">
+  <div class="reveal">
+    <span class="section-tag">26 ENGINES PYTHON</span>
+    <h2 class="section-title">A <span class="highlight">maquinaria</span> por tras</h2>
+    <p class="section-subtitle">Cada engine e um modulo Python independente, testado e integrado via FastAPI com 45 endpoints. Zero dependencias externas no runtime core.</p>
+  </div>
+
+  <div class="engines-grid reveal reveal-delay-1">
+    <div class="engine-chip"><span class="ec-icon">&#128640;</span><span class="ec-name">Dispatch Engine</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#9881;</span><span class="ec-name">State Machine</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#9889;</span><span class="ec-name">Executor</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128268;</span><span class="ec-name">API Executor</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128279;</span><span class="ec-name">Chain Executor (DAG)</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#9878;</span><span class="ec-name">Quality Scorer</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#129504;</span><span class="ec-name">LLM-as-Judge</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128260;</span><span class="ec-name">Evolution Runner</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128295;</span><span class="ec-name">Autodiag</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128737;</span><span class="ec-name">Guardrails</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128257;</span><span class="ec-name">Replanner</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128065;</span><span class="ec-name">Tracer</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128218;</span><span class="ec-name">Context Injector</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128201;</span><span class="ec-name">Adaptive Rubrics</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128302;</span><span class="ec-name">Predictor</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128178;</span><span class="ec-name">Token Meter</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128221;</span><span class="ec-name">Audit Logger</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128274;</span><span class="ec-name">Filelock + WAL</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128451;</span><span class="ec-name">DB (SQLite ACID)</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#127760;</span><span class="ec-name">Runtime (FastAPI)</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128272;</span><span class="ec-name">Auth (RBAC)</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128196;</span><span class="ec-name">Task Templates</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128230;</span><span class="ec-name">Task Store</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128171;</span><span class="ec-name">Tier 3 (10 features)</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128187;</span><span class="ec-name">Install Service</span></div>
+    <div class="engine-chip"><span class="ec-icon">&#128161;</span><span class="ec-name">Session Boot</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     13. EVOLUTION ENGINE
+     ═══════════════════════════════════════════ -->
+<section class="section" id="evolucao">
+  <div class="reveal">
+    <span class="section-tag">SELF-EVOLVING</span>
+    <h2 class="section-title">O sistema que <span class="highlight">aprende sozinho</span></h2>
+    <p class="section-subtitle">O Evolution Engine nao e um buzzword. E um ciclo real que melhora cada skill a cada execucao, ajustando pesos de routing e cristalizando padroes de sucesso.</p>
+  </div>
+
+  <div class="evo-loop reveal reveal-delay-1">
+    <div class="evo-step">
+      <div class="evo-circle">&#128640;</div>
+      <h4>Executar</h4>
+      <p>Skill processa a task</p>
+    </div>
+    <div class="evo-arrow">&#10132;</div>
+    <div class="evo-step">
+      <div class="evo-circle">&#9878;</div>
+      <h4>Avaliar</h4>
+      <p>LLM-as-Judge (0-100)</p>
+    </div>
+    <div class="evo-arrow">&#10132;</div>
+    <div class="evo-step">
+      <div class="evo-circle">&#128218;</div>
+      <h4>Registar</h4>
+      <p>Learning journal entry</p>
+    </div>
+    <div class="evo-arrow">&#10132;</div>
+    <div class="evo-step">
+      <div class="evo-circle">&#129504;</div>
+      <h4>Aprender</h4>
+      <p>Mutation engine evolui</p>
+    </div>
+    <div class="evo-arrow">&#10132;</div>
+    <div class="evo-step">
+      <div class="evo-circle">&#128200;</div>
+      <h4>Melhorar</h4>
+      <p>Pesos + padroes actualizados</p>
+    </div>
+  </div>
+  <div class="evo-loop-label reveal reveal-delay-2">
+    &#8635; Ciclo continuo — <span>cada task torna o sistema mais inteligente</span>
+  </div>
+
+  <div style="max-width:700px;margin:40px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;" class="reveal reveal-delay-3">
+    <div class="glass" style="padding:20px;text-align:center;">
+      <div style="font-size:28px;font-weight:900;font-family:var(--font-mono);color:var(--teal);">$0.001</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">por score LLM-as-Judge</div>
+    </div>
+    <div class="glass" style="padding:20px;text-align:center;">
+      <div style="font-size:28px;font-weight:900;font-family:var(--font-mono);color:var(--amber);">+3%</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">melhoria media por semana</div>
+    </div>
+    <div class="glass" style="padding:20px;text-align:center;">
+      <div style="font-size:28px;font-weight:900;font-family:var(--font-mono);color:#22c55e;">86.4</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">score medio actual</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     14. TESTIMONIAL
+     ═══════════════════════════════════════════ -->
+<section class="section" id="testemunho">
+  <div class="reveal">
+    <span class="section-tag">FEEDBACK</span>
+    <h2 class="section-title" style="text-align:center;">O que dizem os <span class="highlight">utilizadores</span></h2>
+  </div>
+
+  <div class="testimonial-card reveal reveal-delay-1">
+    <div class="quote-mark">"</div>
+    <blockquote>
+      Passei de 3 propostas por semana para 3 por dia. O DARIO nao e so automacao — e ter uma equipa inteira que trabalha com contexto real do meu negocio. O quality scoring mudou tudo: agora sei ANTES de entregar se o output e bom ou se precisa de revisao.
+    </blockquote>
+    <div class="author">
+      Bruno A. <span>— Dono de Agencia Digital, Lisboa</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     15. PRICING
+     ═══════════════════════════════════════════ -->
+<section class="section" id="pricing">
+  <div class="reveal">
+    <span class="section-tag">PRECOS</span>
+    <h2 class="section-title" style="text-align:center;"><span class="highlight">Simples.</span> Sem surpresas.</h2>
+    <p class="section-subtitle" style="text-align:center;margin:0 auto;">Todos os planos incluem os 26 engines, 45 endpoints e acesso completo ao runtime FastAPI. A diferenca esta no volume e prioridade.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="pricing-card glass reveal reveal-delay-1">
+      <div class="price-name">Starter</div>
+      <div class="price-value">49EUR<span>/mes</span></div>
+      <div class="price-desc">Para freelancers e pequenos negocios</div>
+      <ul class="price-features">
+        <li><span class="pf-check">&#10003;</span> 236 skills completos</li>
+        <li><span class="pf-check">&#10003;</span> 100 tasks/mes</li>
+        <li><span class="pf-check">&#10003;</span> Quality scoring</li>
+        <li><span class="pf-check">&#10003;</span> 1 projecto activo</li>
+        <li><span class="pf-check">&#10003;</span> Dashboard basico</li>
+        <li><span class="pf-cross">&#8211;</span> Autopilot 24/7</li>
+        <li><span class="pf-cross">&#8211;</span> DAG workflows</li>
+        <li><span class="pf-cross">&#8211;</span> Multi-tenancy</li>
+      </ul>
+      <a href="#cta" class="btn-outline" style="width:100%;justify-content:center;">Comecar Gratis</a>
+    </div>
+
+    <div class="pricing-card glass featured reveal reveal-delay-2">
+      <div class="price-name">Professional</div>
+      <div class="price-value">99EUR<span>/mes</span></div>
+      <div class="price-desc">Para agencias e PMEs</div>
+      <ul class="price-features">
+        <li><span class="pf-check">&#10003;</span> 236 skills completos</li>
+        <li><span class="pf-check">&#10003;</span> 500 tasks/mes</li>
+        <li><span class="pf-check">&#10003;</span> Quality scoring + LLM-as-Judge</li>
+        <li><span class="pf-check">&#10003;</span> 5 projectos activos</li>
+        <li><span class="pf-check">&#10003;</span> Autopilot 24/7</li>
+        <li><span class="pf-check">&#10003;</span> DAG workflows + checkpoints</li>
+        <li><span class="pf-check">&#10003;</span> Evolution Engine</li>
+        <li><span class="pf-cross">&#8211;</span> Multi-tenancy</li>
+      </ul>
+      <a href="#cta" class="btn-primary" style="width:100%;justify-content:center;">Escolher Professional</a>
+    </div>
+
+    <div class="pricing-card glass reveal reveal-delay-3">
+      <div class="price-name">Enterprise</div>
+      <div class="price-value">199EUR<span>/mes</span></div>
+      <div class="price-desc">Para operacoes complexas</div>
+      <ul class="price-features">
+        <li><span class="pf-check">&#10003;</span> 236 skills completos</li>
+        <li><span class="pf-check">&#10003;</span> Tasks ilimitadas</li>
+        <li><span class="pf-check">&#10003;</span> Quality + Judge + Predictor</li>
+        <li><span class="pf-check">&#10003;</span> Projectos ilimitados</li>
+        <li><span class="pf-check">&#10003;</span> Autopilot 24/7 + prioridade</li>
+        <li><span class="pf-check">&#10003;</span> DAG + chains + federation</li>
+        <li><span class="pf-check">&#10003;</span> Evolution + analytics</li>
+        <li><span class="pf-check">&#10003;</span> Multi-tenancy + RBAC + RGPD</li>
+      </ul>
+      <a href="#cta" class="btn-outline" style="width:100%;justify-content:center;">Contactar Vendas</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     16. FAQ
+     ═══════════════════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="reveal">
+    <span class="section-tag">FAQ</span>
+    <h2 class="section-title" style="text-align:center;">Perguntas <span class="highlight">frequentes</span></h2>
+  </div>
+
+  <div class="faq-list reveal reveal-delay-1">
+
+    <div class="faq-item">
+      <button class="faq-question">
+        O que e exactamente o DARIO Orchestrator?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>O DARIO e um sistema de orquestracao de IA com 236 skills especializados, distribuidos por 11 divisoes. Funciona como uma equipa completa de especialistas — desde copywriting e SEO ate contabilidade e compliance — tudo controlado por 26 engines Python e servido via 45 API endpoints em FastAPI. Nao e um chatbot. E um sistema autonomo que executa, avalia e evolui.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Preciso de conhecimentos tecnicos para usar?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Nao. Falas em linguagem natural — como se pedisses algo a um colega. O Dispatch Engine analisa o teu pedido e encaminha para o skill certo automaticamente. Se quiseres mais controle, tens acesso a 45 endpoints API e podes criar workflows customizados, mas nao e necessario para uso diario.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Como funciona o quality scoring?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Cada output e avaliado pelo LLM-as-Judge em 5 dimensoes: Specificity (menciona dados concretos?), Actionability (proximos passos claros?), Completeness (cobriu todos os requisitos?), Accuracy (informacao correcta?) e Tone (tom adequado?). Cada dimensao vale 0-20, total 0-100. Se o score ficar abaixo de 60, o sistema re-executa automaticamente com feedback especifico sobre o que melhorar. Custo: $0.001 por avaliacao.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        O que significa "self-evolving"?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>O Evolution Engine regista o resultado de cada task num learning journal. O Mutation Engine identifica padroes de sucesso e falha, ajusta pesos de routing (skills que consistentemente pontuam alto recebem mais tarefas) e cristaliza padroes em templates reutilizaveis. Na pratica, o sistema fica mais inteligente a cada task executada — sem necessidade de intervencao manual.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Posso usar so algumas divisoes?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Sim. Cada divisao e independente. Uma agencia digital pode usar so D.A.R.I.O. + SEO + A360. Um atelier de arquitectura pode usar so D.I.V.A. + CONTA + ADRIANA. Mas todas as 236 skills estao disponíveis em todos os planos — usa so o que precisas.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Os meus dados estao seguros?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>O DARIO corre localmente na tua maquina. A database e SQLite ACID com filelock + WAL para integridade. O sistema Auth tem RBAC (Role-Based Access Control). A divisao RISCO tem skills dedicados a RGPD/GDPR compliance, incluindo DPIA, ROPA e gestao de consentimentos. No plano Enterprise, tens multi-tenancy com isolamento completo entre clientes.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Quanto custa em tokens/API calls?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>O Token Meter monitoriza cada chamada. Uma task tipica consome $0.02-$0.15 em API tokens. O quality scoring via LLM-as-Judge custa $0.001 por avaliacao. O Predictor estima o custo ANTES de executar, para que nunca tenhas surpresas. O budget tracking mensal tem alertas automaticos a 80% e hard stop a 95%.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Posso integrar com as minhas ferramentas existentes?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Sim. O runtime FastAPI expoe 45 endpoints REST. Podes integrar com Make.com (o skill dario-make-blueprint gera cenarios automaticamente), Zapier, n8n, ou qualquer ferramenta que consuma APIs REST. O sistema tambem se integra nativamente com GitHub, Obsidian, Vercel, e DataForSEO.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     17. FINAL CTA
+     ═══════════════════════════════════════════ -->
+<section class="cta-section" id="cta">
+  <div class="reveal">
+    <h2><span class="highlight">236 Skills.</span><br>Um Comando.</h2>
+    <p>Para de trabalhar como se estivesses em 2019. Poe 11 divisoes, 26 engines e 45 endpoints a trabalhar por ti — agora.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary btn-pulse">
+        Comecar Agora — Gratis
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#demo" class="btn-outline">Ver Demo Outra Vez</a>
+    </div>
+    <div class="hero-install" id="install-cmd-bottom" title="Clica para copiar" style="margin:32px auto 0;max-width:360px;justify-content:center;">
+      <code>pip install dario-orchestrator</code>
+      <span class="copy-icon">&#128203;</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
 <footer>
-  DARIO Orchestrator v9.0 — Built by BARDA Digital Agency — MIT License — 2026
+  <p>DARIO Orchestrator v9.0 — Construido em Portugal &#127477;&#127481; com IA, para humanos com ambicao.</p>
+  <p style="margin-top:8px;">
+    <a href="#divisoes">Divisoes</a> &middot;
+    <a href="#engines">Engines</a> &middot;
+    <a href="#pricing">Precos</a> &middot;
+    <a href="#faq">FAQ</a> &middot;
+    <a href="mailto:hello@dario.pt">Contacto</a>
+  </p>
+  <p style="margin-top:16px;font-size:11px;opacity:0.5;">&copy; 2026 D.A.R.I.O. — Digital Agency & Revenue Intelligence Orchestrator</p>
 </footer>
 
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════ -->
 <script>
-// Scroll animations
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, {threshold:0.1});
-document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+(function() {
+  'use strict';
 
-// Counter animation
-function animateCounters() {
-  document.querySelectorAll('[data-count]').forEach(el => {
-    const target = parseInt(el.dataset.count);
+  /* ── Scroll Progress Bar ── */
+  const progressBar = document.getElementById('scroll-progress');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  /* ── Nav scroll effect ── */
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+
+  /* ── Mobile nav toggle ── */
+  const navToggle = document.getElementById('nav-toggle');
+  navToggle.addEventListener('click', function() {
+    nav.classList.toggle('mobile-open');
+  });
+
+  /* ── Smooth scroll for nav links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+        nav.classList.remove('mobile-open');
+      }
+    });
+  });
+
+  /* ── Reveal on scroll (IntersectionObserver) ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  reveals.forEach(function(el) { revealObserver.observe(el); });
+
+  /* ── Animated Counter (hero) ── */
+  function animateHeroCounter() {
+    const el = document.getElementById('skill-counter');
+    const target = 236;
     const duration = 2000;
     const start = performance.now();
-    function tick(now) {
-      const progress = Math.min((now - start) / duration, 1);
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.floor(target * eased).toLocaleString();
-      if (progress < 1) requestAnimationFrame(tick);
+      el.textContent = Math.floor(eased * target);
+      if (progress < 1) requestAnimationFrame(update);
     }
-    requestAnimationFrame(tick);
-  });
-}
+    requestAnimationFrame(update);
+  }
 
-// Trigger counters when stats section is visible
-const statsObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) { animateCounters(); statsObserver.disconnect(); }});
-}, {threshold:0.5});
-const statsEl = document.querySelector('.stats');
-if(statsEl) statsObserver.observe(statsEl);
+  /* ── Proof Bar Counter Animation ── */
+  const proofNums = document.querySelectorAll('.proof-num[data-target]');
+  const proofObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        const duration = 1500;
+        const start = performance.now();
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.floor(eased * target) + suffix;
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+        proofObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  proofNums.forEach(function(el) { proofObserver.observe(el); });
+
+  /* ── Hero counter triggers on load ── */
+  setTimeout(animateHeroCounter, 500);
+
+  /* ── Copy to clipboard (install command) ── */
+  function setupCopy(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function() {
+      var code = el.querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(function() {
+        el.classList.add('copied');
+        var icon = el.querySelector('.copy-icon');
+        var orig = icon.textContent;
+        icon.textContent = '\u2713';
+        setTimeout(function() {
+          el.classList.remove('copied');
+          icon.textContent = orig;
+        }, 2000);
+      });
+    });
+  }
+  setupCopy('install-cmd');
+  setupCopy('install-cmd-bottom');
+
+  /* ── Divisions Carousel Navigation ── */
+  var track = document.getElementById('divisions-track');
+  var prevBtn = document.getElementById('div-prev');
+  var nextBtn = document.getElementById('div-next');
+  var scrollAmount = 350;
+  prevBtn.addEventListener('click', function() {
+    track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+  nextBtn.addEventListener('click', function() {
+    track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+
+  /* ── Divisions drag scroll ── */
+  var isDragging = false;
+  var startX, scrollLeft;
+  track.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+  });
+  track.addEventListener('mouseleave', function() { isDragging = false; });
+  track.addEventListener('mouseup', function() { isDragging = false; });
+  track.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    var x = e.pageX - track.offsetLeft;
+    var walk = (x - startX) * 1.5;
+    track.scrollLeft = scrollLeft - walk;
+  });
+
+  /* ── FAQ Accordion ── */
+  document.querySelectorAll('.faq-question').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var item = this.closest('.faq-item');
+      var wasOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item').forEach(function(i) {
+        i.classList.remove('open');
+      });
+      // Toggle current
+      if (!wasOpen) item.classList.add('open');
+    });
+  });
+
+  /* ── Terminal Typewriter Animation ── */
+  var terminalBody = document.getElementById('terminal-body');
+  var terminalLines = [
+    { delay: 0,    text: '<span class="prompt">$</span> <span class="cmd">dario dispatch "Cria proposta comercial Atrium com 3 opcoes de preco"</span>' },
+    { delay: 1200, text: '' },
+    { delay: 1400, text: '<span class="dim">[14:32:01]</span> <span class="amber">DISPATCH</span> Analyzing request...' },
+    { delay: 2200, text: '<span class="dim">[14:32:02]</span> <span class="amber">DISPATCH</span> Matched: <span class="gold">dario-proposal</span> (confidence: 0.94)' },
+    { delay: 3000, text: '<span class="dim">[14:32:02]</span> <span class="amber">DISPATCH</span> Building DAG chain: dario-brand → dario-offer → dario-proposal' },
+    { delay: 3800, text: '<span class="dim">[14:32:03]</span> <span class="teal">CONTEXT</span> Injecting: Atrium Premium RE | NYC+Lisboa | HNW investors' },
+    { delay: 4600, text: '<span class="dim">[14:32:03]</span> <span class="teal">CONTEXT</span> Prior score: 182.5/200 | A360 active | 3 projects' },
+    { delay: 5400, text: '' },
+    { delay: 5600, text: '<span class="dim">[14:32:04]</span> <span class="green">EXECUTE</span> ■ Step 1/3: dario-brand positioning...' },
+    { delay: 6600, text: '<span class="dim">[14:32:17]</span> <span class="green">EXECUTE</span> ■ Step 2/3: dario-offer Grand Slam...' },
+    { delay: 7600, text: '<span class="dim">[14:32:34]</span> <span class="green">EXECUTE</span> ■ Step 3/3: dario-proposal 3 opcoes...' },
+    { delay: 8600, text: '' },
+    { delay: 8800, text: '<span class="dim">[14:32:51]</span> <span class="gold">SCORING</span> LLM-as-Judge evaluating output...' },
+    { delay: 9800, text: '<span class="dim">[14:32:52]</span> <span class="gold">SCORING</span> Specificity: 19 | Actionability: 18 | Completeness: 18' },
+    { delay: 10600, text: '<span class="dim">[14:32:52]</span> <span class="gold">SCORING</span> Accuracy: 18 | Tone: 18 | <span class="green">TOTAL: 91/100</span>' },
+    { delay: 11400, text: '' },
+    { delay: 11600, text: '<span class="dim">[14:32:53]</span> <span class="teal">EVOLVE</span> +0.03 weight boost → dario-proposal' },
+    { delay: 12200, text: '<span class="dim">[14:32:53]</span> <span class="teal">EVOLVE</span> Pattern crystallized: "3-opcoes-blair-enns"' },
+    { delay: 12800, text: '' },
+    { delay: 13000, text: '<span class="dim">[14:32:53]</span> <span class="green">DELIVERED</span> proposta_atrium_3opcoes.md' },
+    { delay: 13600, text: '<span class="dim">[14:32:53]</span> <span class="green">DELIVERED</span> Tempo total: 52s | Custo: $0.08 | Score: 91/100' },
+    { delay: 14400, text: '' },
+    { delay: 14600, text: '<span class="prompt">$</span> <span class="cmd">_</span>' },
+  ];
+
+  var terminalStarted = false;
+  var terminalEl = document.getElementById('terminal');
+  var termObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !terminalStarted) {
+      terminalStarted = true;
+      runTerminal();
+      termObserver.unobserve(terminalEl);
+    }
+  }, { threshold: 0.3 });
+  termObserver.observe(terminalEl);
+
+  function runTerminal() {
+    terminalBody.innerHTML = '';
+    terminalLines.forEach(function(line) {
+      setTimeout(function() {
+        var div = document.createElement('div');
+        div.className = 'terminal-line';
+        if (line.text === '') {
+          div.innerHTML = '&nbsp;';
+        } else {
+          div.innerHTML = line.text;
+        }
+        terminalBody.appendChild(div);
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+      }, line.delay);
+    });
+
+    // Restart loop
+    setTimeout(function() {
+      terminalBody.innerHTML = '';
+      runTerminal();
+    }, 18000);
+  }
+
+  /* ── Card tilt micro-interaction ── */
+  document.querySelectorAll('.tilt-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      var centerX = rect.width / 2;
+      var centerY = rect.height / 2;
+      var rotateX = ((y - centerY) / centerY) * -3;
+      var rotateY = ((x - centerX) / centerX) * 3;
+      card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+    });
+  });
+
+})();
 </script>
+
 </body>
 </html>
