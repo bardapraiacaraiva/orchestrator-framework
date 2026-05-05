@@ -5,134 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DARIO COMMAND CENTER v9.0</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  background: #06060f;
-  color: #c8d0e0;
+html, body {
+  height: 100%;
   font-family: 'Inter', sans-serif;
+  background: #060611;
+  color: #c8d0e0;
   overflow: hidden;
-  height: 100vh;
-  width: 100vw;
 }
 
+/* HEADER */
 #header {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 48px;
-  background: linear-gradient(180deg, #0a0a1a 0%, #06060f 100%);
+  background: linear-gradient(180deg, #0a0a1a 0%, #060611 100%);
   border-bottom: 1px solid #1a1a3e;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  z-index: 100;
+  padding: 0 20px;
+  z-index: 200;
 }
 
-#header .title {
+.header-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   font-weight: 600;
   color: #ffaa00;
   letter-spacing: 1.5px;
-  text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+  text-shadow: 0 0 10px rgba(255,170,0,0.3);
+  white-space: nowrap;
 }
 
-#header .badges {
+.header-tabs {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  gap: 4px;
 }
 
-#header .badge {
+.tab-btn {
+  background: transparent;
+  border: 1px solid #1a1a3e;
+  color: #4a5a70;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  padding: 3px 10px;
+  font-weight: 500;
+  padding: 6px 14px;
   border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  border-color: #aa66ff;
+  color: #c8d0e0;
+}
+
+.tab-btn.active {
+  background: rgba(170,102,255,0.15);
+  border-color: #aa66ff;
+  color: #aa66ff;
+  text-shadow: 0 0 8px rgba(170,102,255,0.4);
+}
+
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 3px;
   font-weight: 500;
 }
 
-#header .badge-active {
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid rgba(0, 255, 136, 0.4);
+.badge-state {
+  background: rgba(0,212,255,0.12);
+  border: 1px solid rgba(0,212,255,0.3);
+  color: #00d4ff;
+}
+
+.badge-health {
+  background: rgba(0,255,136,0.12);
+  border: 1px solid rgba(0,255,136,0.3);
   color: #00ff88;
 }
 
-#header .badge-guardian {
-  background: rgba(255, 51, 68, 0.1);
-  border: 1px solid rgba(255, 51, 68, 0.4);
-  color: #ff3344;
+.badge-entities {
+  color: #4a5a70;
 }
 
-#header .badge-autonomy {
-  background: rgba(170, 102, 255, 0.1);
-  border: 1px solid rgba(170, 102, 255, 0.4);
-  color: #aa66ff;
-}
-
-#header .info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  font-family: 'JetBrains Mono', monospace;
+#clock {
+  color: #4a5a70;
   font-size: 11px;
-  color: #6a7a90;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-#header .info .health {
-  color: #00ff88;
-}
-
-#canvas-container {
+/* LAYOUT */
+#main-wrapper {
   position: fixed;
-  top: 48px;
-  left: 0;
-  right: 280px;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 48px; left: 0; right: 260px; bottom: 0;
 }
 
-#radialCanvas {
-  cursor: grab;
-}
-
-#radialCanvas:active {
-  cursor: grabbing;
-}
-
-#bottom-panel {
+#sidebar {
   position: fixed;
-  top: 48px;
-  right: 0;
-  bottom: 0;
-  width: 280px;
-  background: linear-gradient(180deg, #080812 0%, #06060f 100%);
+  top: 48px; right: 0; bottom: 0;
+  width: 260px;
+  background: #080812;
   border-left: 1px solid #1a1a3e;
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding: 12px 14px;
-  z-index: 50;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #1a2535 transparent;
+  overflow: hidden;
+  z-index: 100;
 }
 
-/* panel-section now in sidebar block above */
+/* SIDEBAR SECTIONS */
+.sidebar-section {
+  border-bottom: 1px solid #1a1a3e;
+  padding: 12px 14px;
+}
 
-.panel-title {
+.sidebar-section:last-child { border-bottom: none; }
+
+.sidebar-section h3 {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  font-weight: 600;
   color: #4a5a70;
-  margin-bottom: 8px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
 
 .stat-row {
@@ -143,1125 +151,1404 @@ body {
   font-size: 12px;
 }
 
-.stat-label { color: #6a7a90; }
-.stat-value { color: #e0e8f0; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
-.stat-value.green { color: #00ff88; }
-.stat-value.amber { color: #ffaa00; }
-.stat-value.red { color: #ff3344; }
-.stat-value.cyan { color: #00d4ff; }
+.stat-label { color: #4a5a70; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; }
+.stat-active { color: #00d4ff; }
+.stat-done { color: #00ff88; }
+.stat-pending { color: #ffaa00; }
+.stat-blocked { color: #ff3344; }
+.stat-budget { color: #aa66ff; }
 
-#event-feed {
+/* EVENTS FEED */
+#events-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#events-list {
+  flex: 1;
   overflow-y: auto;
-  max-height: 200px;
-  flex-shrink: 0;
-  scrollbar-width: thin;
-  scrollbar-color: #1a2535 transparent;
+  padding: 0 14px;
 }
 
-.panel-section {
-  flex-shrink: 0;
-  border-bottom: 1px solid #0d1525;
-  padding-bottom: 10px;
-  margin-bottom: 4px;
-}
+#events-list::-webkit-scrollbar { width: 3px; }
+#events-list::-webkit-scrollbar-track { background: transparent; }
+#events-list::-webkit-scrollbar-thumb { background: #1a1a3e; border-radius: 2px; }
 
 .event-item {
-  font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  padding: 3px 0;
-  border-bottom: 1px solid #0a1020;
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(26,26,62,0.5);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
 }
 
-.event-time { color: #4a5a70; white-space: nowrap; }
-.event-type { font-weight: 500; white-space: nowrap; }
-.event-type.dispatch { color: #ffaa00; }
-.event-type.complete { color: #00ff88; }
-.event-type.error { color: #ff3344; }
-.event-type.info { color: #00d4ff; }
-.event-msg { color: #8a9ab0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.event-time { color: #4a5a70; }
+.event-dispatch { color: #ffaa00; }
+.event-pulse { color: #00d4ff; }
+.event-score { color: #00ff88; }
+.event-error { color: #ff3344; }
+.event-default { color: #c8d0e0; }
 
+/* NODE DETAILS */
 #node-details {
-  font-size: 12px;
+  min-height: 100px;
+  max-height: 160px;
+  overflow-y: auto;
 }
 
-#node-details .detail-name {
-  font-size: 14px;
+#node-details .detail-title {
+  font-size: 13px;
   font-weight: 600;
-  color: #e0e8f0;
-  margin-bottom: 4px;
+  color: #00d4ff;
+  margin-bottom: 6px;
 }
 
 #node-details .detail-role {
   font-size: 11px;
-  color: #6a7a90;
-  margin-bottom: 10px;
+  color: #4a5a70;
+  margin-bottom: 8px;
 }
 
-#node-details .detail-stat {
-  display: flex;
-  justify-content: space-between;
-  padding: 2px 0;
+#node-details .detail-info {
   font-size: 11px;
+  color: #c8d0e0;
+  line-height: 1.5;
 }
 
-#tooltip {
-  position: fixed;
+/* TAB CONTENT */
+.tab-content {
   display: none;
-  background: #0d1525;
-  border: 1px solid #1a2a40;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 11px;
-  z-index: 200;
-  pointer-events: none;
-  max-width: 240px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  width: 100%;
+  height: 100%;
 }
 
-#tooltip .tt-name { font-weight: 600; color: #e0e8f0; margin-bottom: 2px; }
-#tooltip .tt-role { color: #6a7a90; font-size: 10px; margin-bottom: 4px; }
-#tooltip .tt-stat { color: #8a9ab0; font-size: 10px; }
+.tab-content.active {
+  display: block;
+}
 
-#sidebar {
-  position: fixed;
-  top: 48px;
-  right: 0;
-  width: 220px;
-  bottom: 30%;
-  background: rgba(8, 8, 18, 0.95);
-  border-left: 1px solid #1a1a3e;
-  padding: 12px;
-  z-index: 80;
+/* TAB 1: CANVAS */
+#canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#radialCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* TAB 2: TASK BOARD */
+#taskboard {
+  padding: 16px;
+  height: 100%;
   overflow-y: auto;
-  display: none;
-  scrollbar-width: thin;
-  scrollbar-color: #1a2535 transparent;
+  display: flex;
+  flex-direction: column;
 }
 
-#sidebar.visible { display: block; }
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
 
-#sidebar .sidebar-title {
+.filter-btn {
+  background: transparent;
+  border: 1px solid #1a1a3e;
+  color: #4a5a70;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  color: #00d4ff;
-  margin-bottom: 4px;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-#sidebar .sidebar-count {
+.filter-btn:hover { border-color: #00d4ff; color: #c8d0e0; }
+.filter-btn.active { background: rgba(0,212,255,0.12); border-color: #00d4ff; color: #00d4ff; }
+
+#task-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #1a1a3e;
+  border-radius: 6px;
+}
+
+#task-table-wrap::-webkit-scrollbar { width: 5px; }
+#task-table-wrap::-webkit-scrollbar-track { background: #060611; }
+#task-table-wrap::-webkit-scrollbar-thumb { background: #1a1a3e; border-radius: 3px; }
+
+table.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+table.task-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+table.task-table th {
+  background: #0a0a1a;
+  border-bottom: 1px solid #1a1a3e;
+  padding: 8px 10px;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: #4a5a70;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+table.task-table th:hover { color: #00d4ff; }
+table.task-table th .sort-arrow { margin-left: 4px; font-size: 9px; }
+
+table.task-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(26,26,62,0.4);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+table.task-table tr { transition: background 0.15s; }
+table.task-table tr:hover { background: rgba(0,212,255,0.03); }
+table.task-table tr.status-done { border-left: 2px solid #00ff88; }
+table.task-table tr.status-todo { border-left: 2px solid #ffaa00; }
+table.task-table tr.status-active { border-left: 2px solid #00d4ff; }
+table.task-table tr.status-blocked { border-left: 2px solid #ff3344; }
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.done { background: rgba(0,255,136,0.15); color: #00ff88; }
+.status-badge.todo { background: rgba(255,170,0,0.15); color: #ffaa00; }
+.status-badge.active { background: rgba(0,212,255,0.15); color: #00d4ff; }
+.status-badge.blocked { background: rgba(255,51,68,0.15); color: #ff3344; }
+.status-badge.in_progress { background: rgba(0,212,255,0.15); color: #00d4ff; }
+
+/* TAB 3: ANALYTICS */
+#analytics {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto 1fr;
+  gap: 16px;
+}
+
+.analytics-card {
+  background: #0a0a1a;
+  border: 1px solid #1a1a3e;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.analytics-card h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #4a5a70;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin-bottom: 12px;
 }
 
-.worker-item {
+.gauge-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.gauge-wrap svg { max-width: 140px; }
+
+.gauge-label {
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.gauge-sublabel {
+  font-size: 10px;
+  color: #4a5a70;
+  margin-top: 2px;
+}
+
+/* State Machine */
+.state-machine {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.state-node {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid #1a1a3e;
+  color: #4a5a70;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.state-node.active-state {
+  border-color: #00d4ff;
+  color: #00d4ff;
+  box-shadow: 0 0 15px rgba(0,212,255,0.3), inset 0 0 10px rgba(0,212,255,0.1);
+}
+
+.state-arrow {
+  color: #1a1a3e;
+  font-size: 16px;
+}
+
+/* Skills Chart */
+.skills-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-bar-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0;
-  font-size: 11px;
-  border-bottom: 1px solid #0a1020;
 }
 
-.worker-dot {
+.skill-bar-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #4a5a70;
+  width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skill-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #1a1a3e;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #00d4ff, #aa66ff);
+  transition: width 0.4s;
+}
+
+.skill-bar-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #c8d0e0;
+  width: 30px;
+  text-align: right;
+}
+
+/* Engine Lights */
+.engine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 6px;
+}
+
+.engine-light {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #4a5a70;
+}
+
+.engine-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  flex-shrink: 0;
+  background: #00ff88;
+  box-shadow: 0 0 4px rgba(0,255,136,0.5);
 }
 
-.worker-dot.idle { background: #1a2535; }
-.worker-dot.active { background: #00d4ff; box-shadow: 0 0 6px #00d4ff; }
-.worker-dot.done { background: #00ff88; }
-.worker-dot.blocked { background: #ff3344; }
+.engine-dot.off {
+  background: #ff3344;
+  box-shadow: 0 0 4px rgba(255,51,68,0.5);
+}
 
-.worker-name { color: #8a9ab0; }
+/* OFFLINE BANNER */
+#offline-banner {
+  display: none;
+  position: fixed;
+  top: 48px; left: 0; right: 0;
+  background: rgba(255,51,68,0.15);
+  border-bottom: 1px solid #ff3344;
+  color: #ff3344;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-align: center;
+  padding: 6px;
+  z-index: 300;
+}
+
+#offline-banner.show { display: block; }
+
+/* Scrollbar for analytics */
+#analytics::-webkit-scrollbar { width: 5px; }
+#analytics::-webkit-scrollbar-track { background: #060611; }
+#analytics::-webkit-scrollbar-thumb { background: #1a1a3e; border-radius: 3px; }
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  z-index: 9999;
+}
+
+/* Autonomy badge */
+.badge-autonomy {
+  background: rgba(255,170,0,0.12);
+  border: 1px solid rgba(255,170,0,0.3);
+  color: #ffaa00;
+}
+
+/* Node count in radial */
+.node-count-indicator {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #4a5a70;
+  pointer-events: none;
+}
+
+/* Tooltip */
+#canvas-tooltip {
+  position: absolute;
+  display: none;
+  background: #0a0a1a;
+  border: 1px solid #1a1a3e;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #c8d0e0;
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Active connection highlight */
+.connection-active {
+  stroke: #00d4ff;
+  stroke-width: 2;
+}
+
+/* Legend for radial */
+#radial-legend {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #4a5a70;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Analytics card full-width */
+.analytics-card.full-width {
+  grid-column: span 2;
+}
+
+/* Pulse animation for active nodes */
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #1a1a3e 25%, #2a2a4e 50%, #1a1a3e 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  #sidebar { width: 200px; }
+  #main-wrapper { right: 200px; }
+  .header-title { font-size: 11px; }
+  .header-badges { gap: 8px; }
+}
+
+@media (max-width: 700px) {
+  #sidebar { display: none; }
+  #main-wrapper { right: 0; }
+}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div id="header">
-  <div class="title">DARIO COMMAND CENTER v9.0</div>
-  <div class="badges">
-    <span id="state-badge" class="badge badge-active">ACTIVE</span>
-    <span class="badge badge-autonomy">P-A3</span>
+  <div class="header-title">DARIO COMMAND CENTER v9.0</div>
+  <div class="header-tabs">
+    <button class="tab-btn active" data-tab="tab-command">CMD CENTER</button>
+    <button class="tab-btn" data-tab="tab-taskboard">TASK BOARD</button>
+    <button class="tab-btn" data-tab="tab-analytics">ANALYTICS</button>
   </div>
-  <div class="info">
-    <span>Health: <span id="health-val" class="health">100%</span></span>
-    <span>Entities: <span id="entity-count">165</span></span>
+  <div class="header-badges">
+    <span class="badge badge-state" id="badge-state">IDLE</span>
+    <span class="badge badge-autonomy" id="badge-autonomy">AUTO: OFF</span>
+    <span class="badge badge-health" id="badge-health">100%</span>
+    <span class="badge-entities" id="badge-entities">Entities: 165</span>
     <span id="clock">00:00:00 UTC</span>
   </div>
 </div>
 
-<div id="canvas-container">
-  <canvas id="radialCanvas"></canvas>
-</div>
+<!-- OFFLINE BANNER -->
+<div id="offline-banner">OFFLINE - API UNREACHABLE</div>
 
-<div id="bottom-panel">
-  <div class="panel-section">
-    <div class="panel-title">System Stats</div>
-    <div class="stat-row"><span class="stat-label">Active Workers</span><span id="s-active" class="stat-value cyan">0</span></div>
-    <div class="stat-row"><span class="stat-label">Tasks Done</span><span id="s-done" class="stat-value green">0</span></div>
-    <div class="stat-row"><span class="stat-label">Tasks Pending</span><span id="s-pending" class="stat-value amber">0</span></div>
-    <div class="stat-row"><span class="stat-label">Tasks Blocked</span><span id="s-blocked" class="stat-value red">0</span></div>
-    <div class="stat-row"><span class="stat-label">Budget Used</span><span id="s-budget" class="stat-value">0%</span></div>
-    <div class="stat-row"><span class="stat-label">Uptime</span><span id="s-uptime" class="stat-value">--</span></div>
+<!-- MAIN CONTENT -->
+<div id="main-wrapper">
+  <!-- Tab 1: Command Center (Radial Canvas) -->
+  <div class="tab-content active" id="tab-command">
+    <div id="canvas-container">
+      <canvas id="radialCanvas"></canvas>
+      <div id="canvas-tooltip"></div>
+      <div id="radial-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#ffaa00"></span>CEO</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#aa66ff"></span>VP (4)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#00d4ff"></span>Director (28)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#1a2535;border:1px solid #0a2a3a"></span>Worker (133)</div>
+      </div>
+      <div class="node-count-indicator" id="node-count">Nodes: 0 | Zoom: 1.0x</div>
+    </div>
   </div>
-  <div class="panel-section">
-    <div class="panel-title">Live Event Feed</div>
-    <div id="event-feed"></div>
+
+  <!-- Tab 2: Task Board -->
+  <div class="tab-content" id="tab-taskboard">
+    <div id="taskboard">
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="done">Done</button>
+        <button class="filter-btn" data-filter="todo">Todo</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="blocked">Blocked</button>
+      </div>
+      <div id="task-table-wrap">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th data-sort="id">ID <span class="sort-arrow"></span></th>
+              <th data-sort="title">Title <span class="sort-arrow"></span></th>
+              <th data-sort="skill">Skill <span class="sort-arrow"></span></th>
+              <th data-sort="assignee">Assignee <span class="sort-arrow"></span></th>
+              <th data-sort="status">Status <span class="sort-arrow"></span></th>
+              <th data-sort="score">Score <span class="sort-arrow"></span></th>
+              <th data-sort="priority">Priority <span class="sort-arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="task-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="panel-section">
-    <div class="panel-title">Selected Node</div>
-    <div id="node-details">
-      <div style="color:#4a5a70;font-size:11px;">Click or hover a node to see details</div>
+
+  <!-- Tab 3: Analytics -->
+  <div class="tab-content" id="tab-analytics">
+    <div id="analytics">
+      <!-- Health Gauge -->
+      <div class="analytics-card">
+        <h4>System Health</h4>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 120" id="health-gauge">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#1a1a3e" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#00ff88" stroke-width="10"
+              stroke-dasharray="314" stroke-dashoffset="0" stroke-linecap="round"
+              transform="rotate(-90 60 60)" id="health-arc"/>
+          </svg>
+          <div class="gauge-label" id="health-value" style="color:#00ff88">100%</div>
+          <div class="gauge-sublabel">Overall Health</div>
+        </div>
+      </div>
+
+      <!-- Budget Gauge -->
+      <div class="analytics-card">
+        <h4>Budget Usage</h4>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 120" id="budget-gauge">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#1a1a3e" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#aa66ff" stroke-width="10"
+              stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round"
+              transform="rotate(-90 60 60)" id="budget-arc"/>
+          </svg>
+          <div class="gauge-label" id="budget-value" style="color:#aa66ff">0%</div>
+          <div class="gauge-sublabel">Tokens Used</div>
+        </div>
+      </div>
+
+      <!-- State Machine -->
+      <div class="analytics-card">
+        <h4>State Machine</h4>
+        <div class="state-machine">
+          <div class="state-node active-state" id="sm-idle">IDLE</div>
+          <span class="state-arrow">&#8594;</span>
+          <div class="state-node" id="sm-scanning">SCAN</div>
+          <span class="state-arrow">&#8594;</span>
+          <div class="state-node" id="sm-executing">EXEC</div>
+          <span class="state-arrow">&#8594;</span>
+          <div class="state-node" id="sm-scoring">SCORE</div>
+        </div>
+      </div>
+
+      <!-- Top Skills -->
+      <div class="analytics-card">
+        <h4>Top Skills</h4>
+        <div class="skills-chart" id="skills-chart"></div>
+      </div>
+
+      <!-- Engine Status -->
+      <div class="analytics-card" style="grid-column: span 2;">
+        <h4>Engine Status (26 Modules)</h4>
+        <div class="engine-grid" id="engine-grid"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sidebar-title" id="sidebar-title">Director</div>
-  <div class="sidebar-count" id="sidebar-count">0 workers</div>
-  <div id="sidebar-workers"></div>
-</div>
+  <div class="sidebar-section">
+    <h3>System Stats</h3>
+    <div class="stat-row"><span class="stat-label">Active</span><span class="stat-value stat-active" id="stat-active">0</span></div>
+    <div class="stat-row"><span class="stat-label">Done</span><span class="stat-value stat-done" id="stat-done">0</span></div>
+    <div class="stat-row"><span class="stat-label">Pending</span><span class="stat-value stat-pending" id="stat-pending">0</span></div>
+    <div class="stat-row"><span class="stat-label">Blocked</span><span class="stat-value stat-blocked" id="stat-blocked">0</span></div>
+    <div class="stat-row"><span class="stat-label">Budget</span><span class="stat-value stat-budget" id="stat-budget">0.00%</span></div>
+  </div>
 
-<div id="tooltip">
-  <div class="tt-name"></div>
-  <div class="tt-role"></div>
-  <div class="tt-stat"></div>
+  <div class="sidebar-section" id="events-section">
+    <h3>Live Events</h3>
+    <div id="events-list"></div>
+  </div>
+
+  <div class="sidebar-section">
+    <h3>Node Details</h3>
+    <div id="node-details">
+      <div class="detail-info" style="color:#4a5a70; font-size:11px;">Hover or click a node in Command Center</div>
+    </div>
+  </div>
 </div>
 
 <script>
 // ============================================================
-// DATA HIERARCHY
+// HIERARCHY DATA — 165 entities
 // ============================================================
 const CEO = { id:'dario-ceo', name:'D.A.R.I.O.', role:'CEO' };
 
 const VPS = [
-  { id:'diva-vp', name:'D.I.V.A.', role:'Architecture & Design', sector:[315,45] },
-  { id:'lucas-vp', name:'L.U.C.A.S.', role:'Operations & Intelligence', sector:[45,135] },
-  { id:'a360-vp', name:'A360', role:'Business Acceleration', sector:[135,180] },
-  { id:'atlas-vp', name:'A.T.L.A.S.', role:'Events & Logistics', sector:[180,225] },
-];
-
-const DIRECT_DIRS = [
-  { id:'dir-marketing', name:'Marketing', parent:'ceo', workerCount:12, sector:[225,255],
-    workers:['brand','offer','sales-letter','ads','funnel','pipeline','email-seq','naming','story-circle','pitch','proposal','negotiation'] },
-  { id:'dir-technical', name:'Technical', parent:'ceo', workerCount:7, sector:[255,275],
-    workers:['wp-audit','woo-audit','cwv-fix','pentest','make-blueprint','ios-hig','sop'] },
-  { id:'dir-seo', name:'SEO', parent:'ceo', workerCount:16, sector:[275,315],
-    workers:['seo-audit','seo-technical','seo-content','seo-schema','seo-local','seo-geo','seo-plan','seo-page','seo-sitemap','seo-images','seo-hreflang','seo-programmatic','seo-competitor','seo-dataforseo','seo-image-gen','kw-cluster'] },
-  { id:'dir-finance', name:'Finance', parent:'ceo', workerCount:3, sector:[225,232],
-    workers:['financial-model','pricing-calculator','saas-metrics'] },
-  { id:'dir-client-success', name:'Client Success', parent:'ceo', workerCount:3, sector:[232,240],
-    workers:['client-onboard','diagnose','projeto'] },
-  { id:'dir-content', name:'Content', parent:'ceo', workerCount:2, sector:[240,247],
-    workers:['social','content'] },
-  { id:'dir-legal', name:'Legal', parent:'ceo', workerCount:1, sector:[247,250],
-    workers:['legal'] },
-  { id:'dir-hr', name:'HR', parent:'ceo', workerCount:1, sector:[250,253],
-    workers:['hr'] },
-  { id:'dir-support', name:'Support', parent:'ceo', workerCount:1, sector:[253,256],
-    workers:['support'] },
-  { id:'dir-product', name:'Product', parent:'ceo', workerCount:1, sector:[256,259],
-    workers:['product'] },
-  { id:'dir-pr', name:'PR', parent:'ceo', workerCount:1, sector:[259,262],
-    workers:['pr'] },
+  { id:'diva-vp', name:'D.I.V.A.', role:'Architecture & Design', angle: 0 },
+  { id:'lucas-vp', name:'L.U.C.A.S.', role:'Operations & Intelligence', angle: 90 },
+  { id:'a360-vp', name:'A360', role:'Business Acceleration', angle: 180 },
+  { id:'atlas-vp', name:'A.T.L.A.S.', role:'Events & Logistics', angle: 270 },
 ];
 
 const VP_DIRS = {
   'diva-vp': [
-    { id:'dir-design', name:'Design', workerCount:10, workers:['moodboard','materials','floor-plan','render','render-brief','vision','portfolio','smart-home','briefing','diva-client-onboard'] },
+    { id:'dir-design', name:'Design', workerCount:10, workers:['moodboard','materials','floor-plan','render','render-brief','vision','portfolio','smart-home','briefing','diva-onboard'] },
     { id:'dir-construction', name:'Construction', workerCount:10, workers:['diva-budget','calc','timeline','inspection','contract','comparador','planradar','bim','diva-diagnose','roadmap'] },
     { id:'dir-regulatory', name:'Regulatory', workerCount:2, workers:['licensing','energy'] },
   ],
   'lucas-vp': [
-    { id:'dir-cost-control', name:'Cost Control', workerCount:4, workers:['budget-tracker','model-router','cost-alerts','cost-optimizer'] },
+    { id:'dir-cost-control', name:'Cost Ctrl', workerCount:4, workers:['budget-tracker','model-router','cost-alerts','cost-optimizer'] },
     { id:'dir-quality', name:'Quality', workerCount:4, workers:['quality-scorer','feedback-loop','skill-evaluator','revision-analyst'] },
-    { id:'dir-monitoring', name:'Monitoring', workerCount:4, workers:['heartbeat-engine','stale-detector','health-monitor','alert-dispatcher'] },
-    { id:'dir-analytics', name:'Analytics', workerCount:4, workers:['cross-project','skill-dashboard','revenue-tracker','knowledge-graph'] },
+    { id:'dir-monitoring', name:'Monitor', workerCount:4, workers:['heartbeat','stale-detect','health-mon','alert-dispatch'] },
+    { id:'dir-analytics', name:'Analytics', workerCount:4, workers:['cross-project','skill-dash','revenue','knowledge'] },
     { id:'dir-saas-eng', name:'SaaS Eng', workerCount:4, workers:['backend','frontend','ai-agents','database'] },
     { id:'dir-accounting', name:'Accounting', workerCount:3, workers:['tax','compliance','reporting'] },
   ],
   'a360-vp': [
     { id:'dir-a360-research', name:'Research', workerCount:3, workers:['nicho-explorer','mapear-nicho','cliente-radar'] },
-    { id:'dir-a360-production', name:'Production', workerCount:5, workers:['lp-builder','pitch-deck','gtm','playbook-vendas','meeting-prep'] },
+    { id:'dir-a360-prod', name:'Production', workerCount:5, workers:['lp-builder','pitch-deck','gtm','playbook-vendas','meeting-prep'] },
   ],
   'atlas-vp': [
-    { id:'dir-event-planning', name:'Planning', workerCount:6, workers:['ev-briefing','venue','ev-timeline','ev-budget','checklist','post-event'] },
-    { id:'dir-logistics', name:'Logistics', workerCount:6, workers:['vendor','catering','transport','accommodation','staff','warehouse'] },
-    { id:'dir-av-production', name:'AV Production', workerCount:5, workers:['av','staging','decor','entertainment','photo-video'] },
-    { id:'dir-guest-exp', name:'Guest Exp', workerCount:5, workers:['guest','seating','protocol','ev-tech','hybrid'] },
-    { id:'dir-event-biz', name:'Event Biz', workerCount:6, workers:['ev-marketing','sponsor','crm','risk','ev-compliance','sustainability'] },
+    { id:'dir-planning', name:'Planning', workerCount:6, workers:['ev-briefing','venue','ev-timeline','ev-budget','checklist','post-event'] },
+    { id:'dir-logistics', name:'Logistics', workerCount:6, workers:['vendor','catering','transport','hotel','staff','warehouse'] },
+    { id:'dir-av-prod', name:'AV Prod', workerCount:5, workers:['av','staging','decor','entertainment','photo-video'] },
+    { id:'dir-guest', name:'Guest Exp', workerCount:5, workers:['guest','seating','protocol','ev-tech','hybrid'] },
+    { id:'dir-ev-biz', name:'Event Biz', workerCount:6, workers:['ev-marketing','sponsor','crm','risk','ev-compliance','sustainability'] },
   ],
 };
 
-// ============================================================
-// BUILD NODE MAP
-// ============================================================
-const nodes = [];
-const connections = [];
-
-// CEO node
-nodes.push({ id: CEO.id, name: CEO.name, role: CEO.role, type: 'ceo', x: 0, y: 0, radius: 25, color: '#ffaa00', visible: true, workerCount: 0 });
-
-// LAYOUT: 4 VPs get 55 degrees each (220 total), 11 direct dirs get remaining 140 degrees
-// VPs at: 0, 90, 180, 270 (cardinal points) — directors spread around them
-const VP_ANGLES = [0, 90, 180, 270]; // DIVA=right, LUCAS=bottom, A360=left, ATLAS=top
-const VP_SECTOR_SIZE = 55; // degrees per VP sector for its directors
-
-VPS.forEach((vp, i) => {
-  const angle = VP_ANGLES[i] * Math.PI / 180;
-  nodes.push({
-    id: vp.id, name: vp.name, role: vp.role, type: 'vp',
-    baseAngle: VP_ANGLES[i],
-    sector: [VP_ANGLES[i] - VP_SECTOR_SIZE/2, VP_ANGLES[i] + VP_SECTOR_SIZE/2],
-    x: Math.cos(angle) * 150,
-    y: Math.sin(angle) * 150,
-    radius: 18, color: '#aa66ff', visible: true, workerCount: 0
-  });
-  connections.push({ from: CEO.id, to: vp.id });
-});
-
-function distributeInSector(dirs, sectorStart, sectorEnd, parentId, radiusDist) {
-  let range = sectorEnd - sectorStart;
-  if (range <= 0) range += 360;
-  const step = range / (dirs.length + 1);
-
-  dirs.forEach((dir, i) => {
-    const angleDeg = sectorStart + step * (i + 1);
-    const angleRad = angleDeg * Math.PI / 180;
-    nodes.push({
-      id: dir.id, name: dir.name, role: 'Director', type: 'director',
-      parentVP: parentId,
-      angleDeg: angleDeg,
-      x: Math.cos(angleRad) * radiusDist,
-      y: Math.sin(angleRad) * radiusDist,
-      radius: 12, color: '#00d4ff', visible: true,
-      workerCount: dir.workerCount,
-      workers: dir.workers,
-      expanded: false
-    });
-    connections.push({ from: parentId, to: dir.id });
-  });
-}
-
-// VP directors: spread within each VP's sector
-VPS.forEach((vp, i) => {
-  const dirs = VP_DIRS[vp.id] || [];
-  const center = VP_ANGLES[i];
-  distributeInSector(dirs, center - VP_SECTOR_SIZE/2, center + VP_SECTOR_SIZE/2, vp.id, 300);
-});
-
-// Direct CEO directors: place in the 4 gaps between VPs
-// VPs at 0, 90, 180, 270. Gaps: 28-62, 118-152, 208-242, 298-332
-// Split 11 dirs: 3 in gap1, 3 in gap2, 3 in gap3, 2 in gap4
-const GAPS = [
-  { start:22, end:68, count:3 },   // between DIVA(0) and LUCAS(90)
-  { start:112, end:158, count:3 },  // between LUCAS(90) and A360(180)
-  { start:202, end:248, count:3 },  // between A360(180) and ATLAS(270)
-  { start:292, end:338, count:2 },  // between ATLAS(270) and DIVA(0)
+const DIRECT_DIRS = [
+  { id:'dir-marketing', name:'Marketing', workerCount:12, workers:['brand','offer','sales-letter','ads','funnel','pipeline','email-seq','naming','story-circle','pitch','proposal','negotiation'] },
+  { id:'dir-technical', name:'Technical', workerCount:7, workers:['wp-audit','woo-audit','cwv-fix','pentest','make-blueprint','ios-hig','sop'] },
+  { id:'dir-seo', name:'SEO', workerCount:16, workers:['seo-audit','seo-technical','seo-content','seo-schema','seo-local','seo-geo','seo-plan','seo-page','seo-sitemap','seo-images','seo-hreflang','seo-programmatic','seo-competitor','seo-dataforseo','seo-image-gen','kw-cluster'] },
+  { id:'dir-finance', name:'Finance', workerCount:3, workers:['financial-model','pricing-calc','saas-metrics'] },
+  { id:'dir-client', name:'Client', workerCount:3, workers:['client-onboard','diagnose','projeto'] },
+  { id:'dir-content', name:'Content', workerCount:2, workers:['social','content'] },
+  { id:'dir-legal', name:'Legal', workerCount:1, workers:['legal'] },
+  { id:'dir-hr', name:'HR', workerCount:1, workers:['hr'] },
+  { id:'dir-support', name:'Support', workerCount:1, workers:['support'] },
+  { id:'dir-product', name:'Product', workerCount:1, workers:['product'] },
+  { id:'dir-pr', name:'PR', workerCount:1, workers:['pr'] },
 ];
-let dirIdx = 0;
-GAPS.forEach(gap => {
-  const step = (gap.end - gap.start) / (gap.count + 1);
-  for (let g = 0; g < gap.count && dirIdx < DIRECT_DIRS.length; g++, dirIdx++) {
-    const dir = DIRECT_DIRS[dirIdx];
-    const angleDeg = gap.start + step * (g + 1);
-    const angleRad = angleDeg * Math.PI / 180;
-    nodes.push({
-      id: dir.id, name: dir.name, role: 'Director (CEO)', type: 'director',
-      parentVP: 'dario-ceo',
-      angleDeg: angleDeg,
-      x: Math.cos(angleRad) * 300,
-      y: Math.sin(angleRad) * 300,
-      radius: 12, color: '#00d4ff', visible: true,
-      workerCount: dir.workerCount,
-      workers: dir.workers,
-      expanded: false
-    });
-    connections.push({ from: 'dario-ceo', to: dir.id });
-  }
+
+// Gap angles for direct reports (between VPs)
+// VP at 0,90,180,270. Gaps centered: 45, 135, 225, 315 (spread 50 degrees each)
+const GAP_CLUSTERS = [
+  { center: 45, count: 3 },   // Marketing, Technical, SEO
+  { center: 135, count: 3 },  // Finance, Client, Content
+  { center: 225, count: 3 },  // Legal, HR, Support
+  { center: 315, count: 2 },  // Product, PR
+];
+
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+const API_BASE = window.location.origin;
+let state = {
+  health: 100,
+  budget: { percentage: 0 },
+  tasks: [],
+  events: [],
+  scores: {},
+  stateMachine: 'idle',
+  selectedNode: null,
+  expandedDirector: null,
+  hoveredNode: null,
+  particles: [],
+  offline: false,
+};
+
+let sortCol = 'id';
+let sortDir = 1;
+let filterStatus = 'all';
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'tab-command') resizeCanvas();
+  });
 });
-
-// Worker nodes (hidden by default)
-const workerNodes = [];
-nodes.forEach(n => {
-  if (n.type === 'director' && n.workers) {
-    n.workers.forEach((w, i) => {
-      workerNodes.push({
-        id: `worker-${n.id}-${w}`,
-        name: w,
-        role: `Worker under ${n.name}`,
-        type: 'worker',
-        parentDir: n.id,
-        parentAngle: n.angleDeg,
-        index: i,
-        total: n.workers.length,
-        x: 0, y: 0,
-        radius: 6, color: '#1a2535',
-        visible: false,
-        status: 'idle'
-      });
-    });
-  }
-});
-
-// ============================================================
-// CANVAS SETUP
-// ============================================================
-const canvas = document.getElementById('radialCanvas');
-const ctx = canvas.getContext('2d');
-let W, H, cx, cy;
-let scale = 1.0;
-let panX = 0, panY = 0;
-let dragging = false;
-let dragStartX = 0, dragStartY = 0;
-let panStartX = 0, panStartY = 0;
-let expandedDirector = null;
-let hoveredNode = null;
-let selectedNode = null;
-let animFrame = 0;
-
-function resize() {
-  const container = document.getElementById('canvas-container');
-  W = container.clientWidth;
-  H = container.clientHeight;
-  canvas.width = W * window.devicePixelRatio;
-  canvas.height = H * window.devicePixelRatio;
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-  cx = W / 2;
-  cy = H / 2;
-}
-
-window.addEventListener('resize', resize);
-resize();
-
-// ============================================================
-// PARTICLES
-// ============================================================
-const particles = [];
-
-function createParticle(fromId, toId, type) {
-  const fromNode = nodes.find(n => n.id === fromId) || workerNodes.find(n => n.id === fromId);
-  const toNode = nodes.find(n => n.id === toId) || workerNodes.find(n => n.id === toId);
-  if (!fromNode || !toNode) return;
-
-  // Create bezier control point (offset perpendicular to line)
-  const mx = (fromNode.x + toNode.x) / 2;
-  const my = (fromNode.y + toNode.y) / 2;
-  const dx = toNode.x - fromNode.x;
-  const dy = toNode.y - fromNode.y;
-  const perpX = -dy * 0.3 * (Math.random() - 0.5);
-  const perpY = dx * 0.3 * (Math.random() - 0.5);
-
-  particles.push({
-    fromX: fromNode.x, fromY: fromNode.y,
-    toX: toNode.x, toY: toNode.y,
-    cpX: mx + perpX, cpY: my + perpY,
-    t: 0,
-    speed: 0.008 + Math.random() * 0.006,
-    color: type === 'dispatch' ? '#ffaa00' : '#00ff88',
-    size: type === 'dispatch' ? 4 : 3,
-    glowSize: type === 'dispatch' ? 8 : 6,
-    trail: [],
-    alive: true
-  });
-}
-
-function updateParticles() {
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.t += p.speed;
-    if (p.t >= 1) {
-      particles.splice(i, 1);
-      continue;
-    }
-    // Quadratic bezier position
-    const t = p.t;
-    const mt = 1 - t;
-    const px = mt * mt * p.fromX + 2 * mt * t * p.cpX + t * t * p.toX;
-    const py = mt * mt * p.fromY + 2 * mt * t * p.cpY + t * t * p.toY;
-    p.trail.push({ x: px, y: py, alpha: 1.0 });
-    if (p.trail.length > 12) p.trail.shift();
-    // Fade trail
-    p.trail.forEach((tp, ti) => { tp.alpha = (ti + 1) / p.trail.length; });
-  }
-}
-
-// Ambient particles
-let ambientTimer = 0;
-function spawnAmbientParticle() {
-  const connIdx = Math.floor(Math.random() * connections.length);
-  const conn = connections[connIdx];
-  const type = Math.random() > 0.5 ? 'dispatch' : 'return';
-  if (type === 'dispatch') {
-    createParticle(conn.from, conn.to, 'dispatch');
-  } else {
-    createParticle(conn.to, conn.from, 'return');
-  }
-}
-
-// ============================================================
-// WORKER POSITION CALCULATION
-// ============================================================
-function calcWorkerPositions(dirNode) {
-  const workers = workerNodes.filter(w => w.parentDir === dirNode.id);
-  const count = workers.length;
-  if (count === 0) return;
-
-  const arcSpread = Math.min(30, count * 4); // degrees
-  const halfArc = arcSpread / 2;
-  const baseAngle = dirNode.angleDeg;
-  const workerRadius = 420;
-
-  workers.forEach((w, i) => {
-    const offset = count === 1 ? 0 : (i / (count - 1) - 0.5) * arcSpread;
-    const angleDeg = baseAngle + offset;
-    const angleRad = angleDeg * Math.PI / 180;
-    w.x = Math.cos(angleRad) * workerRadius;
-    w.y = Math.sin(angleRad) * workerRadius;
-    w.visible = true;
-  });
-}
-
-function hideWorkers(dirId) {
-  workerNodes.forEach(w => {
-    if (w.parentDir === dirId) {
-      w.visible = false;
-    }
-  });
-}
-
-// ============================================================
-// COORDINATE TRANSFORMS
-// ============================================================
-function worldToScreen(wx, wy) {
-  return {
-    x: cx + (wx + panX) * scale,
-    y: cy + (wy + panY) * scale
-  };
-}
-
-function screenToWorld(sx, sy) {
-  return {
-    x: (sx - cx) / scale - panX,
-    y: (sy - cy) / scale - panY
-  };
-}
-
-// ============================================================
-// DRAWING
-// ============================================================
-function drawRings() {
-  ctx.strokeStyle = '#0d1525';
-  ctx.lineWidth = 1;
-  [150, 300, 420].forEach(r => {
-    const sr = r * scale;
-    const center = worldToScreen(0, 0);
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, sr, 0, Math.PI * 2);
-    ctx.stroke();
-  });
-}
-
-function drawConnections() {
-  connections.forEach(conn => {
-    const fromNode = nodes.find(n => n.id === conn.from);
-    const toNode = nodes.find(n => n.id === conn.to);
-    if (!fromNode || !toNode || !fromNode.visible || !toNode.visible) return;
-
-    // Dim connections when a director is expanded (except active ones)
-    let alpha = 0.15;
-    if (expandedDirector) {
-      if (conn.to === expandedDirector || conn.from === expandedDirector) {
-        alpha = 0.6;
-      } else {
-        alpha = 0.05;
-      }
-    }
-    if (hoveredNode && (conn.from === hoveredNode.id || conn.to === hoveredNode.id)) {
-      alpha = 0.5;
-    }
-
-    const from = worldToScreen(fromNode.x, fromNode.y);
-    const to = worldToScreen(toNode.x, toNode.y);
-
-    ctx.strokeStyle = `rgba(10, 26, 48, ${alpha})`;
-    if (alpha > 0.3) ctx.strokeStyle = `rgba(0, 212, 255, ${alpha})`;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(from.x, from.y);
-    ctx.lineTo(to.x, to.y);
-    ctx.stroke();
-  });
-
-  // Worker connections
-  if (expandedDirector) {
-    const dirNode = nodes.find(n => n.id === expandedDirector);
-    if (dirNode) {
-      const from = worldToScreen(dirNode.x, dirNode.y);
-      workerNodes.filter(w => w.parentDir === expandedDirector && w.visible).forEach(w => {
-        const to = worldToScreen(w.x, w.y);
-        ctx.strokeStyle = 'rgba(0, 212, 255, 0.25)';
-        ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.stroke();
-      });
-    }
-  }
-}
-
-function drawNode(node, isHovered) {
-  if (!node.visible) return;
-  const pos = worldToScreen(node.x, node.y);
-  const r = node.radius * scale;
-
-  // Glow
-  if (node.type === 'ceo' || isHovered) {
-    const glowSize = r * 2;
-    const grad = ctx.createRadialGradient(pos.x, pos.y, r * 0.5, pos.x, pos.y, glowSize);
-    grad.addColorStop(0, node.color + '40');
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, glowSize, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Dim non-active directors when one is expanded
-  let dimFactor = 1.0;
-  if (expandedDirector && node.type === 'director' && node.id !== expandedDirector) {
-    dimFactor = 0.35;
-  }
-
-  // Node body
-  ctx.fillStyle = node.color;
-  ctx.globalAlpha = dimFactor;
-  ctx.beginPath();
-  ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.globalAlpha = 1.0;
-
-  // CEO heartbeat pulse
-  if (node.type === 'ceo') {
-    const pulse = 1 + Math.sin(animFrame * 0.03) * 0.15;
-    ctx.strokeStyle = node.color + '60';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, r * pulse * 1.4, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  // Label
-  let fontSize, labelY;
-  if (node.type === 'ceo') {
-    fontSize = Math.max(10, 14 * scale);
-    labelY = pos.y + r + fontSize + 4;
-  } else if (node.type === 'vp') {
-    fontSize = Math.max(9, 13 * scale);
-    labelY = pos.y + r + fontSize + 3;
-  } else if (node.type === 'director') {
-    fontSize = Math.max(8, 11 * scale);
-    labelY = pos.y + r + fontSize + 2;
-  } else {
-    fontSize = Math.max(7, 9 * scale);
-    labelY = pos.y + r + fontSize + 1;
-  }
-
-  ctx.font = `600 ${fontSize}px Inter`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-
-  // Text shadow for legibility
-  ctx.fillStyle = '#000000';
-  ctx.globalAlpha = 0.7 * dimFactor;
-  ctx.fillText(node.name, pos.x + 1, labelY + 1);
-  ctx.globalAlpha = dimFactor;
-  ctx.fillStyle = '#e0e8f0';
-  ctx.fillText(node.name, pos.x, labelY);
-  ctx.globalAlpha = 1.0;
-}
-
-function drawWorkerNode(node, isHovered) {
-  if (!node.visible) return;
-  const pos = worldToScreen(node.x, node.y);
-  const r = node.radius * scale;
-
-  // Status color
-  let color = '#1a2535';
-  if (node.status === 'active') color = '#00d4ff';
-  else if (node.status === 'done') color = '#00ff88';
-  else if (node.status === 'blocked') color = '#ff3344';
-
-  if (isHovered) {
-    const glowSize = r * 2.5;
-    const grad = ctx.createRadialGradient(pos.x, pos.y, r * 0.3, pos.x, pos.y, glowSize);
-    grad.addColorStop(0, color + '60');
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, glowSize, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Active pulse
-  if (node.status === 'active') {
-    const pulse = 1 + Math.sin(animFrame * 0.05 + node.index) * 0.3;
-    ctx.fillStyle = color + '30';
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, r * pulse * 1.8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Worker label
-  const fontSize = Math.max(7, 8 * scale);
-  ctx.font = `500 ${fontSize}px Inter`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillStyle = '#000000';
-  ctx.globalAlpha = 0.6;
-  ctx.fillText(node.name, pos.x + 1, pos.y + r + 3);
-  ctx.globalAlpha = 1.0;
-  ctx.fillStyle = '#8a9ab0';
-  ctx.fillText(node.name, pos.x, pos.y + r + 2);
-}
-
-function drawParticles() {
-  particles.forEach(p => {
-    // Draw trail
-    p.trail.forEach((tp, i) => {
-      const pos = worldToScreen(tp.x, tp.y);
-      const alpha = tp.alpha * 0.6;
-      const size = p.size * scale * (tp.alpha * 0.5 + 0.5);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = alpha;
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, size, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Draw head with glow
-    if (p.trail.length > 0) {
-      const head = p.trail[p.trail.length - 1];
-      const pos = worldToScreen(head.x, head.y);
-
-      // Glow
-      const grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.glowSize * scale);
-      grad.addColorStop(0, p.color + 'cc');
-      grad.addColorStop(1, 'transparent');
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, p.glowSize * scale, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Core
-      ctx.globalAlpha = 1.0;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, p.size * scale, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1.0;
-  });
-}
-
-// ============================================================
-// MAIN RENDER LOOP
-// ============================================================
-function render() {
-  animFrame++;
-  ctx.clearRect(0, 0, W, H);
-
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-
-  drawRings();
-  drawConnections();
-
-  // Draw nodes in order: workers (back), directors, VPs, CEO (front)
-  workerNodes.forEach(n => drawWorkerNode(n, hoveredNode && hoveredNode.id === n.id));
-  nodes.filter(n => n.type === 'director').forEach(n => drawNode(n, hoveredNode && hoveredNode.id === n.id));
-  nodes.filter(n => n.type === 'vp').forEach(n => drawNode(n, hoveredNode && hoveredNode.id === n.id));
-  nodes.filter(n => n.type === 'ceo').forEach(n => drawNode(n, hoveredNode && hoveredNode.id === n.id));
-
-  drawParticles();
-  updateParticles();
-
-  // Ambient particles
-  ambientTimer++;
-  if (ambientTimer > 180) { // every ~3 seconds at 60fps
-    spawnAmbientParticle();
-    ambientTimer = 0;
-  }
-
-  requestAnimationFrame(render);
-}
-
-// ============================================================
-// INTERACTIONS
-// ============================================================
-function getNodeAtPosition(sx, sy) {
-  const world = screenToWorld(sx, sy);
-
-  // Check workers first (smallest, on top when expanded)
-  for (const n of workerNodes) {
-    if (!n.visible) continue;
-    const dx = world.x - n.x;
-    const dy = world.y - n.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < n.radius + 8) return n;
-  }
-
-  // Then other nodes (reverse order for front-to-back)
-  const ordered = [...nodes].reverse();
-  for (const n of ordered) {
-    if (!n.visible) continue;
-    const dx = world.x - n.x;
-    const dy = world.y - n.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const hitRadius = n.radius + 8;
-    if (dist < hitRadius) return n;
-  }
-
-  return null;
-}
-
-canvas.addEventListener('mousedown', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-
-  const node = getNodeAtPosition(mx, my);
-  if (node) {
-    handleNodeClick(node);
-    return;
-  }
-
-  dragging = true;
-  dragStartX = e.clientX;
-  dragStartY = e.clientY;
-  panStartX = panX;
-  panStartY = panY;
-});
-
-canvas.addEventListener('mousemove', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-
-  if (dragging) {
-    panX = panStartX + (e.clientX - dragStartX) / scale;
-    panY = panStartY + (e.clientY - dragStartY) / scale;
-    return;
-  }
-
-  const node = getNodeAtPosition(mx, my);
-  hoveredNode = node;
-  canvas.style.cursor = node ? 'pointer' : 'grab';
-
-  // Tooltip
-  const tooltip = document.getElementById('tooltip');
-  if (node) {
-    tooltip.style.display = 'block';
-    tooltip.style.left = (e.clientX + 15) + 'px';
-    tooltip.style.top = (e.clientY - 10) + 'px';
-    tooltip.querySelector('.tt-name').textContent = node.name;
-    tooltip.querySelector('.tt-role').textContent = node.role || node.type;
-    let statText = '';
-    if (node.workerCount !== undefined) statText = `Workers: ${node.workerCount}`;
-    if (node.status) statText = `Status: ${node.status}`;
-    if (node.type === 'ceo') statText = 'Central Command';
-    tooltip.querySelector('.tt-stat').textContent = statText;
-  } else {
-    tooltip.style.display = 'none';
-  }
-
-  // Update node details panel
-  if (node) {
-    updateNodeDetails(node);
-  }
-});
-
-canvas.addEventListener('mouseup', () => { dragging = false; });
-canvas.addEventListener('mouseleave', () => {
-  dragging = false;
-  document.getElementById('tooltip').style.display = 'none';
-});
-
-canvas.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  const zoomFactor = e.deltaY > 0 ? 0.92 : 1.08;
-  scale = Math.max(0.5, Math.min(2.0, scale * zoomFactor));
-}, { passive: false });
-
-function handleNodeClick(node) {
-  selectedNode = node;
-  updateNodeDetails(node);
-
-  if (node.type === 'director') {
-    if (expandedDirector === node.id) {
-      // Collapse
-      hideWorkers(expandedDirector);
-      expandedDirector = null;
-      document.getElementById('sidebar').classList.remove('visible');
-    } else {
-      // Collapse previous
-      if (expandedDirector) hideWorkers(expandedDirector);
-      // Expand new
-      expandedDirector = node.id;
-      calcWorkerPositions(node);
-      showSidebar(node);
-    }
-  } else if (node.type === 'ceo') {
-    // Pulse: spawn particles to all VPs
-    VPS.forEach(vp => {
-      createParticle(CEO.id, vp.id, 'dispatch');
-    });
-  } else if (node.type === 'vp') {
-    // Spawn particles to its directors
-    const vpDirs = VP_DIRS[node.id] || [];
-    vpDirs.forEach(d => {
-      setTimeout(() => createParticle(node.id, d.id, 'dispatch'), Math.random() * 500);
-    });
-  }
-}
-
-function showSidebar(dirNode) {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.classList.add('visible');
-  document.getElementById('sidebar-title').textContent = dirNode.name;
-  document.getElementById('sidebar-count').textContent = `${dirNode.workerCount} workers`;
-
-  const container = document.getElementById('sidebar-workers');
-  container.innerHTML = '';
-
-  if (dirNode.workers) {
-    dirNode.workers.forEach(w => {
-      const wNode = workerNodes.find(n => n.id === `worker-${dirNode.id}-${w}`);
-      const status = wNode ? wNode.status : 'idle';
-      const item = document.createElement('div');
-      item.className = 'worker-item';
-      item.innerHTML = `<div class="worker-dot ${status}"></div><span class="worker-name">${w}</span>`;
-      container.appendChild(item);
-    });
-  }
-}
-
-function updateNodeDetails(node) {
-  const panel = document.getElementById('node-details');
-  let html = `<div class="detail-name">${node.name}</div>`;
-  html += `<div class="detail-role">${node.role || node.type}</div>`;
-
-  if (node.type === 'ceo') {
-    html += `<div class="detail-stat"><span class="stat-label">Type</span><span class="stat-value amber">Central AI</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">VPs</span><span class="stat-value">${VPS.length}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Total Entities</span><span class="stat-value">165</span></div>`;
-  } else if (node.type === 'vp') {
-    const dirs = VP_DIRS[node.id] || [];
-    const totalWorkers = dirs.reduce((s, d) => s + d.workerCount, 0);
-    html += `<div class="detail-stat"><span class="stat-label">Directors</span><span class="stat-value">${dirs.length}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Workers</span><span class="stat-value">${totalWorkers}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Sector</span><span class="stat-value">${node.sector[0]}-${node.sector[1]} deg</span></div>`;
-  } else if (node.type === 'director') {
-    html += `<div class="detail-stat"><span class="stat-label">Workers</span><span class="stat-value cyan">${node.workerCount}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Parent</span><span class="stat-value">${node.parentVP}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Angle</span><span class="stat-value">${Math.round(node.angleDeg)} deg</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Status</span><span class="stat-value green">${node.expanded ? 'Expanded' : 'Collapsed'}</span></div>`;
-  } else if (node.type === 'worker') {
-    html += `<div class="detail-stat"><span class="stat-label">Status</span><span class="stat-value">${node.status}</span></div>`;
-    html += `<div class="detail-stat"><span class="stat-label">Director</span><span class="stat-value">${node.parentDir}</span></div>`;
-  }
-
-  panel.innerHTML = html;
-}
 
 // ============================================================
 // CLOCK
 // ============================================================
 function updateClock() {
   const now = new Date();
-  const utc = now.toISOString().substr(11, 8);
-  document.getElementById('clock').textContent = utc + ' UTC';
+  document.getElementById('clock').textContent = now.toISOString().slice(11, 19) + ' UTC';
 }
 setInterval(updateClock, 1000);
 updateClock();
 
 // ============================================================
-// API POLLING
+// API FETCHING
 // ============================================================
-const API_BASE = 'http://localhost:8421';
-let lastEvents = [];
-
-async function fetchData() {
+async function fetchAPI(path) {
   try {
-    // Health
-    const healthRes = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
-    if (healthRes.ok) {
-      const health = await healthRes.json();
-      document.getElementById('health-val').textContent = (health.health_pct || 100) + '%';
-      document.getElementById('s-uptime').textContent = health.uptime || '--';
-      const badge = document.getElementById('state-badge');
-      if (health.state === 'GUARDIAN' || health.state === 'guardian') {
-        badge.className = 'badge badge-guardian';
-        badge.textContent = 'GUARDIAN';
-      } else {
-        badge.className = 'badge badge-active';
-        badge.textContent = 'ACTIVE';
-      }
-    }
-  } catch (e) {}
-
-  try {
-    // Tasks
-    const tasksRes = await fetch(`${API_BASE}/tasks`, { signal: AbortSignal.timeout(3000) });
-    if (tasksRes.ok) {
-      const tasks = await tasksRes.json();
-      const list = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-      let active = 0, done = 0, pending = 0, blocked = 0;
-      list.forEach(t => {
-        const s = (t.status || '').toLowerCase();
-        if (s === 'in_progress' || s === 'active') active++;
-        else if (s === 'done' || s === 'completed') done++;
-        else if (s === 'blocked') blocked++;
-        else pending++;
-      });
-      document.getElementById('s-active').textContent = active;
-      document.getElementById('s-done').textContent = done;
-      document.getElementById('s-pending').textContent = pending;
-      document.getElementById('s-blocked').textContent = blocked;
-
-      // Update worker statuses based on tasks
-      list.forEach(t => {
-        if (t.assigned_to) {
-          const worker = workerNodes.find(w => w.name === t.assigned_to || w.id.includes(t.assigned_to));
-          if (worker) {
-            const s = (t.status || '').toLowerCase();
-            if (s === 'in_progress' || s === 'active') worker.status = 'active';
-            else if (s === 'done' || s === 'completed') worker.status = 'done';
-            else if (s === 'blocked') worker.status = 'blocked';
-            else worker.status = 'idle';
-          }
-        }
-      });
-    }
-  } catch (e) {}
-
-  try {
-    // Budget
-    const budgetRes = await fetch(`${API_BASE}/budget`, { signal: AbortSignal.timeout(3000) });
-    if (budgetRes.ok) {
-      const budget = await budgetRes.json();
-      const pct = budget.percentage || budget.used_pct || 0;
-      const el = document.getElementById('s-budget');
-      el.textContent = Math.round(pct) + '%';
-      el.className = 'stat-value ' + (pct >= 95 ? 'red' : pct >= 80 ? 'amber' : 'green');
-    }
-  } catch (e) {}
-
-  try {
-    // Audit/Events
-    const auditRes = await fetch(`${API_BASE}/audit?limit=30`, { signal: AbortSignal.timeout(3000) });
-    if (auditRes.ok) {
-      const audit = await auditRes.json();
-      const events = Array.isArray(audit) ? audit : (audit.events || audit.entries || []);
-      updateEventFeed(events);
-    }
-  } catch (e) {}
+    const r = await fetch(API_BASE + path, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) throw new Error(r.status);
+    state.offline = false;
+    document.getElementById('offline-banner').classList.remove('show');
+    return await r.json();
+  } catch(e) {
+    state.offline = true;
+    document.getElementById('offline-banner').classList.add('show');
+    return null;
+  }
 }
 
-function updateEventFeed(events) {
-  const feed = document.getElementById('event-feed');
-  feed.innerHTML = '';
+async function refreshData() {
+  const [health, tasks, audit, budget, scores, stateData] = await Promise.all([
+    fetchAPI('/health'),
+    fetchAPI('/tasks'),
+    fetchAPI('/audit?limit=30'),
+    fetchAPI('/budget'),
+    fetchAPI('/scores'),
+    fetchAPI('/state'),
+  ]);
 
-  const recent = events.slice(0, 15);
-  recent.forEach(ev => {
-    const item = document.createElement('div');
-    item.className = 'event-item';
+  if (health) {
+    state.health = typeof health.health === 'number' ? health.health : (health.percentage || 100);
+    document.getElementById('badge-health').textContent = Math.round(state.health) + '%';
+  }
 
-    const time = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '--:--';
-    const type = ev.type || ev.action || 'info';
-    let typeClass = 'info';
-    if (type.includes('dispatch') || type.includes('assign')) typeClass = 'dispatch';
-    else if (type.includes('complete') || type.includes('done')) typeClass = 'complete';
-    else if (type.includes('error') || type.includes('fail')) typeClass = 'error';
+  if (tasks) {
+    state.tasks = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
+    updateStats();
+    renderTaskTable();
+  }
 
-    const msg = ev.message || ev.description || ev.detail || JSON.stringify(ev).substring(0, 80);
+  if (audit) {
+    state.events = Array.isArray(audit) ? audit.slice(0, 15) : (audit.entries || []).slice(0, 15);
+    renderEvents();
+  }
 
-    item.innerHTML = `<span class="event-time">${time}</span><span class="event-type ${typeClass}">${type}</span><span class="event-msg">${msg}</span>`;
-    feed.appendChild(item);
+  if (budget) {
+    state.budget = budget;
+    const pct = budget.percentage || 0;
+    document.getElementById('stat-budget').textContent = pct.toFixed(2) + '%';
+    updateBudgetGauge(pct);
+  }
+
+  if (scores) {
+    state.scores = scores;
+    renderSkillsChart();
+  }
+
+  if (stateData) {
+    state.stateMachine = stateData.state || stateData.current || 'idle';
+    document.getElementById('badge-state').textContent = (state.stateMachine || 'IDLE').toUpperCase();
+    const autonomy = stateData.autonomy || stateData.auto || false;
+    document.getElementById('badge-autonomy').textContent = 'AUTO: ' + (autonomy ? 'ON' : 'OFF');
+    updateStateMachine();
+  }
+
+  updateHealthGauge();
+}
+
+function updateStats() {
+  let active = 0, done = 0, pending = 0, blocked = 0;
+  state.tasks.forEach(t => {
+    const s = (t.status || '').toLowerCase();
+    if (s === 'done' || s === 'completed') done++;
+    else if (s === 'active' || s === 'in_progress' || s === 'executing') active++;
+    else if (s === 'blocked' || s === 'failed') blocked++;
+    else pending++;
+  });
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-blocked').textContent = blocked;
+}
+
+// ============================================================
+// TASK TABLE
+// ============================================================
+function renderTaskTable() {
+  const tbody = document.getElementById('task-tbody');
+  let tasks = [...state.tasks];
+
+  if (filterStatus !== 'all') {
+    tasks = tasks.filter(t => {
+      const s = (t.status || '').toLowerCase();
+      if (filterStatus === 'done') return s === 'done' || s === 'completed';
+      if (filterStatus === 'active') return s === 'active' || s === 'in_progress' || s === 'executing';
+      if (filterStatus === 'blocked') return s === 'blocked' || s === 'failed';
+      if (filterStatus === 'todo') return s === 'todo' || s === 'pending' || s === 'queued';
+      return true;
+    });
+  }
+
+  tasks.sort((a, b) => {
+    let va = a[sortCol] || '';
+    let vb = b[sortCol] || '';
+    if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * sortDir;
+    return String(va).localeCompare(String(vb)) * sortDir;
   });
 
-  // Spawn particle on new dispatch events
-  if (events.length > 0 && events[0] !== lastEvents[0]) {
-    const newest = events[0];
-    const type = newest.type || newest.action || '';
-    if (type.includes('dispatch') || type.includes('assign')) {
-      createParticle(CEO.id, VPS[Math.floor(Math.random() * VPS.length)].id, 'dispatch');
-    } else if (type.includes('complete') || type.includes('done')) {
-      const vpId = VPS[Math.floor(Math.random() * VPS.length)].id;
-      createParticle(vpId, CEO.id, 'return');
-    }
-  }
-  lastEvents = events;
+  tbody.innerHTML = tasks.map(t => {
+    const s = (t.status || 'todo').toLowerCase();
+    const statusClass = s.includes('done') || s.includes('completed') ? 'done' :
+                        s.includes('active') || s.includes('progress') || s.includes('executing') ? 'active' :
+                        s.includes('block') || s.includes('fail') ? 'blocked' : 'todo';
+    return `<tr class="status-${statusClass}">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4a5a70">${t.id || '-'}</td>
+      <td title="${t.title || t.description || ''}">${t.title || t.description || '-'}</td>
+      <td style="color:#aa66ff">${t.skill || '-'}</td>
+      <td>${t.assignee || t.assigned_to || '-'}</td>
+      <td><span class="status-badge ${statusClass}">${statusClass}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace">${t.score != null ? t.score : '-'}</td>
+      <td style="font-family:'JetBrains Mono',monospace">${t.priority || '-'}</td>
+    </tr>`;
+  }).join('');
 }
 
-// Initial fetch and interval
-fetchData();
-setInterval(fetchData, 8000);
+// Sort headers
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.sort;
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = 1; }
+    renderTaskTable();
+  });
+});
 
-// Add some demo events if API is down
-setTimeout(() => {
-  const feed = document.getElementById('event-feed');
-  if (feed.children.length === 0) {
-    const demoEvents = [
-      { timestamp: new Date().toISOString(), type: 'system', message: 'Dashboard initialized - awaiting API connection' },
-      { timestamp: new Date().toISOString(), type: 'info', message: 'Radial view: CEO + 4 VPs + 28 Directors visible' },
-      { timestamp: new Date().toISOString(), type: 'info', message: 'Click a Director to expand workers' },
-    ];
-    updateEventFeed(demoEvents);
-  }
-}, 2000);
-
-// ============================================================
-// KEYBOARD SHORTCUTS
-// ============================================================
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (expandedDirector) {
-      hideWorkers(expandedDirector);
-      expandedDirector = null;
-      document.getElementById('sidebar').classList.remove('visible');
-    }
-    scale = 1.0;
-    panX = 0;
-    panY = 0;
-  }
-  if (e.key === '+' || e.key === '=') {
-    scale = Math.min(2.0, scale * 1.1);
-  }
-  if (e.key === '-') {
-    scale = Math.max(0.5, scale * 0.9);
-  }
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterStatus = btn.dataset.filter;
+    renderTaskTable();
+  });
 });
 
 // ============================================================
-// START
+// EVENTS FEED
 // ============================================================
-render();
+function renderEvents() {
+  const el = document.getElementById('events-list');
+  el.innerHTML = state.events.map(e => {
+    const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) : '--:--';
+    const action = (e.action || e.type || e.event || 'info').toLowerCase();
+    let cls = 'event-default';
+    if (action.includes('dispatch')) cls = 'event-dispatch';
+    else if (action.includes('pulse') || action.includes('heartbeat')) cls = 'event-pulse';
+    else if (action.includes('score') || action.includes('complete')) cls = 'event-score';
+    else if (action.includes('error') || action.includes('fail')) cls = 'event-error';
+    const msg = e.message || e.description || e.action || action;
+    return `<div class="event-item"><span class="event-time">${time}</span> <span class="${cls}">${msg.slice(0,50)}</span></div>`;
+  }).join('');
+}
+
+// ============================================================
+// ANALYTICS: GAUGES & CHARTS
+// ============================================================
+function updateHealthGauge() {
+  const pct = state.health / 100;
+  const offset = 314 * (1 - pct);
+  document.getElementById('health-arc').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('health-value').textContent = Math.round(state.health) + '%';
+}
+
+function updateBudgetGauge(pct) {
+  const offset = 314 * (1 - pct / 100);
+  document.getElementById('budget-arc').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('budget-value').textContent = pct.toFixed(1) + '%';
+}
+
+function updateStateMachine() {
+  const s = (state.stateMachine || 'idle').toLowerCase();
+  ['idle','scanning','executing','scoring'].forEach(st => {
+    const el = document.getElementById('sm-' + st);
+    if (el) el.classList.toggle('active-state', s.includes(st.slice(0,4)));
+  });
+}
+
+function renderSkillsChart() {
+  const container = document.getElementById('skills-chart');
+  let entries = [];
+  if (state.scores && typeof state.scores === 'object') {
+    if (Array.isArray(state.scores)) {
+      entries = state.scores.slice(0, 8);
+    } else {
+      entries = Object.entries(state.scores).slice(0, 8).map(([k,v]) => ({name:k, score: typeof v === 'number' ? v : (v.avg || v.score || 0)}));
+    }
+  }
+  if (entries.length === 0) {
+    container.innerHTML = '<div style="color:#4a5a70;font-size:11px;">No score data</div>';
+    return;
+  }
+  const maxScore = Math.max(...entries.map(e => e.score || 0), 1);
+  container.innerHTML = entries.map(e => {
+    const pct = ((e.score || 0) / maxScore * 100).toFixed(0);
+    return `<div class="skill-bar-row">
+      <span class="skill-bar-name">${e.name || e.skill || '-'}</span>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${pct}%"></div></div>
+      <span class="skill-bar-val">${e.score || 0}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderEngineGrid() {
+  const engines = ['dispatch','pulse','score','budget','evolve','rag','heartbeat',
+    'quality','stale','health','alert','router','cost','feedback','skill-eval',
+    'revision','cross-proj','revenue','knowledge','backend','frontend','ai-agent',
+    'database','tax','compliance','reporting'];
+  const grid = document.getElementById('engine-grid');
+  grid.innerHTML = engines.map(e => `<div class="engine-light"><span class="engine-dot"></span>${e}</div>`).join('');
+}
+renderEngineGrid();
+
+// ============================================================
+// RADIAL CANVAS — Tab 1
+// ============================================================
+const canvas = document.getElementById('radialCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, cx, cy;
+let zoom = 1, panX = 0, panY = 0;
+let isDragging = false, dragStart = {x:0, y:0}, panStart = {x:0, y:0};
+let nodes = []; // all rendered nodes for hit testing
+let animFrame;
+
+const R_VP = 150;
+const R_DIR = 280;
+const R_WORKER = 380;
+const VP_SECTOR = 50; // degrees
+
+function resizeCanvas() {
+  const container = document.getElementById('canvas-container');
+  W = container.clientWidth;
+  H = container.clientHeight;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  cx = W / 2 + panX;
+  cy = H / 2 + panY;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function degToRad(d) { return d * Math.PI / 180; }
+
+function buildNodePositions() {
+  nodes = [];
+  // CEO
+  nodes.push({ ...CEO, x: 0, y: 0, radius: 25, color: '#ffaa00', type: 'ceo' });
+
+  // VPs
+  VPS.forEach(vp => {
+    const a = degToRad(vp.angle - 90); // -90 to start from top
+    const x = Math.cos(a) * R_VP;
+    const y = Math.sin(a) * R_VP;
+    nodes.push({ ...vp, x, y, radius: 18, color: '#aa66ff', type: 'vp' });
+
+    // Directors for this VP
+    const dirs = VP_DIRS[vp.id] || [];
+    const sectorStart = vp.angle - VP_SECTOR / 2;
+    const step = dirs.length > 1 ? VP_SECTOR / (dirs.length - 1) : 0;
+    dirs.forEach((dir, i) => {
+      const da = degToRad((dirs.length === 1 ? vp.angle : sectorStart + step * i) - 90);
+      const dx = Math.cos(da) * R_DIR;
+      const dy = Math.sin(da) * R_DIR;
+      nodes.push({ ...dir, x: dx, y: dy, radius: 12, color: '#00d4ff', type: 'director', parent: vp.id });
+    });
+  });
+
+  // Direct CEO reports in gap clusters
+  let dirIdx = 0;
+  GAP_CLUSTERS.forEach(cluster => {
+    const startAngle = cluster.center - (cluster.count - 1) * 8;
+    for (let i = 0; i < cluster.count && dirIdx < DIRECT_DIRS.length; i++, dirIdx++) {
+      const dir = DIRECT_DIRS[dirIdx];
+      const da = degToRad(startAngle + i * 16 - 90);
+      const dx = Math.cos(da) * R_DIR;
+      const dy = Math.sin(da) * R_DIR;
+      nodes.push({ ...dir, x: dx, y: dy, radius: 12, color: '#00d4ff', type: 'director', parent: 'dario-ceo' });
+    }
+  });
+}
+
+buildNodePositions();
+
+// Particles
+function spawnParticle() {
+  if (state.particles.length > 40) return;
+  const outward = Math.random() > 0.4;
+  const angle = Math.random() * Math.PI * 2;
+  const startR = outward ? 30 : R_DIR;
+  const endR = outward ? R_DIR : 30;
+  state.particles.push({
+    angle, startR, endR,
+    progress: 0,
+    speed: 0.005 + Math.random() * 0.008,
+    color: outward ? '#ffaa00' : '#00ff88',
+    alpha: 0.8,
+  });
+}
+
+function updateParticles() {
+  state.particles = state.particles.filter(p => {
+    p.progress += p.speed;
+    p.alpha = 1 - p.progress;
+    return p.progress < 1;
+  });
+  if (Math.random() < 0.15) spawnParticle();
+}
+
+// Worker expansion
+let expandedWorkers = [];
+function expandDirector(dir) {
+  if (state.expandedDirector === dir.id) {
+    state.expandedDirector = null;
+    expandedWorkers = [];
+    return;
+  }
+  state.expandedDirector = dir.id;
+  expandedWorkers = [];
+  const workers = dir.workers || [];
+  const dirNode = nodes.find(n => n.id === dir.id);
+  if (!dirNode) return;
+  const baseAngle = Math.atan2(dirNode.y, dirNode.x);
+  const spread = Math.min(workers.length * 0.12, 1.2);
+  const startA = baseAngle - spread / 2;
+  const stepA = workers.length > 1 ? spread / (workers.length - 1) : 0;
+  workers.forEach((w, i) => {
+    const a = startA + stepA * i;
+    expandedWorkers.push({
+      id: w, name: w, x: Math.cos(a) * R_WORKER, y: Math.sin(a) * R_WORKER,
+      radius: 6, color: '#1a2535', type: 'worker', parent: dir.id
+    });
+  });
+}
+
+// Drawing
+function drawFrame() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(zoom, zoom);
+
+  // Connection lines (bright when hovered/selected)
+  nodes.forEach(n => {
+    if (n.type === 'vp') {
+      const bright = state.hoveredNode === n.id || state.hoveredNode === 'dario-ceo';
+      drawLine(0, 0, n.x, n.y, bright ? '#aa66ff' : '#1a1a3e', bright ? 0.8 : 0.4);
+    } else if (n.type === 'director') {
+      const parent = nodes.find(p => p.id === n.parent);
+      if (parent) {
+        const bright = state.hoveredNode === n.id || state.hoveredNode === n.parent;
+        drawLine(parent.x, parent.y, n.x, n.y, bright ? '#00d4ff' : '#1a1a3e', bright ? 0.7 : 0.3);
+      }
+    }
+  });
+
+  // Worker connections
+  expandedWorkers.forEach(w => {
+    const parent = nodes.find(n => n.id === w.parent);
+    if (parent) {
+      const bright = state.hoveredNode === w.id || state.hoveredNode === w.parent;
+      drawLine(parent.x, parent.y, w.x, w.y, bright ? '#00d4ff' : '#0a1a2a', bright ? 0.6 : 0.3);
+    }
+  });
+
+  // Particles
+  updateParticles();
+  state.particles.forEach(p => {
+    const r = p.startR + (p.endR - p.startR) * p.progress;
+    const px = Math.cos(p.angle) * r;
+    const py = Math.sin(p.angle) * r;
+    ctx.beginPath();
+    ctx.arc(px, py, 2, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha * 0.6;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  // Orbit rings (faint)
+  drawOrbit(R_VP, '#1a1a3e', 0.3);
+  drawOrbit(R_DIR, '#1a1a3e', 0.2);
+  if (expandedWorkers.length > 0) drawOrbit(R_WORKER, '#0a1a2a', 0.15);
+
+  // Draw workers
+  expandedWorkers.forEach(w => drawNode(w));
+
+  // Draw directors
+  nodes.filter(n => n.type === 'director').forEach(n => drawNode(n));
+
+  // Draw VPs
+  nodes.filter(n => n.type === 'vp').forEach(n => drawNode(n));
+
+  // Draw CEO
+  const ceo = nodes.find(n => n.type === 'ceo');
+  if (ceo) {
+    // Glow
+    const grd = ctx.createRadialGradient(ceo.x, ceo.y, 0, ceo.x, ceo.y, 45);
+    grd.addColorStop(0, 'rgba(255,170,0,0.15)');
+    grd.addColorStop(1, 'rgba(255,170,0,0)');
+    ctx.beginPath();
+    ctx.arc(ceo.x, ceo.y, 45, 0, Math.PI * 2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+    // Pulsing ring
+    const pulse = 0.6 + 0.4 * Math.sin(Date.now() / 600);
+    ctx.beginPath();
+    ctx.arc(ceo.x, ceo.y, 30 + pulse * 5, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255,170,0,${0.2 * pulse})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawNode(ceo);
+  }
+
+  ctx.restore();
+  animFrame = requestAnimationFrame(drawFrame);
+}
+
+function drawLine(x1, y1, x2, y2, color, alpha) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+function drawOrbit(r, color, alpha) {
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+function drawNode(n) {
+  const isHovered = state.hoveredNode === n.id;
+  const isExpanded = state.expandedDirector === n.id;
+
+  ctx.beginPath();
+  ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+
+  if (n.type === 'ceo') {
+    ctx.fillStyle = '#ffaa00';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,170,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  } else if (n.type === 'vp') {
+    ctx.fillStyle = isHovered ? '#cc88ff' : '#aa66ff';
+    ctx.fill();
+    if (isHovered) {
+      ctx.strokeStyle = 'rgba(170,102,255,0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  } else if (n.type === 'director') {
+    ctx.fillStyle = isExpanded ? '#00ffcc' : (isHovered ? '#33ddff' : '#00d4ff');
+    ctx.fill();
+    if (isHovered || isExpanded) {
+      ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  } else if (n.type === 'worker') {
+    ctx.fillStyle = isHovered ? '#00d4ff' : '#1a2535';
+    ctx.fill();
+    ctx.strokeStyle = '#0a2a3a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Label
+  ctx.font = n.type === 'ceo' ? '600 10px "JetBrains Mono"' :
+             n.type === 'vp' ? '500 9px "JetBrains Mono"' :
+             n.type === 'worker' ? '400 7px Inter' : '500 8px Inter';
+  ctx.fillStyle = n.type === 'worker' ? '#4a5a70' : '#c8d0e0';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  if (n.type === 'ceo') {
+    ctx.fillStyle = '#060611';
+    ctx.fillText('CEO', n.x, n.y);
+  } else {
+    const labelY = n.y + n.radius + 10;
+    ctx.fillText(n.name, n.x, labelY);
+  }
+}
+
+// Hit testing
+function getNodeAt(mx, my) {
+  // Transform mouse to canvas coords
+  const x = (mx - cx) / zoom;
+  const y = (my - cy) / zoom;
+
+  // Check expanded workers first
+  for (const w of expandedWorkers) {
+    const d = Math.hypot(x - w.x, y - w.y);
+    if (d <= w.radius + 4) return w;
+  }
+  // Then regular nodes (reversed so top-drawn checked first)
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const d = Math.hypot(x - n.x, y - n.y);
+    if (d <= n.radius + 4) return n;
+  }
+  return null;
+}
+
+// Canvas interactions
+canvas.addEventListener('mousemove', e => {
+  if (isDragging) {
+    panX = panStart.x + (e.clientX - dragStart.x);
+    panY = panStart.y + (e.clientY - dragStart.y);
+    cx = W / 2 + panX;
+    cy = H / 2 + panY;
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const node = getNodeAt(mx, my);
+  state.hoveredNode = node ? node.id : null;
+  canvas.style.cursor = node ? 'pointer' : 'grab';
+
+  // Tooltip
+  const tooltip = document.getElementById('canvas-tooltip');
+  if (node) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+    tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+    const wc = node.workerCount ? ` | ${node.workerCount} workers` : '';
+    tooltip.textContent = `${node.name} (${node.type})${wc}`;
+    showNodeDetails(node);
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const node = getNodeAt(mx, my);
+  if (node) {
+    if (node.type === 'director') {
+      expandDirector(node);
+      updateNodeCount();
+    }
+    state.selectedNode = node;
+    showNodeDetails(node);
+  } else {
+    isDragging = true;
+    dragStart = { x: e.clientX, y: e.clientY };
+    panStart = { x: panX, y: panY };
+    canvas.style.cursor = 'grabbing';
+  }
+});
+
+canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'grab'; });
+canvas.addEventListener('mouseleave', () => { isDragging = false; document.getElementById('canvas-tooltip').style.display = 'none'; });
+
+// Double-click to reset view
+canvas.addEventListener('dblclick', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const node = getNodeAt(mx, my);
+  if (!node) {
+    zoom = 1; panX = 0; panY = 0;
+    cx = W / 2; cy = H / 2;
+    updateNodeCount();
+  }
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const zoomSpeed = 0.001;
+  zoom = Math.max(0.3, Math.min(3, zoom - e.deltaY * zoomSpeed));
+}, { passive: false });
+
+function showNodeDetails(node) {
+  const el = document.getElementById('node-details');
+  let info = '';
+  if (node.type === 'ceo') {
+    info = `<div class="detail-title" style="color:#ffaa00">${node.name}</div>
+            <div class="detail-role">${node.role}</div>
+            <div class="detail-info">4 VPs, 11 Direct Reports<br>165 Total Entities</div>`;
+  } else if (node.type === 'vp') {
+    const dirs = VP_DIRS[node.id] || [];
+    const wCount = dirs.reduce((a,d) => a + d.workerCount, 0);
+    info = `<div class="detail-title" style="color:#aa66ff">${node.name}</div>
+            <div class="detail-role">${node.role}</div>
+            <div class="detail-info">${dirs.length} Directors, ${wCount} Workers</div>`;
+  } else if (node.type === 'director') {
+    info = `<div class="detail-title">${node.name}</div>
+            <div class="detail-role">Director</div>
+            <div class="detail-info">${node.workerCount || 0} Workers<br>Click to expand</div>`;
+  } else if (node.type === 'worker') {
+    info = `<div class="detail-title" style="color:#4a5a70">${node.name}</div>
+            <div class="detail-role">Worker</div>`;
+  }
+  el.innerHTML = info;
+}
+
+// Update node count indicator
+function updateNodeCount() {
+  const total = nodes.length + expandedWorkers.length;
+  document.getElementById('node-count').textContent = `Nodes: ${total} | Zoom: ${zoom.toFixed(1)}x`;
+}
+
+canvas.addEventListener('wheel', () => { setTimeout(updateNodeCount, 50); });
+
+// Start animation
+updateNodeCount();
+drawFrame();
+
+// ============================================================
+// DATA REFRESH LOOP
+// ============================================================
+refreshData();
+setInterval(refreshData, 8000);
 </script>
 </body>
 </html>
