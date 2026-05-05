@@ -15,7 +15,7 @@ Usage:
     python license_manager.py --activate KEY    # Activate VIP key
     python license_manager.py --init-trial      # Initialize 7-day trial
     python license_manager.py --check           # Check if license valid (exit 0=ok, 1=expired)
-    python license_manager.py --generate-key TIER EMAIL  # Generate VIP key (admin only)
+    Comprar chave: https://bfranca.com/dario
     python license_manager.py --json
 
 Key format: DARIO-XXXX-XXXX-XXXX-TIER
@@ -34,7 +34,7 @@ from pathlib import Path
 
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 LICENSE_FILE = ORCH_DIR / "license.json"
-MASTER_SECRET = "DARIO-BARDA-2026-ORCHESTRATOR-MASTER"  # For key generation
+# Key validation only — generation is admin-side (not distributed)
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("license")
@@ -107,15 +107,8 @@ TIERS = {
 # KEY GENERATION + VALIDATION
 # =============================================================================
 
-def generate_key(tier: str, email: str) -> str:
-    """Generate a license key. Admin only."""
-    if tier not in ("pro", "enterprise"):
-        return None
-    suffix = "PRO" if tier == "pro" else "ENT"
-    payload = f"{MASTER_SECRET}:{tier}:{email}:{datetime.now().isoformat()}"
-    h = hashlib.sha256(payload.encode()).hexdigest().upper()
-    key = f"DARIO-{h[:4]}-{h[4:8]}-{h[8:12]}-{suffix}"
-    return key
+# Key generation removed from public distribution.
+# Contact barda@bfranca.com to purchase activation keys.
 
 
 def validate_key(key: str) -> dict:
@@ -283,7 +276,7 @@ def main():
     parser.add_argument("--activate", "-a", help="Activate VIP key")
     parser.add_argument("--init-trial", action="store_true", help="Start 7-day trial")
     parser.add_argument("--check", "-c", action="store_true", help="Check if valid (exit code)")
-    parser.add_argument("--generate-key", nargs=2, metavar=("TIER", "EMAIL"), help="Generate key (admin)")
+    # --generate-key removed (admin only, not public)
     parser.add_argument("--json", "-j", action="store_true", help="JSON output")
 
     args = parser.parse_args()
@@ -351,21 +344,6 @@ def main():
                 if result.get("message"):
                     print(f"  {result['message']}")
         return 0 if result["valid"] else 1
-
-    elif args.generate_key:
-        tier, email = args.generate_key
-        if tier not in ("pro", "enterprise"):
-            print("Tier must be 'pro' or 'enterprise'")
-            return 1
-        key = generate_key(tier, email)
-        if args.json:
-            print(json.dumps({"key": key, "tier": tier, "email": email}))
-        else:
-            print(f"  Generated key for {email} ({tier}):")
-            print(f"  {key}")
-            print(f"\n  Send to customer. They run:")
-            print(f"  python license_manager.py --activate {key}")
-        return 0
 
     elif args.status:
         lic = load_license()
