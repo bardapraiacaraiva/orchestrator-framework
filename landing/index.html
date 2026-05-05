@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARIO v9.0 — Durable AI Execution Engine for Claude Code</title>
+<meta name="description" content="The only orchestrator that self-executes, self-corrects, and self-evolves. 26 engines, 45 API endpoints, SQLite persistence, FastAPI runtime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050510;
+  --surface: #0c0c1d;
+  --border: rgba(99,102,241,0.15);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --accent: #818cf8;
+  --accent2: #6366f1;
+  --accent3: #a78bfa;
+  --glow: rgba(129,140,248,0.3);
+  --success: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; overflow-x:hidden; }
+/* fonts loaded via <link> in head */
+
+/* === NOISE TEXTURE === */
+body::before {
+  content:''; position:fixed; inset:0; z-index:-1;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* === GLOW ORBS === */
+.orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:-1; }
+.orb-1 { width:600px; height:600px; background:rgba(99,102,241,0.08); top:-200px; right:-200px; animation:float 20s infinite; }
+.orb-2 { width:500px; height:500px; background:rgba(139,92,246,0.06); bottom:-200px; left:-200px; animation:float 25s infinite reverse; }
+.orb-3 { width:400px; height:400px; background:rgba(52,211,153,0.04); top:50%; left:50%; animation:float 30s infinite; }
+@keyframes float { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-30px)} 66%{transform:translate(-20px,20px)} }
+
+/* === NAV === */
+nav { position:fixed; top:0; width:100%; z-index:100; backdrop-filter:blur(20px); background:rgba(5,5,16,0.8); border-bottom:1px solid var(--border); }
+nav .inner { max-width:1200px; margin:0 auto; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; }
+nav .logo { font-weight:800; font-size:20px; letter-spacing:-0.5px; }
+nav .logo span { color:var(--accent); }
+nav .cta-nav { padding:8px 20px; background:var(--accent2); color:#fff; border:none; border-radius:8px; font-weight:600; font-size:14px; cursor:pointer; transition:all 0.3s; }
+nav .cta-nav:hover { background:var(--accent3); transform:translateY(-1px); box-shadow:0 4px 20px var(--glow); }
+
+/* === HERO === */
+.hero { min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:120px 24px 80px; position:relative; }
+.hero h1 { font-size:clamp(36px,6vw,72px); font-weight:900; line-height:1.05; letter-spacing:-2px; margin-bottom:24px; }
+.hero h1 .gradient { background:linear-gradient(135deg,var(--accent),var(--accent3),var(--success)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { font-size:clamp(16px,2vw,20px); color:var(--muted); max-width:640px; margin:0 auto 40px; line-height:1.6; }
+.hero .cmd { display:inline-block; background:var(--surface); border:1px solid var(--border); padding:14px 28px; border-radius:12px; font-family:'JetBrains Mono',monospace; font-size:15px; cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden; }
+.hero .cmd:hover { border-color:var(--accent); box-shadow:0 0 30px var(--glow); }
+.hero .cmd .cursor { animation:blink 1s infinite; }
+@keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+
+/* === STATS BAR === */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border-radius:16px; overflow:hidden; margin:60px auto; max-width:900px; }
+.stat { background:var(--surface); padding:28px 16px; text-align:center; }
+.stat .num { font-size:32px; font-weight:800; color:var(--accent); font-family:'JetBrains Mono',monospace; }
+.stat .label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
+
+/* === SECTIONS === */
+section { padding:100px 24px; max-width:1200px; margin:0 auto; }
+.section-title { font-size:clamp(28px,4vw,48px); font-weight:800; letter-spacing:-1px; margin-bottom:16px; }
+.section-sub { color:var(--muted); font-size:18px; margin-bottom:48px; max-width:600px; }
+
+/* === BENTO GRID === */
+.bento { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+.bento .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; transition:all 0.4s; position:relative; overflow:hidden; }
+.bento .card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+.bento .card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(99,102,241,0.05),transparent); opacity:0; transition:opacity 0.4s; }
+.bento .card:hover::before { opacity:1; }
+.bento .c-wide { grid-column:span 8; }
+.bento .c-narrow { grid-column:span 4; }
+.bento .c-half { grid-column:span 6; }
+.bento .c-third { grid-column:span 4; }
+.bento .c-full { grid-column:span 12; }
+@media(max-width:768px) { .bento .card { grid-column:span 12 !important; } }
+
+.card .icon { font-size:32px; margin-bottom:16px; }
+.card h3 { font-size:20px; font-weight:700; margin-bottom:8px; }
+.card p { color:var(--muted); font-size:14px; line-height:1.6; }
+.card .tag { display:inline-block; padding:4px 10px; background:rgba(99,102,241,0.1); color:var(--accent); border-radius:6px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; }
+
+/* === COMPARISON TABLE === */
+.compare { overflow-x:auto; margin:48px 0; }
+.compare table { width:100%; border-collapse:collapse; font-size:14px; }
+.compare th { padding:14px 20px; text-align:left; background:var(--surface); color:var(--accent); font-weight:600; border-bottom:2px solid var(--border); position:sticky; top:0; }
+.compare td { padding:12px 20px; border-bottom:1px solid rgba(99,102,241,0.08); }
+.compare tr:hover td { background:rgba(99,102,241,0.03); }
+.compare .yes { color:var(--success); font-weight:600; }
+.compare .no { color:var(--danger); }
+.compare .partial { color:var(--warn); }
+
+/* === ARCHITECTURE === */
+.arch-diagram { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:40px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.8; overflow-x:auto; white-space:pre; color:var(--muted); }
+.arch-diagram .hl { color:var(--accent); font-weight:600; }
+.arch-diagram .g { color:var(--success); }
+.arch-diagram .w { color:var(--warn); }
+
+/* === PRICING === */
+.pricing { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; margin-top:48px; }
+.price-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:40px 32px; text-align:center; transition:all 0.3s; }
+.price-card.featured { border-color:var(--accent); position:relative; }
+.price-card.featured::before { content:'POPULAR'; position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent2); color:#fff; padding:4px 16px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:1px; }
+.price-card h3 { font-size:24px; font-weight:700; margin-bottom:8px; }
+.price-card .price { font-size:48px; font-weight:900; color:var(--accent); margin:16px 0; }
+.price-card .price span { font-size:16px; color:var(--muted); font-weight:400; }
+.price-card ul { list-style:none; text-align:left; margin:24px 0; }
+.price-card li { padding:8px 0; color:var(--muted); font-size:14px; border-bottom:1px solid rgba(99,102,241,0.06); }
+.price-card li::before { content:'✓ '; color:var(--success); font-weight:700; }
+.price-btn { display:block; width:100%; padding:14px; background:var(--accent2); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:15px; cursor:pointer; transition:all 0.3s; }
+.price-btn:hover { background:var(--accent3); transform:translateY(-2px); box-shadow:0 8px 30px var(--glow); }
+
+/* === CTA === */
+.cta-section { text-align:center; padding:120px 24px; position:relative; }
+.cta-section h2 { font-size:clamp(32px,5vw,56px); font-weight:900; letter-spacing:-1.5px; margin-bottom:24px; }
+.cta-section .big-cmd { display:inline-block; background:var(--surface); border:2px solid var(--accent); padding:20px 40px; border-radius:14px; font-family:'JetBrains Mono',monospace; font-size:18px; transition:all 0.3s; cursor:pointer; }
+.cta-section .big-cmd:hover { background:var(--accent2); color:#fff; box-shadow:0 0 60px var(--glow); }
+
+/* === FOOTER === */
+footer { text-align:center; padding:40px 24px; color:var(--muted); font-size:13px; border-top:1px solid var(--border); }
+
+/* === SCROLL ANIMATIONS === */
+[data-animate] { opacity:0; transform:translateY(30px); transition:all 0.8s cubic-bezier(0.16,1,0.3,1); }
+[data-animate].visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav>
+<div class="inner">
+  <div class="logo">DARIO<span> v9.0</span></div>
+  <button class="cta-nav" onclick="document.querySelector('.cta-section').scrollIntoView({behavior:'smooth'})">Install Now</button>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+<div>
+  <h1>The AI That<br><span class="gradient">Manages Itself</span></h1>
+  <p>DARIO is the first durable execution engine for Claude Code. It doesn't just plan tasks — it dispatches, executes, scores, learns, and evolves. Autonomously.</p>
+  <div class="cmd" onclick="navigator.clipboard.writeText('npx github:bardapraiacaraiva/dario-orchestrator-installer --upgrade')">
+    <span style="color:var(--success)">$</span> npx github:bardapraiacaraiva/dario-orchestrator-installer<span class="cursor">|</span>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:12px">One command. Full orchestrator. Any company.</p>
+
+  <div class="stats" data-animate>
+    <div class="stat"><div class="num" data-count="26">0</div><div class="label">Python Engines</div></div>
+    <div class="stat"><div class="num" data-count="45">0</div><div class="label">API Endpoints</div></div>
+    <div class="stat"><div class="num" data-count="48">0</div><div class="label">Tests (100%)</div></div>
+    <div class="stat"><div class="num" data-count="11031">0</div><div class="label">Lines of Code</div></div>
+    <div class="stat"><div class="num" data-count="16">0</div><div class="label">Adaptive Rubrics</div></div>
+    <div class="stat"><div class="num" data-count="3">0</div><div class="label">RBAC Roles</div></div>
+  </div>
+</div>
+</div>
+
+<!-- WHAT IT DOES -->
+<section>
+<h2 class="section-title" data-animate>What DARIO Does</h2>
+<p class="section-sub" data-animate>Everything an AI team needs to work autonomously — in one install.</p>
+
+<div class="bento">
+  <div class="card c-wide" data-animate>
+    <div class="icon">⚡</div>
+    <h3>Durable Execution Engine</h3>
+    <p>Tasks go through a 12-step pipeline: guardrails validate, context is injected, rubric is generated, trace starts, Claude API executes with optimal model routing (Haiku/Sonnet/Opus), LLM-as-Judge scores, replanner handles failures, state advances atomically in SQLite.</p>
+    <div class="tag">Core</div>
+  </div>
+  <div class="card c-narrow" data-animate>
+    <div class="icon">🧠</div>
+    <h3>Self-Evolving</h3>
+    <p>Learning journals capture patterns. Synaptic weights evolve. High-performing skill pairs get dispatch priority. The system literally rewrites its own routing logic.</p>
+    <div class="tag">AI-Native</div>
+  </div>
+  <div class="card c-narrow" data-animate>
+    <div class="icon">🔄</div>
+    <h3>Auto-Recovery</h3>
+    <p>Task fails? Replanner retries with same worker, tries a sibling, falls back to alternative skill, or escalates. Pipeline never stops.</p>
+    <div class="tag">Resilient</div>
+  </div>
+  <div class="card c-wide" data-animate>
+    <div class="icon">🛡️</div>
+    <h3>7 Pre-Execution Guardrails</h3>
+    <p>Before ANY task executes: required fields verified, skill exists in hierarchy, budget sufficient, dependencies met, assignee valid, state allows execution, no double-execution. Blocks if FAIL.</p>
+    <div class="tag">Safety</div>
+  </div>
+  <div class="card c-half" data-animate>
+    <div class="icon">📊</div>
+    <h3>Adaptive Quality Scoring</h3>
+    <p>16 skill-specific rubric profiles. Brand tasks scored on creativity (30%), financials on accuracy (35%). LLM-as-Judge via Haiku at $0.001/score. Not fixed 5 dimensions — contextual.</p>
+    <div class="tag">Intelligence</div>
+  </div>
+  <div class="card c-half" data-animate>
+    <div class="icon">🔮</div>
+    <h3>Predictive Dispatch</h3>
+    <p>Before executing: "This task will score ~84/100, cost ~$0.02, 0% revision risk. Recommend Haiku model." Uses historical data for estimates.</p>
+    <div class="tag">Intelligence</div>
+  </div>
+  <div class="card c-third" data-animate>
+    <div class="icon">🗄️</div>
+    <h3>SQLite ACID</h3>
+    <p>No more YAML race conditions. WAL mode, CAS checkout, atomic transactions. Crash recovery via write-ahead log.</p>
+    <div class="tag">Persistence</div>
+  </div>
+  <div class="card c-third" data-animate>
+    <div class="icon">🌐</div>
+    <h3>45 REST Endpoints</h3>
+    <p>FastAPI runtime on :8422. Tasks, dispatch, state, audit, budget, scores, chains, templates, plugins, compliance, metrics, NL queries.</p>
+    <div class="tag">API</div>
+  </div>
+  <div class="card c-third" data-animate>
+    <div class="icon">🔗</div>
+    <h3>DAG Chains</h3>
+    <p>Skill chains with parallel waves, per-step checkpoints, structured artifact validation. Resume from any point after crash.</p>
+    <div class="tag">Workflow</div>
+  </div>
+</div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+<h2 class="section-title" data-animate>DARIO vs The Competition</h2>
+<p class="section-sub" data-animate>How we compare against every major AI orchestrator in 2026.</p>
+
+<div class="compare" data-animate>
+<table>
+<tr>
+  <th>Feature</th><th>DARIO v9</th><th>Paperclip</th><th>LangGraph</th><th>CrewAI</th><th>Raw Claude</th>
+</tr>
+<tr><td>Durable execution</td><td class="yes">SQLite ACID + WAL</td><td class="yes">PostgreSQL</td><td class="yes">Checkpoints</td><td class="no">In-memory</td><td class="no">None</td></tr>
+<tr><td>Self-evolution</td><td class="yes">Synaptic weights + crystallization</td><td class="no">Static</td><td class="no">Static</td><td class="no">Static</td><td class="no">None</td></tr>
+<tr><td>Pre-exec guardrails</td><td class="yes">7 checks + block</td><td class="partial">Basic</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+<tr><td>Adaptive scoring</td><td class="yes">16 profiles + LLM-Judge</td><td class="no">None</td><td class="no">None</td><td class="partial">Fixed rubric</td><td class="no">None</td></tr>
+<tr><td>DAG workflows</td><td class="yes">Waves + conditions</td><td class="partial">Linear</td><td class="yes">Full DAG</td><td class="partial">Sequential</td><td class="no">None</td></tr>
+<tr><td>Auto-recovery</td><td class="yes">Retry→sibling→fallback→escalate</td><td class="partial">Retry only</td><td class="partial">Retry</td><td class="no">None</td><td class="no">None</td></tr>
+<tr><td>API runtime</td><td class="yes">45 endpoints</td><td class="yes">Full API</td><td class="partial">SDK only</td><td class="no">None</td><td class="no">None</td></tr>
+<tr><td>Multi-tenancy</td><td class="yes">Per-tenant isolation</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+<tr><td>Compliance (RGPD/SOC2)</td><td class="yes">Audit engine</td><td class="partial">Audit log</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+<tr><td>Claude Code native</td><td class="yes">Built for it</td><td class="no">Generic</td><td class="no">Generic</td><td class="no">Generic</td><td class="yes">Native</td></tr>
+<tr><td>One-command install</td><td class="yes">npx install</td><td class="no">Complex</td><td class="no">pip + config</td><td class="no">pip + config</td><td class="yes">Built-in</td></tr>
+</table>
+</div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section>
+<h2 class="section-title" data-animate>Architecture</h2>
+<div class="arch-diagram" data-animate><span class="hl">Runtime Engine v9.0</span> (FastAPI :8422)
+┌──────────────────────────────────────────────────────┐
+│  <span class="g">Scheduler</span>  │  <span class="g">45 REST</span>  │  <span class="g">SQLite</span>  │  <span class="g">Auth</span>  │
+│  (30min)    │  endpoints │  ACID    │  RBAC  │
+├──────────────────────────────────────────────────────┤
+│              <span class="hl">26 Python Engines</span>                      │
+│  <span class="w">dispatch</span> · <span class="w">state</span> · <span class="w">executor</span> · <span class="w">chain_dag</span> ·         │
+│  <span class="w">quality</span> · <span class="w">evolution</span> · <span class="w">autodiag</span> · <span class="w">guardrails</span> ·      │
+│  <span class="w">tracer</span> · <span class="w">replanner</span> · <span class="w">context</span> · <span class="w">rubrics</span> ·         │
+│  <span class="w">llm_judge</span> · <span class="w">predictor</span> · <span class="w">meter</span> · <span class="w">templates</span> ·      │
+│  <span class="w">plugins</span> · <span class="w">federation</span> · <span class="w">compliance</span> · <span class="w">telemetry</span>    │
+├──────────────────────────────────────────────────────┤
+│              <span class="hl">YAML Configs</span> (read-only)               │
+│  company · chains · manifesto · states · webhooks    │
+└──────────────────────────────────────────────────────┘</div>
+</section>
+
+<!-- PRICING -->
+<section>
+<h2 class="section-title" data-animate>Pricing</h2>
+<p class="section-sub" data-animate>One orchestrator. Every tier of capability.</p>
+
+<div class="pricing" data-animate>
+  <div class="price-card">
+    <h3>Community</h3>
+    <div class="price">Free<span></span></div>
+    <ul>
+      <li>8 core skills (orchestrator, dispatch, taskboard, heartbeat, autopilot, quality, analytics, status)</li>
+      <li>YAML task management</li>
+      <li>Basic quality scoring</li>
+      <li>Budget tracking</li>
+      <li>Community support (GitHub Issues)</li>
+    </ul>
+    <button class="price-btn" style="background:transparent;border:1px solid var(--border);color:var(--text)">npx install</button>
+  </div>
+  <div class="price-card featured">
+    <h3>Pro</h3>
+    <div class="price">$49<span>/month</span></div>
+    <ul>
+      <li>Everything in Community</li>
+      <li>26 Python engines (SQLite, FastAPI, DAG)</li>
+      <li>Self-evolution engine</li>
+      <li>LLM-as-Judge (Haiku scoring)</li>
+      <li>Predictive dispatch</li>
+      <li>API auth + RBAC</li>
+      <li>48 pytest tests</li>
+      <li>Priority support</li>
+    </ul>
+    <button class="price-btn">Start Free Trial</button>
+  </div>
+  <div class="price-card">
+    <h3>Enterprise</h3>
+    <div class="price">Custom<span></span></div>
+    <ul>
+      <li>Everything in Pro</li>
+      <li>Multi-tenancy</li>
+      <li>Cross-instance federation</li>
+      <li>RGPD/SOC2 compliance engine</li>
+      <li>Custom skill development</li>
+      <li>White-label branding</li>
+      <li>Dedicated support</li>
+      <li>On-premise deployment</li>
+    </ul>
+    <button class="price-btn" style="background:transparent;border:1px solid var(--accent);color:var(--accent)">Contact Sales</button>
+  </div>
+</div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2 data-animate>Ready to <span style="color:var(--accent)">Orchestrate</span>?</h2>
+  <p style="color:var(--muted);margin-bottom:32px" data-animate>One command. Full autonomous AI team. Zero configuration.</p>
+  <div class="big-cmd" data-animate onclick="navigator.clipboard.writeText('npx github:bardapraiacaraiva/dario-orchestrator-installer')">
+    <span style="color:var(--success)">$</span> npx github:bardapraiacaraiva/dario-orchestrator-installer
+  </div>
+</div>
+
+<footer>
+  DARIO Orchestrator v9.0 — Built by BARDA Digital Agency — MIT License — 2026
+</footer>
+
+<script>
+// Scroll animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+
+// Counter animation
+function animateCounters() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    const duration = 2000;
+    const start = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(target * eased).toLocaleString();
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+// Trigger counters when stats section is visible
+const statsObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { animateCounters(); statsObserver.disconnect(); }});
+}, {threshold:0.5});
+const statsEl = document.querySelector('.stats');
+if(statsEl) statsObserver.observe(statsEl);
+</script>
+</body>
+</html>
