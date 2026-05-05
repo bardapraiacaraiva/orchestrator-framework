@@ -952,8 +952,11 @@ async function refreshData() {
   }
 
   if (audit) {
-    state.events = Array.isArray(audit) ? audit.slice(0, 15) : (audit.entries || []).slice(0, 15);
+    const evts = Array.isArray(audit) ? audit.slice(0, 15) : (audit.entries || []).slice(0, 15);
+    state.events = evts;
     renderEvents();
+    // Trigger particles from REAL events only
+    processAuditForParticles(evts);
   }
 
   if (budget) {
@@ -1206,30 +1209,90 @@ function buildNodePositions() {
 }
 
 buildNodePositions();
+state.allNodes = nodes; // expose for particle targeting
 
-// Particles
-function spawnParticle() {
-  if (state.particles.length > 40) return;
-  const outward = Math.random() > 0.4;
-  const angle = Math.random() * Math.PI * 2;
-  const startR = outward ? 30 : R_DIR;
-  const endR = outward ? R_DIR : 30;
-  state.particles.push({
-    angle, startR, endR,
-    progress: 0,
-    speed: 0.005 + Math.random() * 0.008,
-    color: outward ? '#ffaa00' : '#00ff88',
-    alpha: 0.8,
-  });
+// Particles — EVENT-DRIVEN (only real events trigger particles)
+// No random particles. If nothing is happening, nothing moves.
+let lastProcessedEventCount = 0;
+
+function spawnEventParticle(workerName, type) {
+  // Find the director node that has this worker
+  let targetAngle = null;
+  for (const n of state.allNodes) {
+    if (n.type === 'director' && n.workers) {
+      for (const w of n.workers) {
+        if (workerName.includes(w) || w.includes(workerName.replace('worker-',''))) {
+          targetAngle = (n.angleDeg || 0) * Math.PI / 180;
+          break;
+        }
+      }
+      if (targetAngle !== null) break;
+    }
+  }
+  if (targetAngle === null) targetAngle = Math.random() * Math.PI * 2; // fallback
+
+  if (type === 'dispatch') {
+    // Amber particle from CEO outward to worker's director
+    state.particles.push({
+      angle: targetAngle, startR: 30, endR: R_DIR,
+      progress: 0, speed: 0.008,
+      color: '#ffaa00', alpha: 1.0, label: workerName,
+    });
+  } else if (type === 'complete' || type === 'score') {
+    // Green particle from director back to CEO
+    state.particles.push({
+      angle: targetAngle, startR: R_DIR, endR: 30,
+      progress: 0, speed: 0.006,
+      color: '#00ff88', alpha: 1.0, label: workerName,
+    });
+  } else if (type === 'pulse') {
+    // Cyan ring pulse from CEO (brief flash on all connections)
+    for (let i = 0; i < 8; i++) {
+      state.particles.push({
+        angle: i * Math.PI / 4, startR: 30, endR: R_VP + 20,
+        progress: 0, speed: 0.015,
+        color: '#00d4ff', alpha: 0.4,
+      });
+    }
+  }
+}
+
+function processAuditForParticles(events) {
+  if (!events || events.length === 0) return;
+  // Only process NEW events (compare count)
+  if (events.length <= lastProcessedEventCount) return;
+  const newEvents = events.slice(0, events.length - lastProcessedEventCount);
+  lastProcessedEventCount = events.length;
+
+  for (const ev of newEvents) {
+    const action = ev.action || '';
+    const details = ev.details || '';
+    if (action === 'task_assigned' || action.includes('dispatch')) {
+      // Extract worker from details like "→ worker-brand | reason"
+      const match = details.match(/worker-(\S+)/);
+      const worker = match ? match[0] : 'unknown';
+      spawnEventParticle(worker, 'dispatch');
+    } else if (action === 'task_completed' || action.includes('complete')) {
+      const match = details.match(/worker-(\S+)|skill=(\S+)/);
+      const worker = match ? (match[1] || match[2] || 'unknown') : 'unknown';
+      spawnEventParticle(worker, 'complete');
+    } else if (action === 'task_scored' || action.includes('score')) {
+      const match = details.match(/skill=(\S+)/);
+      const worker = match ? match[1] : 'unknown';
+      spawnEventParticle(worker, 'score');
+    } else if (action === 'pulse_executed') {
+      spawnEventParticle('', 'pulse');
+    }
+  }
 }
 
 function updateParticles() {
   state.particles = state.particles.filter(p => {
     p.progress += p.speed;
-    p.alpha = 1 - p.progress;
+    p.alpha = Math.max(0, 1 - p.progress);
     return p.progress < 1;
   });
-  if (Math.random() < 0.15) spawnParticle();
+  // NO random spawning. Particles only come from real events.
 }
 
 // Worker expansion
