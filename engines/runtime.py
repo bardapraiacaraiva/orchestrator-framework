@@ -496,130 +496,42 @@ async def test_webhook(url: str, event: str = "test"):
 
 # ─── #20: Visual DAG Dashboard ──────────────────────────────────────────────
 
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
-    """Interactive DAG dashboard with live task graph."""
-    # Get current state for embedding
+    """NASA Mission Control dashboard — serves dashboard.html with live API data."""
+    dashboard_file = ORCH_DIR / "dashboard.html"
+    if dashboard_file.exists():
+        return HTMLResponse(content=dashboard_file.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>Dashboard file not found. Run: python db.py --init</h1>", status_code=404)
+
+
+@app.get("/dashboard/agents", response_class=HTMLResponse)
+async def dashboard_agents():
+    """Live Agent Operations Center — real-time execution display."""
+    agent_file = ORCH_DIR / "agent_display.html"
+    if agent_file.exists():
+        return HTMLResponse(content=agent_file.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>Agent display file not found.</h1>", status_code=404)
+
+
+@app.get("/dashboard/data")
+async def dashboard_data():
+    """Full DAG data for dashboard consumption."""
     tasks = db.get_tasks()
-    state_result = _run_engine("state_machine.py", ["--json"])
+    counts = db.get_task_counts()
+    audit = db.get_audit(limit=50)
+    scores = db.get_skill_stats()
     budget = db.get_budget()
-
-    # Build Mermaid DAG from tasks
-    mermaid_lines = ["graph TD"]
-    status_styles = {
-        "done": ":::done", "todo": ":::todo", "in_progress": ":::active",
-        "blocked": ":::blocked", "in_review": ":::review"
+    return {
+        "tasks": tasks,
+        "counts": counts,
+        "audit": audit,
+        "scores": scores,
+        "budget": budget,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    for t in tasks:
-        tid = t["id"]
-        style = status_styles.get(t.get("status", ""), "")
-        label = f'{tid}["{tid}\\n{t["title"][:25]}\\n{t.get("status","")}"]'
-        mermaid_lines.append(f"    {label}{style}")
-
-        deps = t.get("depends_on", "[]")
-        if isinstance(deps, str):
-            try:
-                deps = json.loads(deps)
-            except Exception:
-                deps = []
-        if isinstance(deps, list):
-            for dep in deps:
-                mermaid_lines.append(f"    {dep} --> {tid}")
-
-    mermaid_dag = "\n".join(mermaid_lines)
-
-    state_name = state_result.get("state", "?")
-    health = state_result.get("system_health", 0)
-    autonomy = state_result.get("autonomy_level", "?")
-    budget_pct = budget.get("percentage", 0)
-    tokens_used = budget.get("tokens_used", 0)
-
-    task_counts = db.get_task_counts()
-    total = sum(task_counts.values())
-
-    html = f"""<!DOCTYPE html>
-<html><head>
-<title>DARIO Orchestrator</title>
-<meta charset="utf-8">
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<style>
-  * {{ margin:0; padding:0; box-sizing:border-box; }}
-  body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-         background: #0d1117; color: #c9d1d9; }}
-  .header {{ background: #161b22; padding: 20px 30px; border-bottom: 1px solid #30363d;
-             display: flex; justify-content: space-between; align-items: center; }}
-  .header h1 {{ font-size: 20px; color: #58a6ff; }}
-  .header .badge {{ padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }}
-  .badge.active {{ background: #238636; color: #fff; }}
-  .badge.guardian {{ background: #da3633; color: #fff; }}
-  .badge.pause {{ background: #d29922; color: #000; }}
-  .metrics {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-              gap: 16px; padding: 20px 30px; }}
-  .metric {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; }}
-  .metric .label {{ font-size: 12px; color: #8b949e; text-transform: uppercase; }}
-  .metric .value {{ font-size: 28px; font-weight: 700; margin-top: 4px; }}
-  .metric .value.green {{ color: #3fb950; }}
-  .metric .value.yellow {{ color: #d29922; }}
-  .metric .value.red {{ color: #f85149; }}
-  .dag {{ padding: 20px 30px; }}
-  .dag h2 {{ margin-bottom: 16px; font-size: 16px; color: #8b949e; }}
-  .mermaid {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px;
-              overflow-x: auto; }}
-  .tasks {{ padding: 20px 30px; }}
-  table {{ width: 100%; border-collapse: collapse; }}
-  th {{ text-align: left; padding: 8px 12px; border-bottom: 2px solid #30363d; color: #8b949e;
-       font-size: 12px; text-transform: uppercase; }}
-  td {{ padding: 8px 12px; border-bottom: 1px solid #21262d; font-size: 14px; }}
-  .status {{ padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }}
-  .status.done {{ background: #238636; }}
-  .status.todo {{ background: #1f6feb; }}
-  .status.in_progress {{ background: #d29922; color: #000; }}
-  .status.blocked {{ background: #da3633; }}
-  footer {{ padding: 20px 30px; color: #484f58; font-size: 12px; text-align: center;
-           border-top: 1px solid #21262d; margin-top: 20px; }}
-</style>
-</head><body>
-<div class="header">
-  <h1>DARIO Orchestrator v4.0</h1>
-  <div>
-    <span class="badge {'active' if state_name=='ACTIVE' else 'pause' if state_name=='REFLECTIVE_PAUSE' else 'guardian'}">{state_name}</span>
-    <span class="badge active">{autonomy}</span>
-  </div>
-</div>
-
-<div class="metrics">
-  <div class="metric"><div class="label">System Health</div><div class="value {'green' if health > 0.85 else 'yellow' if health > 0.6 else 'red'}">{health:.1%}</div></div>
-  <div class="metric"><div class="label">Tasks</div><div class="value">{total}</div></div>
-  <div class="metric"><div class="label">Done</div><div class="value green">{task_counts.get('done',0)}</div></div>
-  <div class="metric"><div class="label">Todo</div><div class="value yellow">{task_counts.get('todo',0)}</div></div>
-  <div class="metric"><div class="label">Blocked</div><div class="value {'red' if task_counts.get('blocked',0) > 0 else 'green'}">{task_counts.get('blocked',0)}</div></div>
-  <div class="metric"><div class="label">Budget</div><div class="value {'green' if budget_pct < 80 else 'yellow' if budget_pct < 95 else 'red'}">{budget_pct:.1f}%</div></div>
-  <div class="metric"><div class="label">Tokens Used</div><div class="value">{tokens_used:,}</div></div>
-</div>
-
-<div class="dag">
-  <h2>Task Dependency Graph</h2>
-  <div class="mermaid">
-{mermaid_dag}
-  </div>
-</div>
-
-<div class="tasks">
-  <h2 style="margin-bottom:16px; font-size:16px; color:#8b949e;">Task Board</h2>
-  <table>
-    <tr><th>ID</th><th>Title</th><th>Skill</th><th>Assignee</th><th>Status</th><th>Score</th></tr>
-    {"".join(f'<tr><td>{t["id"]}</td><td>{t["title"][:40]}</td><td>{t.get("skill","")}</td><td>{t.get("assignee","—")}</td><td><span class="status {t.get("status","")}">{t.get("status","")}</span></td><td>{t.get("quality_score","—")}</td></tr>' for t in tasks)}
-  </table>
-</div>
-
-<footer>DARIO Orchestrator Runtime — Port 8422 — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}</footer>
-
-<script>mermaid.initialize({{theme:'dark',startOnLoad:true}});</script>
-</body></html>"""
-
-    return html
 
 
 # ─── Templates API ───────────────────────────────────────────────────────────

@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DARIO Agent Operations Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   DARIO AGENT OPERATIONS CENTER — NASA Flight Controller Display
+   ============================================================================ */
+
+:root {
+  --bg: #060611;
+  --bg-panel: #0a0a1a;
+  --bg-surface: #0e0e20;
+  --bg-elevated: #141428;
+  --border: #1a1a2e;
+  --text: #e0e0f0;
+  --text-dim: #5a5a7a;
+  --text-muted: #2a2a44;
+  --cyan: #00d4ff;
+  --cyan-dim: #00d4ff22;
+  --green: #00ff88;
+  --green-dim: #00ff8822;
+  --amber: #ffaa00;
+  --amber-dim: #ffaa0022;
+  --red: #ff3344;
+  --red-dim: #ff334422;
+  --purple: #aa66ff;
+  --inactive: #1a1a2e;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 212, 255, 0.008) 2px,
+    rgba(0, 212, 255, 0.008) 4px
+  );
+  pointer-events: none;
+  z-index: 10000;
+  animation: scanMove 8s linear infinite;
+}
+
+@keyframes scanMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 200px; }
+}
+
+/* Moving scanline bar */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.15), rgba(0,212,255,0.3), rgba(0,212,255,0.15), transparent);
+  z-index: 10001;
+  pointer-events: none;
+  animation: scanBar 6s linear infinite;
+}
+
+@keyframes scanBar {
+  0% { top: -3px; }
+  100% { top: 100vh; }
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+/* ---- HEADER ---- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(10,10,26,0.95), rgba(6,6,17,0.98));
+  position: relative;
+  z-index: 100;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, var(--cyan-dim), var(--cyan), var(--cyan-dim), transparent 95%);
+}
+
+.header-left { display: flex; align-items: center; gap: 16px; }
+
+.logo {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.logo span { color: var(--cyan); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+
+.logo-sub {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-left: 12px;
+}
+
+.header-center { display: flex; gap: 20px; align-items: center; }
+
+.hdr-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hdr-stat-val {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 12px rgba(0,212,255,0.3);
+}
+
+.hdr-stat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.header-right { display: flex; align-items: center; gap: 16px; }
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(0,255,136,0.08);
+  border: 1px solid rgba(0,255,136,0.25);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--green); }
+  50% { opacity: 0.3; box-shadow: 0 0 4px var(--green); }
+}
+
+.clock {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+
+.state-badge {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--cyan-dim);
+  border: 1px solid rgba(0,212,255,0.3);
+  color: var(--cyan);
+}
+
+/* ---- MAIN LAYOUT ---- */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 50px);
+}
+
+/* ---- ORG CHART AREA ---- */
+.org-chart-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.org-chart-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.03) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(0,255,136,0.015) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(170,102,255,0.01) 0%, transparent 40%);
+}
+
+/* Subtle grid */
+.org-chart-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,26,46,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,26,46,0.3) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.4;
+}
+
+.org-svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.org-nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---- AGENT NODES ---- */
+.agent-node {
+  position: absolute;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 8px 10px;
+  text-align: center;
+  cursor: default;
+  transition: border-color 0.4s, box-shadow 0.4s, background 0.3s;
+  min-width: 110px;
+}
+
+.agent-node.tier-ceo {
+  min-width: 160px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(14,14,32,0.95), rgba(10,10,26,0.98));
+}
+
+.agent-node.tier-vp {
+  min-width: 130px;
+  padding: 10px 12px;
+}
+
+.agent-node.tier-director {
+  min-width: 115px;
+}
+
+.agent-node.tier-worker {
+  min-width: 100px;
+  padding: 6px 8px;
+}
+
+/* States */
+.agent-node.state-active {
+  border-color: var(--cyan);
+  box-shadow: 0 0 15px rgba(0,212,255,0.15), inset 0 0 20px rgba(0,212,255,0.03);
+}
+
+.agent-node.state-executing {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0,212,255,0.25), inset 0 0 30px rgba(0,212,255,0.05);
+  animation: nodeExecuting 2s ease-in-out infinite;
+}
+
+@keyframes nodeExecuting {
+  0%, 100% { box-shadow: 0 0 15px rgba(0,212,255,0.2), inset 0 0 20px rgba(0,212,255,0.03); }
+  50% { box-shadow: 0 0 30px rgba(0,212,255,0.35), inset 0 0 40px rgba(0,212,255,0.06); }
+}
+
+.agent-node.state-done {
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(0,255,136,0.15);
+}
+
+.agent-node.state-dispatching {
+  border-color: var(--amber);
+  box-shadow: 0 0 15px rgba(255,170,0,0.2);
+  animation: nodeDispatching 1s ease-in-out 3;
+}
+
+@keyframes nodeDispatching {
+  0%, 100% { box-shadow: 0 0 10px rgba(255,170,0,0.15); }
+  50% { box-shadow: 0 0 25px rgba(255,170,0,0.4); }
+}
+
+.agent-node.state-idle {
+  border-color: rgba(26,26,46,0.6);
+  opacity: 0.5;
+}
+
+.agent-node.state-idle:hover { opacity: 0.8; }
+
+/* Pulse on assignment */
+.agent-node.pulse-assign {
+  animation: pulseAssign 0.5s ease-out 3;
+}
+
+@keyframes pulseAssign {
+  0% { box-shadow: 0 0 5px var(--cyan); }
+  50% { box-shadow: 0 0 35px var(--cyan), 0 0 60px rgba(0,212,255,0.2); }
+  100% { box-shadow: 0 0 15px rgba(0,212,255,0.2); }
+}
+
+.agent-node.pulse-complete {
+  animation: pulseComplete 0.6s ease-out;
+}
+
+@keyframes pulseComplete {
+  0% { box-shadow: 0 0 5px var(--green); }
+  40% { box-shadow: 0 0 40px var(--green), 0 0 70px rgba(0,255,136,0.3); border-color: var(--green); }
+  100% { box-shadow: 0 0 12px rgba(0,255,136,0.15); }
+}
+
+.node-icon {
+  font-size: 16px;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.tier-ceo .node-icon { font-size: 24px; }
+.tier-vp .node-icon { font-size: 18px; }
+
+.node-name {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tier-ceo .node-name { font-size: 14px; color: var(--cyan); text-shadow: 0 0 12px rgba(0,212,255,0.3); }
+.tier-vp .node-name { font-size: 12px; }
+
+.node-role {
+  font-size: 8px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 1px;
+}
+
+.tier-ceo .node-role { font-size: 9px; }
+
+.node-task {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--cyan);
+  margin-top: 5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,212,255,0.08);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+.node-task.idle {
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.02);
+}
+
+.node-score {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.score-excellent { color: var(--green); }
+.score-good { color: var(--cyan); }
+.score-okay { color: var(--amber); }
+.score-bad { color: var(--red); }
+
+.node-status-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--bg);
+}
+
+.dot-executing {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: dotBreathe 1.5s ease-in-out infinite;
+}
+
+.dot-idle { background: var(--text-muted); }
+.dot-done { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.dot-error { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+@keyframes dotBreathe {
+  0%, 100% { box-shadow: 0 0 4px var(--cyan); }
+  50% { box-shadow: 0 0 12px var(--cyan); }
+}
+
+.node-worker-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* ---- SVG CONNECTIONS ---- */
+.conn-line {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+  opacity: 0.4;
+  transition: stroke 0.5s, opacity 0.5s, stroke-width 0.3s;
+}
+
+.conn-line.active {
+  stroke: var(--cyan);
+  opacity: 0.6;
+  stroke-width: 1.5;
+}
+
+.conn-line.complete {
+  stroke: var(--green);
+  opacity: 0.5;
+}
+
+/* Animated particles along connections */
+.particle {
+  r: 2.5;
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 4px var(--cyan));
+  opacity: 0;
+}
+
+.particle.dispatch {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 6px var(--cyan));
+}
+
+.particle.report {
+  fill: var(--green);
+  filter: drop-shadow(0 0 6px var(--green));
+}
+
+/* Animated flowing dashes */
+.conn-flow {
+  fill: none;
+  stroke-dasharray: 4 8;
+  stroke-width: 1;
+  opacity: 0;
+}
+
+.conn-flow.dispatch-flow {
+  stroke: var(--cyan);
+  opacity: 0.5;
+  animation: dashFlowDown 1.5s linear infinite;
+}
+
+.conn-flow.report-flow {
+  stroke: var(--green);
+  opacity: 0.4;
+  animation: dashFlowUp 1.5s linear infinite;
+}
+
+@keyframes dashFlowDown {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes dashFlowUp {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 24; }
+}
+
+/* ---- BOTTOM PANEL ---- */
+.bottom-panel {
+  border-top: 1px solid var(--border);
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  max-height: 240px;
+  min-height: 180px;
+  position: relative;
+}
+
+.bottom-panel::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, var(--cyan-dim), rgba(0,212,255,0.2), var(--cyan-dim), transparent 95%);
+}
+
+.bottom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  border-bottom: 1px solid rgba(26,26,46,0.5);
+  background: rgba(10,10,26,0.5);
+}
+
+.bottom-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bottom-stats {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.bstat {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.bstat b {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.bstat .g { color: var(--green); }
+.bstat .a { color: var(--amber); }
+.bstat .r { color: var(--red); }
+
+.event-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.event-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 4px 20px;
+  font-size: 12px;
+  transition: background 0.2s;
+  animation: eventSlideIn 0.3s ease-out;
+}
+
+@keyframes eventSlideIn {
+  0% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.event-row:hover { background: rgba(0,212,255,0.03); }
+
+.event-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--cyan);
+  white-space: nowrap;
+  min-width: 65px;
+  opacity: 0.7;
+}
+
+.event-icon {
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.event-icon.dispatch { color: var(--cyan); }
+.event-icon.complete { color: var(--green); }
+.event-icon.score { color: var(--amber); }
+.event-icon.alert { color: var(--red); }
+.event-icon.assign { color: var(--purple); }
+
+.event-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.event-text .actor { color: var(--cyan); font-weight: 600; }
+.event-text .target { color: var(--green); font-weight: 500; }
+.event-text .task-ref { color: var(--amber); }
+.event-text .score-val { font-weight: 700; }
+
+/* ---- TOOLTIP ---- */
+.tooltip {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  background: rgba(10,10,26,0.95);
+  border: 1px solid var(--cyan);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 200px;
+  max-width: 320px;
+  box-shadow: 0 0 20px rgba(0,212,255,0.15);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
+.tooltip.show { display: block; }
+
+.tooltip-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+
+.tooltip-detail {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.tooltip-detail b { color: var(--text); font-weight: 600; }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 1200px) {
+  .agent-node { min-width: 90px; padding: 5px 7px; }
+  .agent-node.tier-ceo { min-width: 130px; }
+  .node-name { font-size: 10px; }
+  .node-task { font-size: 9px; max-width: 100px; }
+}
+
+@media (max-width: 900px) {
+  .header-center { display: none; }
+  .bottom-stats { gap: 12px; }
+  .bstat { font-size: 10px; }
+}
+
+/* ---- GLOW RING for CEO ---- */
+.ceo-ring {
+  position: absolute;
+  border-radius: 16px;
+  border: 1px solid rgba(0,212,255,0.15);
+  animation: ceoRing 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ceoRing {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.08; transform: scale(1.08); }
+}
+
+/* ---- LOADING STATE ---- */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 99999;
+  transition: opacity 0.5s;
+}
+
+.loading-overlay.hide { opacity: 0; pointer-events: none; }
+
+.loading-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  animation: loadBlink 1s ease-in-out infinite;
+}
+
+@keyframes loadBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.loading-bar {
+  width: 200px;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.loading-bar-inner {
+  height: 100%;
+  width: 40%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  border-radius: 1px;
+  animation: loadSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes loadSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+/* Ambient particles */
+.ambient-particle {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  animation: ambientFloat 12s linear infinite;
+}
+
+@keyframes ambientFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  10% { opacity: 0.3; }
+  90% { opacity: 0.1; }
+  100% { opacity: 0; transform: translateY(-200px) scale(1); }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-text">INITIALIZING AGENT OPERATIONS CENTER</div>
+  <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+</div>
+
+<div id="tooltip" class="tooltip">
+  <div class="tooltip-name" id="ttName"></div>
+  <div class="tooltip-detail" id="ttDetail"></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo"><span>D.A.R.I.O.</span> AGENT OPS CENTER</div>
+    <div class="logo-sub">Real-Time Execution Display</div>
+  </div>
+  <div class="header-center">
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="statActive">--</div>
+      <div class="hdr-stat-label">Active</div>
+    </div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="statIdle">--</div>
+      <div class="hdr-stat-label">Idle</div>
+    </div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="statDone">--</div>
+      <div class="hdr-stat-label">Done</div>
+    </div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="statPulses">--</div>
+      <div class="hdr-stat-label">Pulses</div>
+    </div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="statHealth">--</div>
+      <div class="hdr-stat-label">Health</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="state-badge" id="stateBadge">--</div>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-container">
+  <!-- ORG CHART -->
+  <div class="org-chart-area" id="orgChartArea">
+    <div class="org-chart-bg"></div>
+    <div class="org-chart-grid"></div>
+    <svg class="org-svg" id="orgSvg">
+      <defs>
+        <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="svgConnections"></g>
+      <g id="svgParticles"></g>
+    </svg>
+    <div class="org-nodes" id="orgNodes"></div>
+  </div>
+
+  <!-- BOTTOM PANEL -->
+  <div class="bottom-panel">
+    <div class="bottom-header">
+      <div class="bottom-title">Live Event Feed</div>
+      <div class="bottom-stats" id="bottomStats">
+        <div class="bstat">Workers: <b id="bsActive">0</b>/<b id="bsTotal">0</b> active</div>
+        <div class="bstat">Tasks: <b id="bsTodo" class="a">0</b> todo / <b id="bsInProgress">0</b> in_progress / <b id="bsDone" class="g">0</b> done</div>
+        <div class="bstat">Budget: <b id="bsBudget">--</b>%</div>
+      </div>
+    </div>
+    <div class="event-feed" id="eventFeed"></div>
+  </div>
+</div>
+
+<!-- AMBIENT PARTICLES -->
+<div id="ambientContainer"></div>
+
+<script>
+// ============================================================================
+// DARIO AGENT OPERATIONS CENTER — Core Engine
+// ============================================================================
+
+const API_BASE = window.location.origin;
+const POLL_INTERVAL = 5000;
+
+// ---- HIERARCHY ----
+const HIERARCHY = {
+  "dario-ceo": {
+    name: "D.A.R.I.O.", role: "CEO", icon: "\u{1F3AF}", tier: "ceo",
+    children: ["diva-vp", "lucas-vp", "a360-vp", "atlas-vp",
+               "dir-marketing", "dir-technical", "dir-seo", "dir-finance",
+               "dir-legal", "dir-hr", "dir-content", "dir-support",
+               "dir-product", "dir-pr", "dir-client-success"]
+  },
+  // VPs
+  "diva-vp": {
+    name: "D.I.V.A.", role: "VP Architecture", icon: "\u{1F3DB}", tier: "vp",
+    parent: "dario-ceo",
+    children: ["dir-design", "dir-construction", "dir-regulatory"]
+  },
+  "lucas-vp": {
+    name: "L.U.C.A.S.", role: "VP Operations", icon: "\u{1F9E0}", tier: "vp",
+    parent: "dario-ceo",
+    children: ["dir-cost-control", "dir-quality", "dir-monitoring", "dir-analytics", "dir-saas-engineering", "dir-accounting"]
+  },
+  "a360-vp": {
+    name: "Accelera 360", role: "VP Business", icon: "\u{1F680}", tier: "vp",
+    parent: "dario-ceo",
+    children: ["dir-a360-research", "dir-a360-production"]
+  },
+  "atlas-vp": {
+    name: "A.T.L.A.S.", role: "VP Events", icon: "\u{1F3AA}", tier: "vp",
+    parent: "dario-ceo",
+    children: ["dir-event-planning", "dir-logistics", "dir-production", "dir-guest-experience", "dir-event-business"]
+  },
+  // Directors - DARIO
+  "dir-marketing": {
+    name: "Marketing", role: "Director", icon: "\u{1F4E2}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-brand","worker-offer","worker-sales-letter","worker-ads","worker-funnel","worker-pipeline","worker-email-seq","worker-naming","worker-story-circle","worker-pitch","worker-proposal","worker-negotiation"]
+  },
+  "dir-technical": {
+    name: "Technical", role: "Director", icon: "\u2699\uFE0F", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-wp-audit","worker-woo-audit","worker-cwv-fix","worker-pentest","worker-make-blueprint","worker-ios-hig","worker-sop"]
+  },
+  "dir-seo": {
+    name: "SEO", role: "Director", icon: "\u{1F50D}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-seo-audit","worker-seo-technical","worker-seo-content","worker-seo-schema","worker-seo-local","worker-seo-geo","worker-seo-plan","worker-seo-page","worker-seo-sitemap","worker-seo-images","worker-seo-hreflang","worker-seo-programmatic","worker-seo-competitor","worker-seo-dataforseo","worker-seo-image-gen","worker-kw-cluster"]
+  },
+  "dir-finance": {
+    name: "Finance", role: "Director", icon: "\u{1F4B0}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-financial-model","worker-pricing-calculator","worker-saas-metrics"]
+  },
+  "dir-legal": {
+    name: "Legal", role: "Director", icon: "\u2696\uFE0F", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-legal"]
+  },
+  "dir-hr": {
+    name: "HR", role: "Director", icon: "\u{1F465}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-hr"]
+  },
+  "dir-content": {
+    name: "Content", role: "Director", icon: "\u270D\uFE0F", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-social","worker-content"]
+  },
+  "dir-support": {
+    name: "Support", role: "Director", icon: "\u{1F6E0}\uFE0F", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-support"]
+  },
+  "dir-product": {
+    name: "Product", role: "Director", icon: "\u{1F4E6}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-product"]
+  },
+  "dir-pr": {
+    name: "PR", role: "Director", icon: "\u{1F4F0}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-pr"]
+  },
+  "dir-client-success": {
+    name: "Client Success", role: "Director", icon: "\u{1F91D}", tier: "director",
+    parent: "dario-ceo",
+    workers: ["worker-client-onboard","worker-diagnose","worker-projeto"]
+  },
+  // Directors - DIVA
+  "dir-design": {
+    name: "Design", role: "Director", icon: "\u{1F3A8}", tier: "director",
+    parent: "diva-vp",
+    workers: ["worker-diva-moodboard","worker-diva-materials","worker-diva-floor-plan","worker-diva-render","worker-diva-render-brief","worker-diva-vision","worker-diva-portfolio","worker-diva-smart-home","worker-diva-briefing","worker-diva-client-onboard"]
+  },
+  "dir-construction": {
+    name: "Construction", role: "Director", icon: "\u{1F3D7}\uFE0F", tier: "director",
+    parent: "diva-vp",
+    workers: ["worker-diva-budget","worker-diva-calc","worker-diva-timeline","worker-diva-inspection","worker-diva-contract","worker-diva-comparador","worker-diva-planradar","worker-diva-bim","worker-diva-diagnose","worker-diva-roadmap"]
+  },
+  "dir-regulatory": {
+    name: "Regulatory", role: "Director", icon: "\u{1F4DC}", tier: "director",
+    parent: "diva-vp",
+    workers: ["worker-diva-licensing","worker-diva-energy"]
+  },
+  // Directors - LUCAS
+  "dir-cost-control": {
+    name: "Cost Control", role: "Director", icon: "\u{1F4CA}", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-budget-tracker","worker-lucas-model-router","worker-lucas-cost-alerts","worker-lucas-cost-optimizer"]
+  },
+  "dir-quality": {
+    name: "Quality", role: "Director", icon: "\u2705", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-quality-scorer","worker-lucas-feedback-loop","worker-lucas-skill-evaluator","worker-lucas-revision-analyst"]
+  },
+  "dir-monitoring": {
+    name: "Monitoring", role: "Director", icon: "\u{1F4E1}", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-heartbeat-engine","worker-lucas-stale-detector","worker-lucas-health-monitor","worker-lucas-alert-dispatcher"]
+  },
+  "dir-analytics": {
+    name: "Analytics", role: "Director", icon: "\u{1F4C8}", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-cross-project","worker-lucas-skill-dashboard","worker-lucas-revenue-tracker","worker-lucas-knowledge-graph"]
+  },
+  "dir-saas-engineering": {
+    name: "SaaS Eng", role: "Director", icon: "\u{1F4BB}", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-backend","worker-lucas-frontend","worker-lucas-ai-agents","worker-lucas-database"]
+  },
+  "dir-accounting": {
+    name: "Accounting", role: "Director", icon: "\u{1F4D2}", tier: "director",
+    parent: "lucas-vp",
+    workers: ["worker-lucas-tax","worker-lucas-compliance","worker-lucas-reporting"]
+  },
+  // Directors - A360
+  "dir-a360-research": {
+    name: "A360 Research", role: "Director", icon: "\u{1F52C}", tier: "director",
+    parent: "a360-vp",
+    workers: ["worker-a360-nicho-explorer","worker-a360-mapear-nicho","worker-a360-cliente-radar"]
+  },
+  "dir-a360-production": {
+    name: "A360 Production", role: "Director", icon: "\u{1F3ED}", tier: "director",
+    parent: "a360-vp",
+    workers: ["worker-a360-lp-builder","worker-a360-pitch-deck","worker-a360-gtm","worker-a360-playbook-vendas","worker-a360-meeting-prep"]
+  },
+  // Directors - ATLAS
+  "dir-event-planning": {
+    name: "Event Planning", role: "Director", icon: "\u{1F4CB}", tier: "director",
+    parent: "atlas-vp",
+    workers: ["worker-atlas-briefing","worker-atlas-venue","worker-atlas-timeline","worker-atlas-budget","worker-atlas-checklist","worker-atlas-post-event"]
+  },
+  "dir-logistics": {
+    name: "Logistics", role: "Director", icon: "\u{1F69A}", tier: "director",
+    parent: "atlas-vp",
+    workers: ["worker-atlas-vendor","worker-atlas-catering","worker-atlas-transport","worker-atlas-accommodation","worker-atlas-staff","worker-atlas-warehouse"]
+  },
+  "dir-production": {
+    name: "Production", role: "Director", icon: "\u{1F3AC}", tier: "director",
+    parent: "atlas-vp",
+    workers: ["worker-atlas-av","worker-atlas-staging","worker-atlas-decor","worker-atlas-entertainment","worker-atlas-photo-video"]
+  },
+  "dir-guest-experience": {
+    name: "Guest Exp.", role: "Director", icon: "\u{1F31F}", tier: "director",
+    parent: "atlas-vp",
+    workers: ["worker-atlas-guest","worker-atlas-seating","worker-atlas-protocol","worker-atlas-tech","worker-atlas-hybrid"]
+  },
+  "dir-event-business": {
+    name: "Event Biz", role: "Director", icon: "\u{1F4BC}", tier: "director",
+    parent: "atlas-vp",
+    workers: ["worker-atlas-marketing","worker-atlas-sponsor","worker-atlas-crm","worker-atlas-risk","worker-atlas-compliance","worker-atlas-sustainability"]
+  }
+};
+
+// Skill -> Worker mapping
+const SKILL_TO_WORKER = {};
+const WORKER_TO_DIRECTOR = {};
+const DIRECTOR_TO_PARENT = {};
+
+// Build reverse maps
+function buildMaps() {
+  for (const [id, node] of Object.entries(HIERARCHY)) {
+    if (node.workers) {
+      for (const w of node.workers) {
+        WORKER_TO_DIRECTOR[w] = id;
+      }
+    }
+    if (node.children) {
+      for (const c of node.children) {
+        DIRECTOR_TO_PARENT[c] = id;
+      }
+    }
+    if (node.parent) {
+      DIRECTOR_TO_PARENT[id] = node.parent;
+    }
+  }
+}
+buildMaps();
+
+// ---- STATE ----
+let state = {
+  tasks: [],
+  audit: [],
+  health: {},
+  scores: {},
+  prevTaskStates: {},
+  activeWorkers: new Set(),
+  eventHistory: [],
+  lastAuditTs: null,
+  connectionMap: {},
+  totalWorkers: 0,
+  initialized: false,
+};
+
+// ---- VISIBLE TIERS ----
+// We show: CEO, VPs, Directors with active workers, and active workers
+// We also show idle directors but collapse idle workers
+
+function getVisibleNodes(tasks) {
+  const visible = new Set();
+  const activeAssignees = new Set();
+  const workerTasks = {};
+  const workerScores = {};
+
+  // CEO always visible
+  visible.add("dario-ceo");
+
+  // Map tasks to workers
+  for (const t of tasks) {
+    if (t.assignee && (t.status === "in_progress" || t.status === "todo")) {
+      activeAssignees.add(t.assignee);
+      workerTasks[t.assignee] = t;
+    }
+    // Track completed task scores
+    if (t.assignee && t.quality_score) {
+      workerScores[t.assignee] = t.quality_score;
+    }
+  }
+
+  // Determine which "division" groups to show
+  // Show all VPs
+  for (const id of Object.keys(HIERARCHY)) {
+    const n = HIERARCHY[id];
+    if (n.tier === "vp") visible.add(id);
+  }
+
+  // Show directors that have active workers OR that have recent tasks
+  // Also determine which workers to show
+  for (const [dirId, dirNode] of Object.entries(HIERARCHY)) {
+    if (!dirNode.workers) continue;
+    let dirHasActive = false;
+    for (const wid of dirNode.workers) {
+      if (activeAssignees.has(wid)) {
+        visible.add(wid);
+        dirHasActive = true;
+      }
+    }
+    if (dirHasActive) {
+      visible.add(dirId);
+      // Also show parent VP/CEO
+      let p = DIRECTOR_TO_PARENT[dirId];
+      while (p) {
+        visible.add(p);
+        p = DIRECTOR_TO_PARENT[p];
+      }
+    }
+  }
+
+  // If very few are visible, show the direct DARIO directors
+  if (visible.size < 8) {
+    const directDirs = HIERARCHY["dario-ceo"].children || [];
+    for (const d of directDirs.slice(0, 6)) {
+      visible.add(d);
+    }
+  }
+
+  return { visible, activeAssignees, workerTasks, workerScores };
+}
+
+// ---- LAYOUT ENGINE ----
+function computeLayout(visible, chartW, chartH) {
+  const positions = {};
+  const PADDING_X = 30;
+  const PADDING_TOP = 20;
+
+  // Group by tier
+  const tiers = { ceo: [], vp: [], director: [], worker: [] };
+  for (const id of visible) {
+    const node = HIERARCHY[id];
+    if (!node) {
+      // It's a worker not in HIERARCHY, treat as worker
+      tiers.worker.push(id);
+    } else {
+      tiers[node.tier || "worker"].push(id);
+    }
+  }
+
+  // Y positions for each tier
+  const tierY = {
+    ceo: PADDING_TOP + 20,
+    vp: PADDING_TOP + 100,
+    director: PADDING_TOP + 195,
+    worker: PADDING_TOP + 290,
+  };
+
+  // Adaptive: if no VPs visible, shift everything up
+  const hasVPs = tiers.vp.length > 0;
+  const hasDirs = tiers.director.length > 0;
+  const hasWorkers = tiers.worker.length > 0;
+
+  if (!hasVPs) {
+    tierY.director = tierY.vp;
+    tierY.worker = tierY.vp + 95;
+  }
+
+  // CEO
+  for (const id of tiers.ceo) {
+    positions[id] = { x: chartW / 2, y: tierY.ceo };
+  }
+
+  // Layout function: distribute items evenly in the horizontal space
+  function distributeH(items, y, minSpacing) {
+    if (items.length === 0) return;
+    const totalSpace = chartW - PADDING_X * 2;
+    const spacing = Math.max(minSpacing, totalSpace / (items.length + 1));
+    const startX = (chartW - spacing * (items.length - 1)) / 2;
+    for (let i = 0; i < items.length; i++) {
+      positions[items[i]] = { x: startX + i * spacing, y: y };
+    }
+  }
+
+  // VPs
+  distributeH(tiers.vp, tierY.vp, 120);
+
+  // Directors: group by parent, order within parent
+  const dirsByParent = {};
+  for (const dirId of tiers.director) {
+    const parent = DIRECTOR_TO_PARENT[dirId] || "dario-ceo";
+    if (!dirsByParent[parent]) dirsByParent[parent] = [];
+    dirsByParent[parent].push(dirId);
+  }
+
+  // Flatten directors in parent order
+  const orderedDirs = [];
+  const parentOrder = ["dario-ceo", ...tiers.vp];
+  for (const p of parentOrder) {
+    if (dirsByParent[p]) orderedDirs.push(...dirsByParent[p]);
+  }
+  // Any remaining
+  for (const dirId of tiers.director) {
+    if (!orderedDirs.includes(dirId)) orderedDirs.push(dirId);
+  }
+
+  distributeH(orderedDirs, tierY.director, 100);
+
+  // Workers: group by director, place under their director
+  const workersByDir = {};
+  for (const wid of tiers.worker) {
+    const dir = WORKER_TO_DIRECTOR[wid] || "unknown";
+    if (!workersByDir[dir]) workersByDir[dir] = [];
+    workersByDir[dir].push(wid);
+  }
+
+  // Place workers centered under their director
+  for (const [dirId, workers] of Object.entries(workersByDir)) {
+    const dirPos = positions[dirId];
+    if (!dirPos) {
+      // Director not visible, just spread them
+      distributeH(workers, tierY.worker, 90);
+      continue;
+    }
+    const spacing = Math.min(110, (chartW * 0.8) / Math.max(workers.length, 1));
+    const startX = dirPos.x - (spacing * (workers.length - 1)) / 2;
+    for (let i = 0; i < workers.length; i++) {
+      positions[workers[i]] = {
+        x: Math.max(60, Math.min(chartW - 60, startX + i * spacing)),
+        y: tierY.worker
+      };
+    }
+  }
+
+  return positions;
+}
+
+// ---- RENDER ----
+function renderOrgChart(tasks) {
+  const chartArea = document.getElementById("orgChartArea");
+  const chartW = chartArea.clientWidth;
+  const chartH = chartArea.clientHeight;
+  const nodesContainer = document.getElementById("orgNodes");
+  const svgEl = document.getElementById("orgSvg");
+  const connGroup = document.getElementById("svgConnections");
+  const particleGroup = document.getElementById("svgParticles");
+
+  const { visible, activeAssignees, workerTasks, workerScores } = getVisibleNodes(tasks);
+  const positions = computeLayout(visible, chartW, chartH);
+
+  // Clear
+  nodesContainer.innerHTML = "";
+  connGroup.innerHTML = "";
+  particleGroup.innerHTML = "";
+
+  // Count workers
+  let totalWorkerCount = 0;
+  for (const node of Object.values(HIERARCHY)) {
+    if (node.workers) totalWorkerCount += node.workers.length;
+  }
+  state.totalWorkers = totalWorkerCount;
+
+  // Build connection data for later
+  const connections = [];
+
+  // Draw connections
+  for (const id of visible) {
+    const node = HIERARCHY[id];
+    if (!node) continue;
+    const pos = positions[id];
+    if (!pos) continue;
+
+    // Connect to children (VPs, directors)
+    const children = node.children || [];
+    for (const childId of children) {
+      if (!visible.has(childId)) continue;
+      const childPos = positions[childId];
+      if (!childPos) continue;
+
+      const isActive = activeAssignees.has(childId) ||
+        (HIERARCHY[childId] && HIERARCHY[childId].workers &&
+         HIERARCHY[childId].workers.some(w => activeAssignees.has(w)));
+
+      connections.push({ from: id, to: childId, active: isActive, type: "hierarchy" });
+      drawConnection(connGroup, particleGroup, pos, childPos, isActive, id, childId);
+    }
+
+    // Connect to workers
+    const workers = node.workers || [];
+    for (const wid of workers) {
+      if (!visible.has(wid)) continue;
+      const wPos = positions[wid];
+      if (!wPos) continue;
+
+      const isActive = activeAssignees.has(wid);
+      connections.push({ from: id, to: wid, active: isActive, type: "worker" });
+      drawConnection(connGroup, particleGroup, pos, wPos, isActive, id, wid);
+    }
+  }
+
+  state.connectionMap = connections;
+
+  // Draw nodes
+  for (const id of visible) {
+    const node = HIERARCHY[id];
+    const pos = positions[id];
+    if (!pos) continue;
+
+    const isWorker = !node || !node.tier || node.tier === "worker";
+    const tier = node ? node.tier : "worker";
+    const isActive = activeAssignees.has(id);
+    const task = workerTasks[id];
+    const lastScore = workerScores[id];
+
+    // Active worker count for directors
+    let activeCount = 0;
+    let totalCount = 0;
+    if (node && node.workers) {
+      totalCount = node.workers.length;
+      activeCount = node.workers.filter(w => activeAssignees.has(w)).length;
+    }
+
+    const el = document.createElement("div");
+    el.className = `agent-node tier-${tier}`;
+    el.dataset.id = id;
+
+    // Determine state
+    if (isActive && task && task.status === "in_progress") {
+      el.classList.add("state-executing");
+    } else if (isActive) {
+      el.classList.add("state-active");
+    } else if (tier === "ceo" || tier === "vp") {
+      el.classList.add("state-active");
+    } else if (tier === "director" && activeCount > 0) {
+      el.classList.add("state-active");
+    } else {
+      el.classList.add("state-idle");
+    }
+
+    // Check for state change -> pulse
+    const prevState = state.prevTaskStates[id];
+    if (prevState && !isActive && prevState.isActive) {
+      el.classList.add("pulse-complete");
+    } else if (!prevState && isActive) {
+      el.classList.add("pulse-assign");
+    }
+
+    // Position
+    const nodeW = tier === "ceo" ? 160 : tier === "vp" ? 130 : tier === "director" ? 115 : 100;
+    el.style.left = (pos.x - nodeW / 2) + "px";
+    el.style.top = pos.y + "px";
+    el.style.width = nodeW + "px";
+
+    // Content
+    let html = "";
+
+    // Status dot
+    const dotClass = isActive ? "dot-executing" : "dot-idle";
+    html += `<div class="node-status-dot ${dotClass}"></div>`;
+
+    if (node && node.icon) {
+      html += `<div class="node-icon">${node.icon}</div>`;
+    }
+
+    html += `<div class="node-name">${node ? node.name : cleanWorkerId(id)}</div>`;
+    html += `<div class="node-role">${node ? node.role : "Worker"}</div>`;
+
+    // Task info
+    if (task) {
+      html += `<div class="node-task">${task.id}</div>`;
+    } else if (tier === "director" && totalCount > 0) {
+      html += `<div class="node-worker-count">${activeCount}/${totalCount} active</div>`;
+    } else if (tier === "ceo") {
+      const dispatched = tasks.filter(t => t.status === "in_progress").length;
+      html += `<div class="node-task">${dispatched} executing</div>`;
+    } else if (tier === "vp") {
+      // Count active under this VP
+      let vpActive = 0;
+      const vpChildren = node.children || [];
+      for (const cid of vpChildren) {
+        const dir = HIERARCHY[cid];
+        if (dir && dir.workers) {
+          vpActive += dir.workers.filter(w => activeAssignees.has(w)).length;
+        }
+      }
+      if (vpActive > 0) {
+        html += `<div class="node-task">${vpActive} active</div>`;
+      } else {
+        html += `<div class="node-task idle">standby</div>`;
+      }
+    } else if (isWorker && !isActive) {
+      html += `<div class="node-task idle">IDLE</div>`;
+    }
+
+    // Score
+    if (lastScore) {
+      const scoreClass = lastScore >= 90 ? "score-excellent" : lastScore >= 75 ? "score-good" : lastScore >= 60 ? "score-okay" : "score-bad";
+      html += `<div class="node-score ${scoreClass}">${lastScore}/100</div>`;
+    }
+
+    el.innerHTML = html;
+
+    // Tooltip
+    el.addEventListener("mouseenter", (e) => showTooltip(e, id, node, task, lastScore, activeCount, totalCount));
+    el.addEventListener("mouseleave", hideTooltip);
+    el.addEventListener("mousemove", moveTooltip);
+
+    nodesContainer.appendChild(el);
+
+    // CEO ring
+    if (tier === "ceo") {
+      const ring = document.createElement("div");
+      ring.className = "ceo-ring";
+      ring.style.left = (pos.x - nodeW / 2 - 8) + "px";
+      ring.style.top = (pos.y - 8) + "px";
+      ring.style.width = (nodeW + 16) + "px";
+      ring.style.height = (el.offsetHeight + 16) + "px";
+      nodesContainer.appendChild(ring);
+    }
+  }
+
+  // Save states for next comparison
+  for (const id of visible) {
+    state.prevTaskStates[id] = { isActive: activeAssignees.has(id) };
+  }
+}
+
+function drawConnection(connGroup, particleGroup, from, to, isActive, fromId, toId) {
+  const x1 = from.x;
+  const y1 = from.y + 35;
+  const x2 = to.x;
+  const y2 = to.y;
+
+  // Curved path
+  const midY = (y1 + y2) / 2;
+  const d = `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`;
+
+  // Base line
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  line.setAttribute("d", d);
+  line.setAttribute("class", `conn-line ${isActive ? "active" : ""}`);
+  connGroup.appendChild(line);
+
+  // Active flow animation
+  if (isActive) {
+    const flow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    flow.setAttribute("d", d);
+    flow.setAttribute("class", "conn-flow dispatch-flow");
+    connGroup.appendChild(flow);
+
+    // Animated particle
+    animateParticle(particleGroup, d, "dispatch");
+  }
+}
+
+function animateParticle(group, path, type) {
+  const particle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  particle.setAttribute("r", type === "dispatch" ? "2.5" : "2");
+  particle.setAttribute("fill", type === "dispatch" ? "#00d4ff" : "#00ff88");
+  particle.setAttribute("filter", type === "dispatch" ? "url(#glowCyan)" : "url(#glowGreen)");
+  particle.setAttribute("opacity", "0");
+
+  const animMotion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+  animMotion.setAttribute("dur", (2 + Math.random() * 2) + "s");
+  animMotion.setAttribute("repeatCount", "indefinite");
+  animMotion.setAttribute("path", path);
+  if (type === "report") animMotion.setAttribute("keyPoints", "1;0");
+  animMotion.setAttribute("fill", "freeze");
+
+  const animOpacity = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+  animOpacity.setAttribute("attributeName", "opacity");
+  animOpacity.setAttribute("values", "0;0.8;0.8;0");
+  animOpacity.setAttribute("dur", (2 + Math.random() * 2) + "s");
+  animOpacity.setAttribute("repeatCount", "indefinite");
+
+  particle.appendChild(animMotion);
+  particle.appendChild(animOpacity);
+  group.appendChild(particle);
+}
+
+function cleanWorkerId(id) {
+  return id.replace("worker-", "").replace("diva-", "").replace("lucas-", "").replace("a360-", "").replace("atlas-", "").replace(/-/g, " ");
+}
+
+// ---- TOOLTIP ----
+function showTooltip(e, id, node, task, score, activeCount, totalCount) {
+  const tt = document.getElementById("tooltip");
+  const ttName = document.getElementById("ttName");
+  const ttDetail = document.getElementById("ttDetail");
+
+  ttName.textContent = (node ? node.icon + " " : "") + (node ? node.name : cleanWorkerId(id));
+
+  let detail = "";
+  detail += `<b>ID:</b> ${id}<br>`;
+  detail += `<b>Tier:</b> ${node ? node.tier : "worker"}<br>`;
+  if (node && node.role) detail += `<b>Role:</b> ${node.role}<br>`;
+  if (task) {
+    detail += `<b>Task:</b> ${task.id}<br>`;
+    detail += `<b>Title:</b> ${task.title || ""}<br>`;
+    detail += `<b>Status:</b> ${task.status}<br>`;
+    detail += `<b>Skill:</b> ${task.skill || "n/a"}<br>`;
+    detail += `<b>Priority:</b> ${task.priority || "medium"}<br>`;
+    if (task.project) detail += `<b>Project:</b> ${task.project}<br>`;
+  }
+  if (score) detail += `<b>Last Score:</b> ${score}/100<br>`;
+  if (totalCount > 0) detail += `<b>Workers:</b> ${activeCount}/${totalCount} active<br>`;
+
+  ttDetail.innerHTML = detail;
+  tt.classList.add("show");
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const tt = document.getElementById("tooltip");
+  const x = e.clientX + 16;
+  const y = e.clientY + 12;
+  tt.style.left = Math.min(x, window.innerWidth - 340) + "px";
+  tt.style.top = Math.min(y, window.innerHeight - 200) + "px";
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").classList.remove("show");
+}
+
+// ---- EVENT FEED ----
+function renderEvents(auditEntries) {
+  const feed = document.getElementById("eventFeed");
+  const existingCount = feed.children.length;
+
+  // Filter to relevant events and deduplicate
+  const newEvents = [];
+  for (const entry of auditEntries) {
+    const ts = entry.timestamp || entry.created_at || "";
+    if (state.lastAuditTs && ts <= state.lastAuditTs) continue;
+    newEvents.push(entry);
+  }
+
+  if (newEvents.length === 0 && existingCount > 0) return;
+
+  // Show all on first load, then only new ones
+  const toShow = existingCount === 0 ? auditEntries.slice(0, 30) : newEvents;
+
+  for (const entry of toShow.reverse()) {
+    const row = createEventRow(entry);
+    if (row) {
+      feed.insertBefore(row, feed.firstChild);
+    }
+  }
+
+  // Trim to 30 max
+  while (feed.children.length > 30) {
+    feed.removeChild(feed.lastChild);
+  }
+
+  // Update last timestamp
+  if (auditEntries.length > 0) {
+    state.lastAuditTs = auditEntries[0].timestamp || auditEntries[0].created_at;
+  }
+
+  // Auto-scroll to top (newest first)
+  feed.scrollTop = 0;
+}
+
+function createEventRow(entry) {
+  const action = (entry.action || "").toLowerCase();
+  const actor = entry.actor || "";
+  const taskId = entry.task_id || "";
+  const details = entry.details || "";
+  const ts = entry.timestamp || "";
+
+  let iconClass = "dispatch";
+  let iconChar = "\u25BC";
+
+  if (action.includes("complet") || action.includes("done")) {
+    iconClass = "complete";
+    iconChar = "\u25B2";
+  } else if (action.includes("score") || action.includes("quality")) {
+    iconClass = "score";
+    iconChar = "\u26A1";
+  } else if (action.includes("assign") || action.includes("dispatch")) {
+    iconClass = "assign";
+    iconChar = "\u25BC";
+  } else if (action.includes("error") || action.includes("fail") || action.includes("block")) {
+    iconClass = "alert";
+    iconChar = "\u26A0";
+  } else if (action.includes("create")) {
+    iconClass = "dispatch";
+    iconChar = "\u2795";
+  } else if (action.includes("transition") || action.includes("state")) {
+    iconClass = "dispatch";
+    iconChar = "\u21C4";
+  }
+
+  const time = ts ? formatTime(ts) : "--:--:--";
+
+  const row = document.createElement("div");
+  row.className = "event-row";
+
+  let text = `<span class="actor">${escHtml(actor)}</span> `;
+  text += `${escHtml(action)}`;
+  if (taskId) text += ` <span class="task-ref">${escHtml(taskId)}</span>`;
+  if (details) {
+    const shortDetails = details.length > 80 ? details.substring(0, 80) + "..." : details;
+    text += ` - ${escHtml(shortDetails)}`;
+  }
+
+  row.innerHTML = `
+    <div class="event-time">${time}</div>
+    <div class="event-icon ${iconClass}">${iconChar}</div>
+    <div class="event-text">${text}</div>
+  `;
+
+  return row;
+}
+
+function formatTime(isoStr) {
+  try {
+    const d = new Date(isoStr);
+    return d.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  } catch {
+    return "--:--:--";
+  }
+}
+
+function escHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---- STATS ----
+function updateStats(tasks, health) {
+  const active = tasks.filter(t => t.status === "in_progress").length;
+  const todo = tasks.filter(t => t.status === "todo").length;
+  const done = tasks.filter(t => t.status === "done").length;
+  const blocked = tasks.filter(t => t.status === "blocked").length;
+
+  // Active workers (unique assignees with in_progress tasks)
+  const activeWorkers = new Set(tasks.filter(t => t.status === "in_progress" && t.assignee).map(t => t.assignee));
+
+  document.getElementById("statActive").textContent = activeWorkers.size;
+  document.getElementById("statIdle").textContent = Math.max(0, state.totalWorkers - activeWorkers.size);
+  document.getElementById("statDone").textContent = done;
+
+  const pulses = health.scheduler ? health.scheduler.pulses : 0;
+  document.getElementById("statPulses").textContent = pulses;
+
+  const healthVal = health.health || 0;
+  const healthEl = document.getElementById("statHealth");
+  healthEl.textContent = healthVal + "%";
+  healthEl.style.color = healthVal >= 80 ? "var(--green)" : healthVal >= 50 ? "var(--amber)" : "var(--red)";
+
+  const stateVal = health.state || "unknown";
+  const stateBadge = document.getElementById("stateBadge");
+  stateBadge.textContent = stateVal;
+
+  // Bottom stats
+  document.getElementById("bsActive").textContent = activeWorkers.size;
+  document.getElementById("bsTotal").textContent = state.totalWorkers;
+  document.getElementById("bsTodo").textContent = todo;
+  document.getElementById("bsInProgress").textContent = active;
+  document.getElementById("bsDone").textContent = done;
+}
+
+// ---- CLOCK ----
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+// ---- AMBIENT PARTICLES ----
+function createAmbientParticles() {
+  const container = document.getElementById("ambientContainer");
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement("div");
+    p.className = "ambient-particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.top = (60 + Math.random() * 40) + "%";
+    p.style.animationDelay = Math.random() * 12 + "s";
+    p.style.animationDuration = (8 + Math.random() * 8) + "s";
+    if (Math.random() > 0.5) {
+      p.style.background = "var(--green)";
+    }
+    container.appendChild(p);
+  }
+}
+
+// ---- DATA FETCHING ----
+async function fetchJSON(url) {
+  try {
+    const r = await fetch(API_BASE + url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
+async function pollData() {
+  const [tasksData, auditData, healthData, budgetData] = await Promise.all([
+    fetchJSON("/tasks"),
+    fetchJSON("/audit?limit=50"),
+    fetchJSON("/health"),
+    fetchJSON("/budget"),
+  ]);
+
+  if (tasksData && tasksData.tasks) {
+    state.tasks = tasksData.tasks;
+  }
+
+  if (auditData && auditData.entries) {
+    state.audit = auditData.entries;
+    renderEvents(auditData.entries);
+  }
+
+  if (healthData) {
+    state.health = healthData;
+  }
+
+  // Update budget
+  if (budgetData && budgetData.percentage !== undefined) {
+    const budgetEl = document.getElementById("bsBudget");
+    budgetEl.textContent = budgetData.percentage.toFixed(1);
+    budgetEl.className = budgetData.percentage >= 80 ? "r" : budgetData.percentage >= 50 ? "a" : "g";
+  }
+
+  // Render
+  renderOrgChart(state.tasks);
+  updateStats(state.tasks, state.health);
+
+  // Hide loading
+  if (!state.initialized) {
+    state.initialized = true;
+    setTimeout(() => {
+      document.getElementById("loadingOverlay").classList.add("hide");
+    }, 600);
+  }
+}
+
+// ---- SSE (Server-Sent Events) ----
+function connectSSE() {
+  try {
+    const es = new EventSource(API_BASE + "/events");
+    es.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === "task_completed") {
+          // Trigger immediate refresh
+          pollData();
+
+          // Fire report particle on the completed worker
+          fireReportParticle(data.task_id);
+        }
+      } catch {}
+    };
+    es.onerror = () => {
+      es.close();
+      setTimeout(connectSSE, 10000);
+    };
+  } catch {}
+}
+
+function fireReportParticle(taskId) {
+  // Find the worker for this task
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task || !task.assignee) return;
+
+  // Add pulse-complete class
+  const nodeEl = document.querySelector(`[data-id="${task.assignee}"]`);
+  if (nodeEl) {
+    nodeEl.classList.remove("pulse-complete");
+    void nodeEl.offsetWidth; // force reflow
+    nodeEl.classList.add("pulse-complete");
+    setTimeout(() => nodeEl.classList.remove("pulse-complete"), 1800);
+  }
+}
+
+// ---- RESIZE ----
+let resizeTimeout;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    if (state.tasks.length > 0) {
+      renderOrgChart(state.tasks);
+    }
+  }, 200);
+});
+
+// ---- INIT ----
+async function init() {
+  updateClock();
+  setInterval(updateClock, 1000);
+  createAmbientParticles();
+
+  // First poll
+  await pollData();
+
+  // Recurring poll
+  setInterval(pollData, POLL_INTERVAL);
+
+  // SSE for real-time events
+  connectSSE();
+}
+
+init();
+</script>
+</body>
+</html>
