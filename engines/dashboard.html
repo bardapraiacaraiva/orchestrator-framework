@@ -408,13 +408,17 @@ const connections = [];
 // CEO node
 nodes.push({ id: CEO.id, name: CEO.name, role: CEO.role, type: 'ceo', x: 0, y: 0, radius: 25, color: '#ffaa00', visible: true, workerCount: 0 });
 
-// VP nodes
+// LAYOUT: 4 VPs get 55 degrees each (220 total), 11 direct dirs get remaining 140 degrees
+// VPs at: 0, 90, 180, 270 (cardinal points) — directors spread around them
+const VP_ANGLES = [0, 90, 180, 270]; // DIVA=right, LUCAS=bottom, A360=left, ATLAS=top
+const VP_SECTOR_SIZE = 55; // degrees per VP sector for its directors
+
 VPS.forEach((vp, i) => {
-  const angle = (i * 90 + 45) * Math.PI / 180; // 45, 135, 225, 315 degrees offset
+  const angle = VP_ANGLES[i] * Math.PI / 180;
   nodes.push({
     id: vp.id, name: vp.name, role: vp.role, type: 'vp',
-    baseAngle: (i * 90 + 45),
-    sector: vp.sector,
+    baseAngle: VP_ANGLES[i],
+    sector: [VP_ANGLES[i] - VP_SECTOR_SIZE/2, VP_ANGLES[i] + VP_SECTOR_SIZE/2],
     x: Math.cos(angle) * 150,
     y: Math.sin(angle) * 150,
     radius: 18, color: '#aa66ff', visible: true, workerCount: 0
@@ -422,19 +426,16 @@ VPS.forEach((vp, i) => {
   connections.push({ from: CEO.id, to: vp.id });
 });
 
-// Helper: distribute directors within a sector
 function distributeInSector(dirs, sectorStart, sectorEnd, parentId, radiusDist) {
-  // Handle wrap-around (e.g., 315 to 45)
   let range = sectorEnd - sectorStart;
   if (range <= 0) range += 360;
-
   const step = range / (dirs.length + 1);
 
   dirs.forEach((dir, i) => {
     const angleDeg = sectorStart + step * (i + 1);
     const angleRad = angleDeg * Math.PI / 180;
     nodes.push({
-      id: dir.id, name: dir.name, role: `Director`, type: 'director',
+      id: dir.id, name: dir.name, role: 'Director', type: 'director',
       parentVP: parentId,
       angleDeg: angleDeg,
       x: Math.cos(angleRad) * radiusDist,
@@ -448,33 +449,42 @@ function distributeInSector(dirs, sectorStart, sectorEnd, parentId, radiusDist) 
   });
 }
 
-// VP directors
-VPS.forEach(vp => {
+// VP directors: spread within each VP's sector
+VPS.forEach((vp, i) => {
   const dirs = VP_DIRS[vp.id] || [];
-  let sectorStart = vp.sector[0];
-  let sectorEnd = vp.sector[1];
-  distributeInSector(dirs, sectorStart, sectorEnd, vp.id, 300);
+  const center = VP_ANGLES[i];
+  distributeInSector(dirs, center - VP_SECTOR_SIZE/2, center + VP_SECTOR_SIZE/2, vp.id, 300);
 });
 
-// Direct CEO directors - fill remaining sector (225 to 315)
-// They already have custom sectors defined, use midpoints
-DIRECT_DIRS.forEach(dir => {
-  const sectorStart = dir.sector ? dir.sector[0] : 225;
-  const sectorEnd = dir.sector ? dir.sector[1] : 315;
-  const angleDeg = (sectorStart + sectorEnd) / 2;
-  const angleRad = angleDeg * Math.PI / 180;
-  nodes.push({
-    id: dir.id, name: dir.name, role: 'Director (CEO)', type: 'director',
-    parentVP: 'dario-ceo',
-    angleDeg: angleDeg,
-    x: Math.cos(angleRad) * 300,
-    y: Math.sin(angleRad) * 300,
-    radius: 12, color: '#00d4ff', visible: true,
-    workerCount: dir.workerCount,
-    workers: dir.workers,
-    expanded: false
-  });
-  connections.push({ from: 'dario-ceo', to: dir.id });
+// Direct CEO directors: place in the 4 gaps between VPs
+// VPs at 0, 90, 180, 270. Gaps: 28-62, 118-152, 208-242, 298-332
+// Split 11 dirs: 3 in gap1, 3 in gap2, 3 in gap3, 2 in gap4
+const GAPS = [
+  { start:22, end:68, count:3 },   // between DIVA(0) and LUCAS(90)
+  { start:112, end:158, count:3 },  // between LUCAS(90) and A360(180)
+  { start:202, end:248, count:3 },  // between A360(180) and ATLAS(270)
+  { start:292, end:338, count:2 },  // between ATLAS(270) and DIVA(0)
+];
+let dirIdx = 0;
+GAPS.forEach(gap => {
+  const step = (gap.end - gap.start) / (gap.count + 1);
+  for (let g = 0; g < gap.count && dirIdx < DIRECT_DIRS.length; g++, dirIdx++) {
+    const dir = DIRECT_DIRS[dirIdx];
+    const angleDeg = gap.start + step * (g + 1);
+    const angleRad = angleDeg * Math.PI / 180;
+    nodes.push({
+      id: dir.id, name: dir.name, role: 'Director (CEO)', type: 'director',
+      parentVP: 'dario-ceo',
+      angleDeg: angleDeg,
+      x: Math.cos(angleRad) * 300,
+      y: Math.sin(angleRad) * 300,
+      radius: 12, color: '#00d4ff', visible: true,
+      workerCount: dir.workerCount,
+      workers: dir.workers,
+      expanded: false
+    });
+    connections.push({ from: 'dario-ceo', to: dir.id });
+  }
 });
 
 // Worker nodes (hidden by default)
