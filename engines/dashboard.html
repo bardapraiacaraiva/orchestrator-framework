@@ -91,8 +91,8 @@ body {
   position: fixed;
   top: 48px;
   left: 0;
-  right: 0;
-  bottom: 30%;
+  right: 280px;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,23 +108,23 @@ body {
 
 #bottom-panel {
   position: fixed;
-  bottom: 0;
-  left: 0;
+  top: 48px;
   right: 0;
-  height: 30%;
+  bottom: 0;
+  width: 280px;
   background: linear-gradient(180deg, #080812 0%, #06060f 100%);
-  border-top: 1px solid #1a1a3e;
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
+  border-left: 1px solid #1a1a3e;
+  display: flex;
+  flex-direction: column;
   gap: 1px;
-  padding: 12px 20px;
+  padding: 12px 14px;
   z-index: 50;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1a2535 transparent;
 }
 
-.panel-section {
-  padding: 8px 12px;
-  overflow: hidden;
-}
+/* panel-section now in sidebar block above */
 
 .panel-title {
   font-family: 'JetBrains Mono', monospace;
@@ -152,9 +152,17 @@ body {
 
 #event-feed {
   overflow-y: auto;
-  max-height: calc(30vh - 50px);
+  max-height: 200px;
+  flex-shrink: 0;
   scrollbar-width: thin;
   scrollbar-color: #1a2535 transparent;
+}
+
+.panel-section {
+  flex-shrink: 0;
+  border-bottom: 1px solid #0d1525;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .event-item {
