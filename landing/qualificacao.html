@@ -775,33 +775,33 @@ footer {
     var level, heading, text, savings, ctaText, subject;
 
     if (totalScore <= 15) {
-      level = 'Starter';
-      heading = 'O Seu Ponto de Partida';
-      text = 'A sua empresa ainda esta numa fase inicial para a implementacao completa. Recomendamos o nosso Plano Starter para comecar a digitalizar os seus processos.';
+      level = 'Em Desenvolvimento';
+      heading = 'A Sua Empresa Esta a Crescer';
+      text = 'A sua empresa ainda precisa de maturar alguns processos antes da implementacao completa. Vamos agendar uma conversa para identificar por onde comecar \u2014 sem custos, sem compromisso.';
       savings = '';
-      ctaText = 'Conhecer o Plano Starter';
-      subject = 'Starter';
+      ctaText = 'Agendar Conversa Gratuita';
+      subject = 'Conversa Inicial - Empresa em Desenvolvimento';
     } else if (totalScore <= 25) {
-      level = 'Basico';
+      level = 'Potencial Identificado';
       heading = 'A Sua Empresa Tem Potencial!';
-      text = 'A sua empresa tem potencial! Estimamos que pode poupar entre 1.000\u20ac-3.000\u20ac/mes com as nossas ferramentas basicas de automacao.';
-      savings = '1.000\u20ac - 3.000\u20ac/mes';
+      text = 'Identificamos que a sua empresa pode estar a perder entre 1.000\u20ac-3.000\u20ac/mes em ineficiencias operacionais. Implementamos a nossa tecnologia e cobramos apenas uma percentagem dos resultados obtidos \u2014 se nao melhorar, nao paga nada.';
+      savings = '1.000\u20ac - 3.000\u20ac/mes em poupanca estimada';
       ctaText = 'Agendar Diagnostico Gratuito';
-      subject = 'Diagnostico - Nivel Basico';
+      subject = 'Diagnostico - Potencial Identificado';
     } else if (totalScore <= 32) {
       level = 'Profissional';
-      heading = 'Excelente Perfil!';
-      text = 'Excelente! A sua empresa e ideal para a nossa implementacao profissional. Estimamos um potencial de poupanca de 3.000\u20ac-8.000\u20ac/mes.';
-      savings = '3.000\u20ac - 8.000\u20ac/mes';
+      heading = 'Perfil Ideal Para Implementacao!';
+      text = 'Excelente! A sua empresa tem o perfil ideal. Estimamos um potencial de poupanca de 3.000\u20ac-8.000\u20ac/mes. Nos implementamos, medimos os resultados, e recebemos apenas uma percentagem do que a sua empresa efectivamente ganha. Zero risco para si.';
+      savings = '3.000\u20ac - 8.000\u20ac/mes em poupanca estimada';
       ctaText = 'Agendar Chamada com Especialista';
-      subject = 'Qualificado PRO';
+      subject = 'Qualificado Profissional - Pronto para Implementacao';
     } else {
       level = 'Enterprise';
-      heading = 'Perfil Enterprise!';
-      text = 'A sua empresa tem perfil Enterprise! Potencial de poupanca superior a 10.000\u20ac/mes com implementacao completa.';
-      savings = '+10.000\u20ac/mes';
+      heading = 'Potencial Extraordinario!';
+      text = 'A sua empresa tem perfil Enterprise com potencial de poupanca superior a 10.000\u20ac/mes. Implementamos a nossa tecnologia com equipa dedicada e participamos nos resultados \u2014 so ganhamos quando a sua empresa ganha. Sem mensalidades, sem custos fixos.';
+      savings = '+10.000\u20ac/mes em poupanca estimada';
       ctaText = 'Agendar Reuniao com o Director';
-      subject = 'Qualificado Enterprise';
+      subject = 'Qualificado Enterprise - Implementacao Completa';
     }
 
     var emailBody = buildEmailBody(level, totalScore);
