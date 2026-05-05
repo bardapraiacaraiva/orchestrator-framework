@@ -2,1927 +2,1298 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DARIO Mission Control v9.0 — Unified Mega-Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARIO COMMAND CENTER v9.0</title>
 <style>
-/* ═══════════════════════════════════════════════════════════════════════════
-   DARIO MISSION CONTROL v9.0 — UNIFIED MEGA-DASHBOARD
-   NASA-inspired Dark Theme | 30 Agents + 135 Workers = 165 Entities
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-:root {
-  --bg: #0a0a0f;
-  --bg-panel: #0d0d14;
-  --bg-surface: #12121c;
-  --bg-elevated: #181825;
-  --border: #1e1e30;
-  --border-glow: #00d4ff33;
-  --text: #e0e0f0;
-  --text-dim: #6a6a8a;
-  --text-muted: #3a3a55;
-  --cyan: #00d4ff;
-  --cyan-dim: #00d4ff44;
-  --amber: #ffaa00;
-  --amber-dim: #ffaa0033;
-  --green: #00ff88;
-  --green-dim: #00ff8833;
-  --red: #ff3344;
-  --red-dim: #ff334433;
-  --purple: #aa66ff;
-  --purple-dim: #aa66ff33;
-  --white: #ffffff;
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body {
-  height: 100%;
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
+body {
+  background: #060611;
+  color: #c8d0e0;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
-/* Scan-line overlay */
-body::before {
-  content: '';
+#header {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none;
-  z-index: 9999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-}
-
-/* ═══════ HEADER ═══════ */
-.header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 56px;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(180deg, #0a0a1a 0%, #060611 100%);
+  border-bottom: 1px solid #1a1a3e;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  z-index: 1000;
-  backdrop-filter: blur(12px);
+  padding: 0 20px;
+  z-index: 100;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.logo {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--cyan);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.logo span { color: var(--text-dim); font-weight: 400; font-size: 11px; letter-spacing: 0; margin-left: 8px; }
-
-.status-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-family: var(--font-mono);
-  background: var(--green-dim);
-  color: var(--green);
-  border: 1px solid var(--green);
-}
-
-.status-pill .dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse-dot 2s infinite;
-}
-
-.status-pill.offline { background: var(--red-dim); color: var(--red); border-color: var(--red); }
-.status-pill.offline .dot { background: var(--red); animation: none; }
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.entity-count {
-  color: var(--amber);
+#header .title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
   font-weight: 600;
-}
-
-/* ═══════ TAB BAR ═══════ */
-.tab-bar {
-  position: fixed;
-  top: 56px; left: 0; right: 0;
-  height: 44px;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  gap: 4px;
-  z-index: 999;
-}
-
-.tab-btn {
-  padding: 8px 20px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-dim);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.tab-btn:hover {
-  color: var(--text);
-  background: var(--bg-surface);
-}
-
-.tab-btn.active {
-  color: var(--cyan);
-  background: var(--cyan-dim);
-  border-color: var(--cyan);
-}
-
-/* ═══════ MAIN CONTENT ═══════ */
-.main {
-  margin-top: 100px;
-  padding: 20px;
-  min-height: calc(100vh - 100px);
-}
-
-.tab-content {
-  display: none;
-  animation: fadeIn 0.3s ease;
-}
-
-.tab-content.active { display: block; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ═══════ PANELS ═══════ */
-.panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.panel::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
-}
-
-.panel-title {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 12px;
-}
-
-/* ═══════ TAB 1: MISSION CONTROL ═══════ */
-.mc-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr 300px;
-  grid-template-rows: auto auto;
-  gap: 16px;
-}
-
-@media (max-width: 1200px) {
-  .mc-grid { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 768px) {
-  .mc-grid { grid-template-columns: 1fr; }
-}
-
-/* Health Gauge */
-.health-gauge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-}
-
-.gauge-svg { width: 160px; height: 160px; }
-
-.gauge-label {
-  font-family: var(--font-mono);
-  font-size: 36px;
-  font-weight: 700;
-  margin-top: 8px;
-}
-
-.gauge-sublabel {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-
-/* Task Bars */
-.task-bars { display: flex; flex-direction: column; gap: 10px; }
-
-.task-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.task-bar-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  width: 60px;
-  text-align: right;
-  color: var(--text-dim);
-  text-transform: uppercase;
-}
-
-.task-bar-track {
-  flex: 1;
-  height: 20px;
-  background: var(--bg-surface);
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-
-.task-bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.6s ease;
-}
-
-.task-bar-fill.done { background: var(--green); }
-.task-bar-fill.active { background: var(--cyan); }
-.task-bar-fill.todo { background: var(--amber); }
-.task-bar-fill.blocked { background: var(--red); }
-
-.task-bar-count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  width: 30px;
-  text-align: left;
-}
-
-/* Budget Gauge */
-.budget-gauge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-.budget-bar {
-  width: 100%;
-  height: 12px;
-  background: var(--bg-surface);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-
-.budget-fill {
-  height: 100%;
-  border-radius: 6px;
-  transition: width 0.6s ease;
-  background: var(--green);
-}
-
-.budget-fill.warn { background: var(--amber); }
-.budget-fill.critical { background: var(--red); }
-
-.budget-text {
-  font-family: var(--font-mono);
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 8px;
-}
-
-.budget-sub {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-
-/* State Machine */
-.state-machine {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding: 16px;
-}
-
-.state-node {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
+  color: #ffaa00;
   letter-spacing: 1px;
-  color: var(--text-dim);
-  background: var(--bg-surface);
-  transition: all 0.3s;
+  text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
 }
 
-.state-node.active {
-  color: var(--cyan);
-  border-color: var(--cyan);
-  background: var(--cyan-dim);
-  box-shadow: 0 0 12px var(--cyan-dim), inset 0 0 12px var(--cyan-dim);
-  animation: state-glow 2s infinite;
-}
-
-@keyframes state-glow {
-  0%, 100% { box-shadow: 0 0 12px var(--cyan-dim); }
-  50% { box-shadow: 0 0 24px var(--cyan-dim), 0 0 48px rgba(0,212,255,0.1); }
-}
-
-/* Activity Feed */
-.activity-feed {
-  max-height: 300px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.activity-feed::-webkit-scrollbar { width: 4px; }
-.activity-feed::-webkit-scrollbar-track { background: var(--bg); }
-.activity-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-.feed-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  transition: background 0.2s;
-}
-
-.feed-item:hover { background: var(--bg-surface); }
-
-.feed-time {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  min-width: 50px;
-}
-
-.feed-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-
-.feed-msg { color: var(--text-dim); line-height: 1.4; }
-
-/* Quick Actions */
-.quick-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.action-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg-surface);
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.action-btn:hover {
-  border-color: var(--cyan);
-  color: var(--cyan);
-  background: var(--cyan-dim);
-}
-
-/* Engine Lights */
-.engine-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 6px;
-}
-
-.engine-light {
+#header .badges {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-dim);
+  gap: 16px;
 }
 
-.engine-light .indicator {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
+#header .badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
 }
 
-.engine-light .indicator.warn { background: var(--amber); }
-.engine-light .indicator.error { background: var(--red); }
-.engine-light .indicator.off { background: var(--text-muted); }
+#header .badge-online {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
+  color: #00ff88;
+}
 
-/* ═══════ TAB 2: AGENT OPERATIONS (Org Chart) ═══════ */
-.org-container {
-  position: relative;
+#header .badge-offline {
+  background: rgba(255, 51, 68, 0.1);
+  border: 1px solid #ff3344;
+  color: #ff3344;
+}
+
+#header .badge-entities {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid #0a3a5e;
+  color: #00d4ff;
+}
+
+#header .badge-health {
+  background: rgba(170, 102, 255, 0.08);
+  border: 1px solid #3a1a5e;
+  color: #aa66ff;
+}
+
+#header .clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #5a6080;
+}
+
+#main-container {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  right: 280px;
+  bottom: 140px;
+}
+
+#canvas {
   width: 100%;
-  min-height: calc(100vh - 160px);
+  height: 100%;
+  display: block;
 }
 
-.org-level {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
+#sidebar {
+  position: fixed;
+  top: 48px;
+  right: 0;
+  width: 280px;
+  bottom: 0;
+  background: #080814;
+  border-left: 1px solid #1a1a3e;
+  overflow-y: auto;
+  padding: 12px;
+  z-index: 50;
+}
+
+#sidebar h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #5a6080;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+#sidebar .section {
   margin-bottom: 20px;
 }
 
-.org-node {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg-panel);
-  cursor: pointer;
-  transition: all 0.3s;
-  min-width: 140px;
-  text-align: center;
-  position: relative;
-}
-
-.org-node:hover {
-  border-color: var(--cyan);
-  transform: translateY(-2px);
-}
-
-.org-node.expanded {
-  border-color: var(--cyan);
-  background: var(--bg-elevated);
-}
-
-.org-node.active-entity {
-  border-color: var(--cyan);
-  box-shadow: 0 0 12px var(--cyan-dim);
-  animation: node-pulse 2s infinite;
-}
-
-@keyframes node-pulse {
-  0%, 100% { box-shadow: 0 0 8px var(--cyan-dim); }
-  50% { box-shadow: 0 0 20px var(--cyan-dim); }
-}
-
-.org-node.idle { opacity: 0.5; }
-
-.org-node .node-name {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-
-.org-node .node-role {
-  font-size: 9px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.org-node .node-task {
-  font-size: 9px;
-  color: var(--cyan);
-  margin-top: 4px;
-  font-family: var(--font-mono);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
-}
-
-.org-node .badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--cyan);
-  color: var(--bg);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 8px;
-  min-width: 20px;
-  text-align: center;
-}
-
-.org-node.type-ceo { border-color: var(--amber); }
-.org-node.type-ceo .node-name { color: var(--amber); }
-.org-node.type-vp { border-color: var(--purple); }
-.org-node.type-vp .node-name { color: var(--purple); }
-.org-node.type-director { border-color: var(--cyan-dim); }
-.org-node.type-worker { border-color: var(--border); min-width: 110px; }
-.org-node.type-worker .node-name { font-size: 10px; }
-
-/* Division container */
-.division-container {
-  margin-top: 16px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-surface);
-  display: none;
-}
-
-.division-container.visible { display: block; animation: fadeIn 0.3s ease; }
-
-.division-header {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--cyan);
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.division-header .close-btn {
-  cursor: pointer;
-  color: var(--text-dim);
-  font-size: 16px;
-  padding: 0 4px;
-}
-
-.division-header .close-btn:hover { color: var(--red); }
-
-.workers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 8px;
-}
-
-.director-section {
-  margin-bottom: 16px;
-}
-
-.director-section-title {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--purple);
-  margin-bottom: 8px;
-  padding: 4px 8px;
-  background: var(--purple-dim);
+.task-item {
+  background: #0a0a1e;
+  border: 1px solid #1a1a3e;
   border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.director-section-title .worker-count {
-  color: var(--text-dim);
-  font-weight: 400;
-}
-
-/* ═══════ TAB 3: LIVE EXECUTION ═══════ */
-.exec-grid {
-  display: grid;
-  grid-template-columns: 250px 1fr 280px;
-  grid-template-rows: auto auto;
-  gap: 16px;
-  min-height: calc(100vh - 180px);
-}
-
-@media (max-width: 1100px) {
-  .exec-grid { grid-template-columns: 1fr; }
-}
-
-.pipeline-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  padding: 20px;
-  flex-wrap: wrap;
-}
-
-.pipeline-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  min-width: 100px;
-  text-align: center;
-  position: relative;
-  transition: all 0.3s;
-}
-
-.pipeline-step.active-step {
-  border-color: var(--cyan);
-  background: var(--cyan-dim);
-  box-shadow: 0 0 16px var(--cyan-dim);
-}
-
-.pipeline-step.done-step {
-  border-color: var(--green);
-  background: var(--green-dim);
-}
-
-.pipeline-step .step-name {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.pipeline-step .step-task {
-  font-size: 9px;
-  color: var(--text-dim);
-}
-
-.pipeline-arrow {
-  width: 30px;
-  height: 2px;
-  background: var(--border);
-  position: relative;
-}
-
-.pipeline-arrow::after {
-  content: '';
-  position: absolute;
-  right: 0; top: -3px;
-  border: 4px solid transparent;
-  border-left-color: var(--border);
-}
-
-.pipeline-arrow.active-arrow {
-  background: var(--cyan);
-}
-
-.pipeline-arrow.active-arrow::after {
-  border-left-color: var(--cyan);
-}
-
-/* Queue */
-.task-queue {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.queue-item {
   padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  font-size: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.queue-item .q-id {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-muted);
-}
-
-.queue-item .q-skill {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--cyan);
-}
-
-.queue-item .q-desc {
-  font-size: 10px;
-  color: var(--text-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Completed */
-.completed-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.completed-item {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.completed-item .c-info { display: flex; flex-direction: column; gap: 2px; }
-.completed-item .c-skill { font-family: var(--font-mono); font-size: 10px; color: var(--green); }
-.completed-item .c-time { font-size: 9px; color: var(--text-muted); }
-.completed-item .c-score {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.score-high { color: var(--green); }
-.score-mid { color: var(--amber); }
-.score-low { color: var(--red); }
-
-/* ═══════ TAB 4: SKILL PERFORMANCE ═══════ */
-.perf-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 16px;
-}
-
-@media (max-width: 900px) {
-  .perf-grid { grid-template-columns: 1fr; }
-}
-
-/* Bar Chart */
-.bar-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.bar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bar-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  width: 100px;
-  text-align: right;
-  color: var(--text-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bar-track {
-  flex: 1;
-  height: 14px;
-  background: var(--bg-surface);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 3px;
-  background: var(--cyan);
-  transition: width 0.6s ease;
-}
-
-.bar-value {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  width: 30px;
-  color: var(--text-dim);
-}
-
-/* Tier Distribution */
-.tier-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.tier-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-}
-
-.tier-letter {
-  font-family: var(--font-mono);
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.tier-count {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-.tier-pct {
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
-.tier-a .tier-letter { color: var(--green); }
-.tier-b .tier-letter { color: var(--cyan); }
-.tier-c .tier-letter { color: var(--amber); }
-.tier-d .tier-letter { color: var(--red); }
-
-/* Evolution Trend */
-.trend-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 280px;
-  overflow-y: auto;
-}
-
-.trend-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  border-radius: 4px;
+  margin-bottom: 6px;
   font-size: 11px;
 }
 
-.trend-item:hover { background: var(--bg-surface); }
+.task-item .task-name {
+  color: #e0e0f0;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
 
-.trend-skill {
-  font-family: var(--font-mono);
+.task-item .task-meta {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--text);
+  color: #5a6080;
 }
 
-.trend-change {
-  font-family: var(--font-mono);
+.task-item.executing {
+  border-color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.1);
+}
+
+.task-item.queued {
+  border-color: #1a1a3e;
+}
+
+.task-item.completed {
+  border-color: #00ff88;
+}
+
+.score-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
 }
 
-.trend-up { color: var(--green); }
-.trend-down { color: var(--red); }
-.trend-flat { color: var(--text-dim); }
-
-/* Budget Breakdown */
-.budget-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.budget-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-}
-
-.budget-row:hover { background: var(--bg-surface); }
-
-.budget-skill { font-family: var(--font-mono); font-size: 10px; }
-.budget-cost { font-family: var(--font-mono); font-size: 10px; color: var(--amber); }
-
-/* ═══════ OFFLINE BANNER ═══════ */
-.offline-banner {
-  display: none;
+#bottom-panel {
   position: fixed;
-  top: 56px;
-  left: 0; right: 0;
-  background: var(--red);
-  color: var(--white);
-  text-align: center;
-  padding: 6px;
-  font-family: var(--font-mono);
+  left: 0;
+  right: 280px;
+  bottom: 0;
+  height: 140px;
+  background: #080814;
+  border-top: 1px solid #1a1a3e;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+#stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+  border-bottom: 1px solid #0a0a2e;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.stat {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  font-weight: 600;
-  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat .label {
+  color: #5a6080;
+}
+
+.stat .value {
+  color: #e0e0f0;
+  font-weight: 500;
+}
+
+.stat .value.active { color: #00d4ff; }
+.stat .value.idle { color: #5a6080; }
+.stat .value.done { color: #00ff88; }
+.stat .value.budget { color: #ffaa00; }
+.stat .value.health { color: #aa66ff; }
+
+#bottom-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+#event-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+}
+
+.event-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 0;
+  color: #5a6080;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-line .time { color: #3a3a5e; }
+.event-line .type-dispatch { color: #ffaa00; }
+.event-line .type-execute { color: #00d4ff; }
+.event-line .type-complete { color: #00ff88; }
+.event-line .type-score { color: #aa66ff; }
+.event-line .type-error { color: #ff3344; }
+
+#legend {
+  width: 240px;
+  padding: 10px 16px;
+  border-left: 1px solid #0a0a2e;
+  flex-shrink: 0;
+}
+
+#legend h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #3a3a5e;
   letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
-.offline-banner.visible { display: block; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 11px;
+}
 
-/* ═══════ SCROLLBAR ═══════ */
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+#tooltip {
+  position: fixed;
+  display: none;
+  background: #0e0e22;
+  border: 1px solid #2a2a5e;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 260px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+#tooltip .tt-name {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+#tooltip .tt-role {
+  color: #5a6080;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+#tooltip .tt-info {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #7a80a0;
+}
+
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-/* ═══════ UTILITY ═══════ */
-.grid-span-2 { grid-column: span 2; }
-.grid-span-3 { grid-column: span 3; }
-
-@media (max-width: 1200px) {
-  .grid-span-2, .grid-span-3 { grid-column: span 1; }
-}
+::-webkit-scrollbar-track { background: #060611; }
+::-webkit-scrollbar-thumb { background: #1a1a3e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2a2a5e; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <div class="logo">DARIO<span>Mission Control v9.0</span></div>
-    <div class="status-pill" id="statusPill">
-      <div class="dot"></div>
-      <span id="statusText">ONLINE</span>
-    </div>
-  </div>
-  <div class="header-right">
-    <span>ENTITIES: <span class="entity-count">165</span></span>
-    <span id="clockDisplay">--:--:--</span>
+<div id="header">
+  <span class="title">DARIO COMMAND CENTER v9.0</span>
+  <div class="badges">
+    <span class="badge badge-online" id="status-badge">ONLINE</span>
+    <span class="badge badge-entities">165 ENTITIES</span>
+    <span class="badge badge-health" id="health-badge">HEALTH 98%</span>
+    <span class="clock" id="clock">--:--:-- UTC</span>
   </div>
 </div>
 
-<!-- OFFLINE BANNER -->
-<div class="offline-banner" id="offlineBanner">CONNECTION LOST — RETRYING...</div>
-
-<!-- TAB BAR -->
-<div class="tab-bar">
-  <button class="tab-btn active" data-tab="mission-control">Mission Control</button>
-  <button class="tab-btn" data-tab="agent-ops">Agent Operations</button>
-  <button class="tab-btn" data-tab="live-exec">Live Execution</button>
-  <button class="tab-btn" data-tab="skill-perf">Skill Performance</button>
+<div id="main-container">
+  <canvas id="canvas"></canvas>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-
-  <!-- ═══════ TAB 1: MISSION CONTROL ═══════ -->
-  <div class="tab-content active" id="tab-mission-control">
-    <div class="mc-grid">
-      <!-- Health Gauge -->
-      <div class="panel health-gauge">
-        <div class="panel-title">System Health</div>
-        <svg class="gauge-svg" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#1e1e30" stroke-width="8"/>
-          <circle id="healthArc" cx="60" cy="60" r="50" fill="none" stroke="#00ff88" stroke-width="8"
-            stroke-dasharray="314" stroke-dashoffset="94" stroke-linecap="round"
-            transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 0.8s ease"/>
-          <text x="60" y="56" text-anchor="middle" fill="#e0e0f0" font-family="JetBrains Mono" font-size="20" font-weight="700" id="healthValue">70%</text>
-          <text x="60" y="72" text-anchor="middle" fill="#6a6a8a" font-family="Inter" font-size="8">HEALTH</text>
-        </svg>
-      </div>
-
-      <!-- Task Status -->
-      <div class="panel">
-        <div class="panel-title">Task Status</div>
-        <div class="task-bars">
-          <div class="task-bar-row">
-            <span class="task-bar-label">Done</span>
-            <div class="task-bar-track"><div class="task-bar-fill done" id="barDone" style="width:60%"></div></div>
-            <span class="task-bar-count" id="countDone">0</span>
-          </div>
-          <div class="task-bar-row">
-            <span class="task-bar-label">Active</span>
-            <div class="task-bar-track"><div class="task-bar-fill active" id="barActive" style="width:20%"></div></div>
-            <span class="task-bar-count" id="countActive">0</span>
-          </div>
-          <div class="task-bar-row">
-            <span class="task-bar-label">Todo</span>
-            <div class="task-bar-track"><div class="task-bar-fill todo" id="barTodo" style="width:15%"></div></div>
-            <span class="task-bar-count" id="countTodo">0</span>
-          </div>
-          <div class="task-bar-row">
-            <span class="task-bar-label">Blocked</span>
-            <div class="task-bar-track"><div class="task-bar-fill blocked" id="barBlocked" style="width:5%"></div></div>
-            <span class="task-bar-count" id="countBlocked">0</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Budget -->
-      <div class="panel budget-gauge">
-        <div class="panel-title">Budget</div>
-        <div class="budget-text" id="budgetPct">---%</div>
-        <div class="budget-sub" id="budgetSub">Loading...</div>
-        <div class="budget-bar"><div class="budget-fill" id="budgetFill" style="width:0%"></div></div>
-      </div>
-
-      <!-- State Machine -->
-      <div class="panel">
-        <div class="panel-title">State Machine</div>
-        <div class="state-machine" id="stateMachine">
-          <div class="state-node" data-state="idle">Idle</div>
-          <div class="state-node" data-state="scanning">Scanning</div>
-          <div class="state-node" data-state="dispatching">Dispatching</div>
-          <div class="state-node active" data-state="executing">Executing</div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="panel">
-        <div class="panel-title">Quick Actions</div>
-        <div class="quick-actions">
-          <button class="action-btn" onclick="triggerAction('pulse')">PULSE</button>
-          <button class="action-btn" onclick="triggerAction('dispatch')">DISPATCH</button>
-          <button class="action-btn" onclick="triggerAction('diagnose')">DIAG</button>
-          <button class="action-btn" onclick="triggerAction('evolve')">EVOLVE</button>
-          <button class="action-btn" onclick="triggerAction('score')">SCORE</button>
-        </div>
-      </div>
-
-      <!-- Engine Status -->
-      <div class="panel">
-        <div class="panel-title">Engine Status</div>
-        <div class="engine-grid" id="engineGrid"></div>
-      </div>
-
-      <!-- Activity Feed -->
-      <div class="panel grid-span-3">
-        <div class="panel-title">Activity Feed</div>
-        <div class="activity-feed" id="activityFeed"></div>
+<div id="sidebar">
+  <div class="section">
+    <h3>Executing</h3>
+    <div id="executing-list">
+      <div class="task-item executing">
+        <div class="task-name">No active tasks</div>
+        <div class="task-meta">System idle</div>
       </div>
     </div>
   </div>
-
-  <!-- ═══════ TAB 2: AGENT OPERATIONS ═══════ -->
-  <div class="tab-content" id="tab-agent-ops">
-    <div class="org-container" id="orgContainer"></div>
-  </div>
-
-  <!-- ═══════ TAB 3: LIVE EXECUTION ═══════ -->
-  <div class="tab-content" id="tab-live-exec">
-    <div class="exec-grid">
-      <!-- Queue -->
-      <div class="panel">
-        <div class="panel-title">Queue (Todo)</div>
-        <div class="task-queue" id="taskQueue"></div>
-      </div>
-
-      <!-- Pipeline -->
-      <div class="panel">
-        <div class="panel-title">Execution Pipeline</div>
-        <div class="pipeline-container" id="pipelineContainer">
-          <div class="pipeline-step" data-step="guardrails"><div class="step-name">Guardrails</div><div class="step-task" id="pipeGuardrails">---</div></div>
-          <div class="pipeline-arrow"></div>
-          <div class="pipeline-step" data-step="context"><div class="step-name">Context</div><div class="step-task" id="pipeContext">---</div></div>
-          <div class="pipeline-arrow"></div>
-          <div class="pipeline-step active-step" data-step="execute"><div class="step-name">Execute</div><div class="step-task" id="pipeExecute">---</div></div>
-          <div class="pipeline-arrow"></div>
-          <div class="pipeline-step" data-step="score"><div class="step-name">Score</div><div class="step-task" id="pipeScore">---</div></div>
-          <div class="pipeline-arrow"></div>
-          <div class="pipeline-step" data-step="deliver"><div class="step-name">Deliver</div><div class="step-task" id="pipeDeliver">---</div></div>
-        </div>
-      </div>
-
-      <!-- Completed -->
-      <div class="panel">
-        <div class="panel-title">Recently Completed</div>
-        <div class="completed-list" id="completedList"></div>
-      </div>
-
-      <!-- Live Events (spans full width) -->
-      <div class="panel grid-span-3">
-        <div class="panel-title">Live Events</div>
-        <div class="activity-feed" id="liveEvents"></div>
+  <div class="section">
+    <h3>Queue</h3>
+    <div id="queue-list">
+      <div class="task-item queued">
+        <div class="task-name">Queue empty</div>
+        <div class="task-meta">Awaiting dispatch</div>
       </div>
     </div>
   </div>
-
-  <!-- ═══════ TAB 4: SKILL PERFORMANCE ═══════ -->
-  <div class="tab-content" id="tab-skill-perf">
-    <div class="perf-grid">
-      <!-- Top Skills Bar Chart -->
-      <div class="panel">
-        <div class="panel-title">Top 20 Skills by Avg Score</div>
-        <div class="bar-chart" id="skillBars"></div>
-      </div>
-
-      <!-- Tier Distribution -->
-      <div class="panel">
-        <div class="panel-title">Tier Distribution</div>
-        <div class="tier-grid" id="tierGrid">
-          <div class="tier-card tier-a"><div class="tier-letter">A</div><div class="tier-count" id="tierA">0</div><div class="tier-pct" id="tierAPct">0%</div></div>
-          <div class="tier-card tier-b"><div class="tier-letter">B</div><div class="tier-count" id="tierB">0</div><div class="tier-pct" id="tierBPct">0%</div></div>
-          <div class="tier-card tier-c"><div class="tier-letter">C</div><div class="tier-count" id="tierC">0</div><div class="tier-pct" id="tierCPct">0%</div></div>
-          <div class="tier-card tier-d"><div class="tier-letter">D</div><div class="tier-count" id="tierD">0</div><div class="tier-pct" id="tierDPct">0%</div></div>
-        </div>
-      </div>
-
-      <!-- Evolution Trend -->
-      <div class="panel">
-        <div class="panel-title">Weight Evolution (Recent Changes)</div>
-        <div class="trend-list" id="trendList"></div>
-      </div>
-
-      <!-- Budget by Skill -->
-      <div class="panel">
-        <div class="panel-title">Budget Breakdown by Skill</div>
-        <div class="budget-list" id="budgetBreakdown"></div>
+  <div class="section">
+    <h3>Recent Completions</h3>
+    <div id="completions-list">
+      <div class="task-item completed">
+        <div class="task-name">System initialized</div>
+        <div class="task-meta">Score: <span class="score-badge">--</span></div>
       </div>
     </div>
   </div>
+</div>
 
+<div id="bottom-panel">
+  <div id="stats-bar">
+    <div class="stat"><span class="label">ACTIVE:</span><span class="value active" id="stat-active">0</span></div>
+    <div class="stat"><span class="label">IDLE:</span><span class="value idle" id="stat-idle">135</span></div>
+    <div class="stat"><span class="label">DONE:</span><span class="value done" id="stat-done">0</span></div>
+    <div class="stat"><span class="label">BUDGET:</span><span class="value budget" id="stat-budget">42%</span></div>
+    <div class="stat"><span class="label">HEALTH:</span><span class="value health" id="stat-health">98%</span></div>
+    <div class="stat"><span class="label">STATE:</span><span class="value" id="stat-state">IDLE</span></div>
+  </div>
+  <div id="bottom-content">
+    <div id="event-feed"></div>
+    <div id="legend">
+      <h4>Legend</h4>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffaa00;box-shadow:0 0 6px #ffaa00"></div>CEO (DARIO)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#aa66ff"></div>VP</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div>Director</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1a1a2e;border:1px solid #3a3a5e"></div>Worker (idle)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00d4ff;box-shadow:0 0 4px #00d4ff"></div>Worker (active)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>Worker (done)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff3344"></div>Worker (blocked)</div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-name"></div>
+  <div class="tt-role"></div>
+  <div class="tt-info"></div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════════════
-   DARIO MISSION CONTROL v9.0 — JAVASCRIPT ENGINE
-   ═══════════════════════════════════════════════════════════════════════════ */
+// ═══════════════════════════════════════════════════════════════════════
+// DARIO COMMAND CENTER v9.0 — RADIAL NERVOUS SYSTEM
+// Canvas-based rendering with particle animations
+// ═══════════════════════════════════════════════════════════════════════
 
-// ═══════ COMPLETE HIERARCHY DATA (165 entities) ═══════
 const HIERARCHY = {
-  id: 'dario-ceo', name: 'DARIO CEO', type: 'ceo', role: 'Chief Executive Officer',
-  children: [
-    {
-      id: 'diva-vp', name: 'DIVA VP', type: 'vp', role: 'Architecture & Design',
-      children: [
-        { id: 'dir-design', name: 'Design', type: 'director', role: 'Design Director',
-          workers: [
-            { id: 'w-moodboard', name: 'moodboard', skill: 'diva-moodboard' },
-            { id: 'w-materials', name: 'materials', skill: 'diva-materials' },
-            { id: 'w-floor-plan', name: 'floor-plan', skill: 'diva-floor-plan' },
-            { id: 'w-render', name: 'render', skill: 'diva-render' },
-            { id: 'w-render-brief', name: 'render-brief', skill: 'diva-render-brief' },
-            { id: 'w-vision', name: 'vision', skill: 'diva-vision' },
-            { id: 'w-portfolio', name: 'portfolio', skill: 'diva-portfolio' },
-            { id: 'w-smart-home', name: 'smart-home', skill: 'diva-smart-home' },
-            { id: 'w-briefing-design', name: 'briefing', skill: 'diva-briefing' },
-            { id: 'w-client-onboard-design', name: 'client-onboard', skill: 'diva-client-onboard' }
-          ]
-        },
-        { id: 'dir-construction', name: 'Construction', type: 'director', role: 'Construction Director',
-          workers: [
-            { id: 'w-budget-const', name: 'budget', skill: 'diva-budget' },
-            { id: 'w-calc', name: 'calc', skill: 'diva-calc' },
-            { id: 'w-timeline', name: 'timeline', skill: 'diva-timeline' },
-            { id: 'w-inspection', name: 'inspection', skill: 'diva-inspection' },
-            { id: 'w-contract', name: 'contract', skill: 'diva-contract' },
-            { id: 'w-comparador', name: 'comparador', skill: 'diva-comparador' },
-            { id: 'w-planradar', name: 'planradar', skill: 'diva-planradar' },
-            { id: 'w-bim', name: 'bim', skill: 'diva-bim' },
-            { id: 'w-diagnose-const', name: 'diagnose', skill: 'diva-diagnose' },
-            { id: 'w-roadmap-const', name: 'roadmap', skill: 'diva-roadmap' }
-          ]
-        },
-        { id: 'dir-regulatory', name: 'Regulatory', type: 'director', role: 'Regulatory Director',
-          workers: [
-            { id: 'w-licensing', name: 'licensing', skill: 'diva-licensing' },
-            { id: 'w-energy', name: 'energy', skill: 'diva-energy' }
-          ]
-        }
+  center: { id: "dario-ceo", name: "D.A.R.I.O.", role: "CEO", type: "ceo" },
+  vps: [
+    { id: "diva-vp", name: "D.I.V.A.", role: "Architecture VP", type: "vp", angle: 0,
+      directors: [
+        { id: "dir-design", name: "Design", workers: ["moodboard","materials","floor-plan","render","render-brief","vision","portfolio","smart-home","briefing","client-onboard"] },
+        { id: "dir-construction", name: "Construction", workers: ["budget","calc","timeline","inspection","contract","comparador","planradar","bim","diagnose","roadmap"] },
+        { id: "dir-regulatory", name: "Regulatory", workers: ["licensing","energy"] }
       ]
     },
-    {
-      id: 'lucas-vp', name: 'LUCAS VP', type: 'vp', role: 'Operations & Intelligence',
-      children: [
-        { id: 'dir-cost-control', name: 'Cost Control', type: 'director', role: 'Cost Control Director',
-          workers: [
-            { id: 'w-budget-tracker', name: 'budget-tracker', skill: 'lucas-finance' },
-            { id: 'w-model-router', name: 'model-router', skill: 'dario-dispatch' },
-            { id: 'w-cost-alerts', name: 'cost-alerts', skill: 'lucas-finance' },
-            { id: 'w-cost-optimizer', name: 'cost-optimizer', skill: 'lucas-finance' }
-          ]
-        },
-        { id: 'dir-quality', name: 'Quality', type: 'director', role: 'Quality Director',
-          workers: [
-            { id: 'w-quality-scorer', name: 'quality-scorer', skill: 'lucas-quality' },
-            { id: 'w-feedback-loop', name: 'feedback-loop', skill: 'lucas-quality' },
-            { id: 'w-skill-evaluator', name: 'skill-evaluator', skill: 'lucas-quality' },
-            { id: 'w-revision-analyst', name: 'revision-analyst', skill: 'lucas-quality' }
-          ]
-        },
-        { id: 'dir-monitoring', name: 'Monitoring', type: 'director', role: 'Monitoring Director',
-          workers: [
-            { id: 'w-heartbeat-engine', name: 'heartbeat-engine', skill: 'lucas-heartbeat' },
-            { id: 'w-stale-detector', name: 'stale-detector', skill: 'lucas-heartbeat' },
-            { id: 'w-health-monitor', name: 'health-monitor', skill: 'lucas-heartbeat' },
-            { id: 'w-alert-dispatcher', name: 'alert-dispatcher', skill: 'lucas-heartbeat' }
-          ]
-        },
-        { id: 'dir-analytics', name: 'Analytics', type: 'director', role: 'Analytics Director',
-          workers: [
-            { id: 'w-cross-project', name: 'cross-project', skill: 'lucas-analytics' },
-            { id: 'w-skill-dashboard', name: 'skill-dashboard', skill: 'lucas-analytics' },
-            { id: 'w-revenue-tracker', name: 'revenue-tracker', skill: 'lucas-analytics' },
-            { id: 'w-knowledge-graph', name: 'knowledge-graph', skill: 'lucas-analytics' }
-          ]
-        },
-        { id: 'dir-saas-engineering', name: 'SaaS Engineering', type: 'director', role: 'SaaS Engineering Director',
-          workers: [
-            { id: 'w-backend', name: 'backend', skill: 'dario-ai-engineering' },
-            { id: 'w-frontend', name: 'frontend', skill: 'dario-ai-engineering' },
-            { id: 'w-ai-agents', name: 'ai-agents', skill: 'dario-ai-engineering' },
-            { id: 'w-database', name: 'database', skill: 'nexus-database' }
-          ]
-        },
-        { id: 'dir-accounting', name: 'Accounting', type: 'director', role: 'Accounting Director',
-          workers: [
-            { id: 'w-tax', name: 'tax', skill: 'conta-irc' },
-            { id: 'w-compliance-acc', name: 'compliance', skill: 'conta-auditoria' },
-            { id: 'w-reporting-acc', name: 'reporting', skill: 'conta-relatorios' }
-          ]
-        }
+    { id: "lucas-vp", name: "L.U.C.A.S.", role: "Operations VP", type: "vp", angle: 90,
+      directors: [
+        { id: "dir-cost-control", name: "Cost Control", workers: ["budget-tracker","model-router","cost-alerts","cost-optimizer"] },
+        { id: "dir-quality", name: "Quality", workers: ["quality-scorer","feedback-loop","skill-evaluator","revision-analyst"] },
+        { id: "dir-monitoring", name: "Monitoring", workers: ["heartbeat-engine","stale-detector","health-monitor","alert-dispatcher"] },
+        { id: "dir-analytics", name: "Analytics", workers: ["cross-project","skill-dashboard","revenue-tracker","knowledge-graph"] },
+        { id: "dir-saas-engineering", name: "SaaS Eng", workers: ["backend","frontend","ai-agents","database"] },
+        { id: "dir-accounting", name: "Accounting", workers: ["tax","compliance","reporting"] }
       ]
     },
-    {
-      id: 'a360-vp', name: 'A360 VP', type: 'vp', role: 'Business Acceleration',
-      children: [
-        { id: 'dir-a360-research', name: 'A360 Research', type: 'director', role: 'Research Director',
-          workers: [
-            { id: 'w-nicho-explorer', name: 'nicho-explorer', skill: 'a360-nicho' },
-            { id: 'w-mapear-nicho', name: 'mapear-nicho', skill: 'a360-nicho' },
-            { id: 'w-cliente-radar', name: 'cliente-radar', skill: 'a360-avatar' }
-          ]
-        },
-        { id: 'dir-a360-production', name: 'A360 Production', type: 'director', role: 'Production Director',
-          workers: [
-            { id: 'w-lp-builder', name: 'lp-builder', skill: 'dario-funnel' },
-            { id: 'w-pitch-deck', name: 'pitch-deck', skill: 'a360-pitch' },
-            { id: 'w-gtm', name: 'gtm', skill: 'a360-growth' },
-            { id: 'w-playbook-vendas', name: 'playbook-vendas', skill: 'a360-scale' },
-            { id: 'w-meeting-prep', name: 'meeting-prep', skill: 'a360-pitch' }
-          ]
-        }
+    { id: "a360-vp", name: "A360", role: "Acceleration VP", type: "vp", angle: 180,
+      directors: [
+        { id: "dir-a360-research", name: "Research", workers: ["nicho-explorer","mapear-nicho","cliente-radar"] },
+        { id: "dir-a360-production", name: "Production", workers: ["lp-builder","pitch-deck","gtm","playbook-vendas","meeting-prep"] }
       ]
     },
-    {
-      id: 'atlas-vp', name: 'ATLAS VP', type: 'vp', role: 'Events & Logistics',
-      children: [
-        { id: 'dir-event-planning', name: 'Event Planning', type: 'director', role: 'Event Planning Director',
-          workers: [
-            { id: 'w-briefing-event', name: 'briefing', skill: 'atlas-briefing' },
-            { id: 'w-venue', name: 'venue', skill: 'atlas-venue' },
-            { id: 'w-timeline-event', name: 'timeline', skill: 'atlas-timeline' },
-            { id: 'w-budget-event', name: 'budget', skill: 'atlas-budget' },
-            { id: 'w-checklist', name: 'checklist', skill: 'atlas-checklist' },
-            { id: 'w-post-event', name: 'post-event', skill: 'atlas-post-event' }
-          ]
-        },
-        { id: 'dir-logistics', name: 'Logistics', type: 'director', role: 'Logistics Director',
-          workers: [
-            { id: 'w-vendor', name: 'vendor', skill: 'atlas-vendor' },
-            { id: 'w-catering', name: 'catering', skill: 'atlas-catering' },
-            { id: 'w-transport', name: 'transport', skill: 'atlas-transport' },
-            { id: 'w-accommodation', name: 'accommodation', skill: 'atlas-accommodation' },
-            { id: 'w-staff', name: 'staff', skill: 'atlas-staff' },
-            { id: 'w-warehouse', name: 'warehouse', skill: 'atlas-warehouse' }
-          ]
-        },
-        { id: 'dir-production-ev', name: 'Production', type: 'director', role: 'Production Director',
-          workers: [
-            { id: 'w-av', name: 'av', skill: 'atlas-av' },
-            { id: 'w-staging', name: 'staging', skill: 'atlas-staging' },
-            { id: 'w-decor', name: 'decor', skill: 'atlas-decor' },
-            { id: 'w-entertainment', name: 'entertainment', skill: 'atlas-entertainment' },
-            { id: 'w-photo-video', name: 'photo-video', skill: 'atlas-photo-video' }
-          ]
-        },
-        { id: 'dir-guest-experience', name: 'Guest Experience', type: 'director', role: 'Guest Experience Director',
-          workers: [
-            { id: 'w-guest', name: 'guest', skill: 'atlas-guest' },
-            { id: 'w-seating', name: 'seating', skill: 'atlas-seating' },
-            { id: 'w-protocol', name: 'protocol', skill: 'atlas-protocol' },
-            { id: 'w-tech-event', name: 'tech', skill: 'atlas-tech' },
-            { id: 'w-hybrid', name: 'hybrid', skill: 'atlas-hybrid' }
-          ]
-        },
-        { id: 'dir-event-business', name: 'Event Business', type: 'director', role: 'Event Business Director',
-          workers: [
-            { id: 'w-marketing-event', name: 'marketing', skill: 'atlas-marketing' },
-            { id: 'w-sponsor', name: 'sponsor', skill: 'atlas-sponsor' },
-            { id: 'w-crm', name: 'crm', skill: 'atlas-crm' },
-            { id: 'w-risk', name: 'risk', skill: 'atlas-risk' },
-            { id: 'w-compliance-event', name: 'compliance', skill: 'atlas-compliance' },
-            { id: 'w-sustainability', name: 'sustainability', skill: 'atlas-sustainability' }
-          ]
-        }
-      ]
-    },
-    // Direct reports to CEO (directors)
-    {
-      id: 'dir-marketing', name: 'Marketing', type: 'director', role: 'Marketing Director',
-      workers: [
-        { id: 'w-brand', name: 'brand', skill: 'dario-brand' },
-        { id: 'w-offer', name: 'offer', skill: 'dario-offer' },
-        { id: 'w-sales-letter', name: 'sales-letter', skill: 'dario-sales-letter' },
-        { id: 'w-ads', name: 'ads', skill: 'dario-ads-blueprint' },
-        { id: 'w-funnel', name: 'funnel', skill: 'dario-funnel' },
-        { id: 'w-pipeline', name: 'pipeline', skill: 'dario-pipeline' },
-        { id: 'w-email-seq', name: 'email-seq', skill: 'dario-email-seq' },
-        { id: 'w-naming', name: 'naming', skill: 'dario-naming' },
-        { id: 'w-story-circle', name: 'story-circle', skill: 'dario-story-circle' },
-        { id: 'w-pitch-mkt', name: 'pitch', skill: 'dario-pitch' },
-        { id: 'w-proposal', name: 'proposal', skill: 'dario-proposal' },
-        { id: 'w-negotiation', name: 'negotiation', skill: 'dario-negotiation' }
-      ]
-    },
-    {
-      id: 'dir-technical', name: 'Technical', type: 'director', role: 'Technical Director',
-      workers: [
-        { id: 'w-wp-audit', name: 'wp-audit', skill: 'dario-wp-audit' },
-        { id: 'w-woo-audit', name: 'woo-audit', skill: 'dario-woo-audit' },
-        { id: 'w-cwv-fix', name: 'cwv-fix', skill: 'dario-cwv-fix' },
-        { id: 'w-pentest', name: 'pentest', skill: 'dario-pentest-checklist' },
-        { id: 'w-make-blueprint', name: 'make-blueprint', skill: 'dario-make-blueprint' },
-        { id: 'w-ios-hig', name: 'ios-hig', skill: 'dario-ios-hig' },
-        { id: 'w-sop', name: 'sop', skill: 'dario-sop' }
-      ]
-    },
-    {
-      id: 'dir-seo', name: 'SEO', type: 'director', role: 'SEO Director',
-      workers: [
-        { id: 'w-seo-audit', name: 'seo-audit', skill: 'seo-audit' },
-        { id: 'w-seo-technical', name: 'seo-technical', skill: 'seo-technical' },
-        { id: 'w-seo-content', name: 'seo-content', skill: 'seo-content' },
-        { id: 'w-seo-schema', name: 'seo-schema', skill: 'seo-schema' },
-        { id: 'w-seo-local', name: 'seo-local', skill: 'seo-local' },
-        { id: 'w-seo-geo', name: 'seo-geo', skill: 'seo-geo' },
-        { id: 'w-seo-plan', name: 'seo-plan', skill: 'seo-plan' },
-        { id: 'w-seo-page', name: 'seo-page', skill: 'seo-page' },
-        { id: 'w-seo-sitemap', name: 'seo-sitemap', skill: 'seo-sitemap' },
-        { id: 'w-seo-images', name: 'seo-images', skill: 'seo-images' },
-        { id: 'w-seo-hreflang', name: 'seo-hreflang', skill: 'seo-hreflang' },
-        { id: 'w-seo-programmatic', name: 'seo-programmatic', skill: 'seo-programmatic' },
-        { id: 'w-seo-competitor', name: 'seo-competitor', skill: 'seo-competitor-pages' },
-        { id: 'w-seo-dataforseo', name: 'seo-dataforseo', skill: 'seo-dataforseo' },
-        { id: 'w-seo-image-gen', name: 'seo-image-gen', skill: 'seo-image-gen' },
-        { id: 'w-kw-cluster', name: 'kw-cluster', skill: 'dario-kw-cluster' }
-      ]
-    },
-    {
-      id: 'dir-finance', name: 'Finance', type: 'director', role: 'Finance Director',
-      workers: [
-        { id: 'w-financial-model', name: 'financial-model', skill: 'dario-financial-model' },
-        { id: 'w-pricing-calc', name: 'pricing-calculator', skill: 'dario-pricing-calculator' },
-        { id: 'w-saas-metrics', name: 'saas-metrics', skill: 'dario-saas-metrics' }
-      ]
-    },
-    {
-      id: 'dir-client-success', name: 'Client Success', type: 'director', role: 'Client Success Director',
-      workers: [
-        { id: 'w-client-onboard', name: 'client-onboard', skill: 'dario-client-onboard' },
-        { id: 'w-diagnose', name: 'diagnose', skill: 'dario-diagnose' },
-        { id: 'w-projeto', name: 'projeto', skill: 'dario-projeto' }
-      ]
-    },
-    {
-      id: 'dir-legal', name: 'Legal', type: 'director', role: 'Legal Director',
-      workers: [
-        { id: 'w-legal', name: 'legal', skill: 'dario-legal' }
-      ]
-    },
-    {
-      id: 'dir-hr', name: 'HR', type: 'director', role: 'HR Director',
-      workers: [
-        { id: 'w-hr', name: 'hr', skill: 'dario-hr' }
-      ]
-    },
-    {
-      id: 'dir-content', name: 'Content', type: 'director', role: 'Content Director',
-      workers: [
-        { id: 'w-social', name: 'social', skill: 'dario-social' },
-        { id: 'w-content', name: 'content', skill: 'dario-content' }
-      ]
-    },
-    {
-      id: 'dir-support', name: 'Support', type: 'director', role: 'Support Director',
-      workers: [
-        { id: 'w-support', name: 'support', skill: 'dario-support' }
-      ]
-    },
-    {
-      id: 'dir-product', name: 'Product', type: 'director', role: 'Product Director',
-      workers: [
-        { id: 'w-product', name: 'product', skill: 'dario-product' }
-      ]
-    },
-    {
-      id: 'dir-pr', name: 'PR', type: 'director', role: 'PR Director',
-      workers: [
-        { id: 'w-pr', name: 'pr', skill: 'dario-pr' }
+    { id: "atlas-vp", name: "A.T.L.A.S.", role: "Events VP", type: "vp", angle: 270,
+      directors: [
+        { id: "dir-event-planning", name: "Planning", workers: ["ev-briefing","venue","ev-timeline","ev-budget","checklist","post-event"] },
+        { id: "dir-logistics", name: "Logistics", workers: ["vendor","catering","transport","accommodation","staff","warehouse"] },
+        { id: "dir-production", name: "Production", workers: ["av","staging","decor","entertainment","photo-video"] },
+        { id: "dir-guest-experience", name: "Guest Exp", workers: ["guest","seating","protocol","tech","hybrid"] },
+        { id: "dir-event-business", name: "Business", workers: ["ev-marketing","sponsor","crm","risk","ev-compliance","sustainability"] }
       ]
     }
+  ],
+  directReports: [
+    { id: "dir-marketing", name: "Marketing", angle: 30, workers: ["brand","offer","sales-letter","ads","funnel","pipeline","email-seq","naming","story-circle","pitch","proposal","negotiation"] },
+    { id: "dir-technical", name: "Technical", angle: 60, workers: ["wp-audit","woo-audit","cwv-fix","pentest","make-blueprint","ios-hig","sop"] },
+    { id: "dir-seo", name: "SEO", angle: 120, workers: ["seo-audit","seo-technical","seo-content","seo-schema","seo-local","seo-geo","seo-plan","seo-page","seo-sitemap","seo-images","seo-hreflang","seo-programmatic","seo-competitor","seo-dataforseo","seo-image-gen","kw-cluster"] },
+    { id: "dir-finance", name: "Finance", angle: 150, workers: ["financial-model","pricing-calculator","saas-metrics"] },
+    { id: "dir-client-success", name: "Client", angle: 210, workers: ["client-onboard-d","diagnose-d","projeto"] },
+    { id: "dir-content", name: "Content", angle: 240, workers: ["social","content"] },
+    { id: "dir-legal", name: "Legal", angle: 300, workers: ["legal"] },
+    { id: "dir-hr", name: "HR", angle: 315, workers: ["hr"] },
+    { id: "dir-support", name: "Support", angle: 330, workers: ["support"] },
+    { id: "dir-product", name: "Product", angle: 345, workers: ["product"] },
+    { id: "dir-pr", name: "PR", angle: 355, workers: ["pr"] }
   ]
 };
 
-// ═══════ ENGINE LIST ═══════
-const ENGINES = [
-  'orchestrator', 'dispatch', 'quality', 'heartbeat', 'evolution',
-  'rag-engine', 'memory', 'obsidian', 'budget', 'state-machine',
-  'guardrails', 'context', 'scoring', 'routing', 'scheduler',
-  'audit-log', 'skill-registry', 'task-lifecycle', 'event-bus', 'webhook',
-  'compaction', 'cache', 'telemetry', 'health-check', 'auto-start', 'api-gateway'
-];
+// ═══════════════════════════════════════════════════
+// CANVAS SETUP
+// ═══════════════════════════════════════════════════
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H, CX, CY, maxRadius;
+let nodes = [];
+let connections = [];
+let particles = [];
+let ambientParticles = [];
+let hoveredNode = null;
+let selectedDirector = null;
+let time = 0;
+let dpr = window.devicePixelRatio || 1;
 
-// ═══════ STATE ═══════
-let currentTab = 'mission-control';
-let expandedVP = null;
-let isOffline = false;
-let lastData = { health: null, tasks: null, audit: null, scores: null, budget: null, state: null };
+function resize() {
+  const container = document.getElementById('main-container');
+  W = container.clientWidth;
+  H = container.clientHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  CX = W / 2;
+  CY = H / 2;
+  maxRadius = Math.min(W, H) * 0.44;
+  buildLayout();
+}
 
-// ═══════ TAB SWITCHING ═══════
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    const tabId = btn.dataset.tab;
-    document.getElementById('tab-' + tabId).classList.add('active');
-    currentTab = tabId;
+// ═══════════════════════════════════════════════════
+// BUILD LAYOUT — position all 165 entities
+// ═══════════════════════════════════════════════════
+function buildLayout() {
+  nodes = [];
+  connections = [];
+
+  const R_VP = maxRadius * 0.20;
+  const R_DIR = maxRadius * 0.52;
+  const R_WORKER = maxRadius * 0.84;
+
+  // CEO
+  const ceo = {
+    id: HIERARCHY.center.id,
+    name: HIERARCHY.center.name,
+    role: HIERARCHY.center.role,
+    type: 'ceo',
+    x: CX, y: CY,
+    radius: 20,
+    color: '#ffaa00',
+    status: 'active',
+    children: [],
+    parent: null
+  };
+  nodes.push(ceo);
+
+  // Collect all directors with angles for even distribution
+  let allDirectors = [];
+
+  // VP directors
+  HIERARCHY.vps.forEach(vp => {
+    const dirCount = vp.directors.length;
+    const spread = 360 / 4 * 0.7; // each VP gets ~63 degrees
+    const startAngle = vp.angle - spread / 2;
+    vp.directors.forEach((dir, i) => {
+      const angle = dirCount > 1 ? startAngle + (i / (dirCount - 1)) * spread : vp.angle;
+      allDirectors.push({
+        ...dir,
+        angle: angle,
+        vpId: vp.id,
+        vpAngle: vp.angle
+      });
+    });
   });
+
+  // Direct report directors
+  HIERARCHY.directReports.forEach(dir => {
+    allDirectors.push({
+      ...dir,
+      vpId: null,
+      vpAngle: null
+    });
+  });
+
+  // VPs
+  const vpNodes = {};
+  HIERARCHY.vps.forEach(vp => {
+    const angle = (vp.angle - 90) * Math.PI / 180;
+    const vpNode = {
+      id: vp.id,
+      name: vp.name,
+      role: vp.role,
+      type: 'vp',
+      x: CX + Math.cos(angle) * R_VP,
+      y: CY + Math.sin(angle) * R_VP,
+      radius: 12,
+      color: '#aa66ff',
+      status: 'idle',
+      children: [],
+      parent: ceo
+    };
+    nodes.push(vpNode);
+    ceo.children.push(vpNode);
+    connections.push({ from: ceo, to: vpNode, type: 'vp' });
+    vpNodes[vp.id] = vpNode;
+  });
+
+  // Directors and Workers
+  allDirectors.forEach(dir => {
+    const dirAngle = (dir.angle - 90) * Math.PI / 180;
+    const parentNode = dir.vpId ? vpNodes[dir.vpId] : ceo;
+
+    const dirNode = {
+      id: dir.id,
+      name: dir.name,
+      role: dir.vpId ? 'Director under ' + (vpNodes[dir.vpId] ? vpNodes[dir.vpId].name : '') : 'Director (Direct Report)',
+      type: 'director',
+      x: CX + Math.cos(dirAngle) * R_DIR,
+      y: CY + Math.sin(dirAngle) * R_DIR,
+      radius: 9,
+      color: '#00d4ff',
+      status: 'idle',
+      children: [],
+      parent: parentNode
+    };
+    nodes.push(dirNode);
+    parentNode.children.push(dirNode);
+    connections.push({ from: parentNode, to: dirNode, type: 'dir' });
+
+    // Workers
+    const wCount = dir.workers.length;
+    const wSpread = Math.max(8, Math.min(wCount * 3.2, 30));
+    const wStart = dir.angle - wSpread / 2;
+
+    dir.workers.forEach((wName, wi) => {
+      const wAngleVal = wCount > 1 ? wStart + (wi / (wCount - 1)) * wSpread : dir.angle;
+      const wAngle = (wAngleVal - 90) * Math.PI / 180;
+      // Slight radial jitter for dense areas
+      const jitter = (Math.sin(wi * 2.7 + dir.angle) * 0.03) * R_WORKER;
+      const workerNode = {
+        id: dir.id + '-' + wName,
+        name: wName,
+        role: 'Worker in ' + dir.name,
+        type: 'worker',
+        x: CX + Math.cos(wAngle) * (R_WORKER + jitter),
+        y: CY + Math.sin(wAngle) * (R_WORKER + jitter),
+        radius: 4,
+        color: '#1a1a2e',
+        status: 'idle',
+        children: [],
+        parent: dirNode
+      };
+      nodes.push(workerNode);
+      dirNode.children.push(workerNode);
+      connections.push({ from: dirNode, to: workerNode, type: 'worker' });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// PARTICLE SYSTEM
+// ═══════════════════════════════════════════════════
+class Particle {
+  constructor(path, color, speed, size, hasTrail) {
+    this.path = path;
+    this.color = color;
+    this.speed = speed || 0.012;
+    this.size = size || 3;
+    this.hasTrail = hasTrail !== false;
+    this.progress = 0;
+    this.alive = true;
+    this.trailPoints = [];
+  }
+
+  update() {
+    this.progress += this.speed;
+    if (this.progress >= 1) {
+      this.alive = false;
+      return;
+    }
+    if (this.hasTrail) {
+      const pos = this.getPosition();
+      this.trailPoints.push({ x: pos.x, y: pos.y, alpha: 1 });
+      if (this.trailPoints.length > 25) this.trailPoints.shift();
+      for (let i = 0; i < this.trailPoints.length; i++) {
+        this.trailPoints[i].alpha *= 0.9;
+      }
+    }
+  }
+
+  getPosition() {
+    const totalSeg = this.path.length - 1;
+    if (totalSeg <= 0) return this.path[0];
+    const segProg = this.progress * totalSeg;
+    const seg = Math.min(Math.floor(segProg), totalSeg - 1);
+    const t = segProg - seg;
+    const from = this.path[seg];
+    const to = this.path[seg + 1];
+    return {
+      x: from.x + (to.x - from.x) * t,
+      y: from.y + (to.y - from.y) * t
+    };
+  }
+
+  draw(ctx) {
+    if (!this.alive) return;
+    // Trail
+    if (this.hasTrail) {
+      for (let i = 0; i < this.trailPoints.length; i++) {
+        const p = this.trailPoints[i];
+        if (p.alpha < 0.05) continue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, this.size * 0.4 * p.alpha, 0, Math.PI * 2);
+        const a = Math.floor(p.alpha * 200).toString(16).padStart(2, '0');
+        ctx.fillStyle = this.color + a;
+        ctx.fill();
+      }
+    }
+    // Head glow
+    const pos = this.getPosition();
+    ctx.save();
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function buildPathToNode(targetNode) {
+  const chain = [];
+  let node = targetNode;
+  while (node) {
+    chain.unshift({ x: node.x, y: node.y });
+    node = node.parent;
+  }
+  return chain;
+}
+
+function dispatchParticle(targetNode) {
+  const path = buildPathToNode(targetNode);
+  if (path.length >= 2) {
+    particles.push(new Particle(path, '#ffaa00', 0.01, 4.5, true));
+  }
+}
+
+function returnParticle(workerNode) {
+  const path = buildPathToNode(workerNode).reverse();
+  if (path.length >= 2) {
+    particles.push(new Particle(path, '#00ff88', 0.013, 3.5, true));
+  }
+}
+
+function scoreFlash(workerNode) {
+  // Quick cyan flash at worker position
+  const path = [{ x: workerNode.x, y: workerNode.y }, { x: workerNode.x, y: workerNode.y - 0.1 }];
+  const p = new Particle(path, '#aa66ff', 0.05, 6, false);
+  particles.push(p);
+}
+
+function spawnAmbientParticle() {
+  if (connections.length === 0) return;
+  const conn = connections[Math.floor(Math.random() * connections.length)];
+  const path = [{ x: conn.from.x, y: conn.from.y }, { x: conn.to.x, y: conn.to.y }];
+  if (Math.random() > 0.5) path.reverse();
+  const colors = ['#00d4ff44', '#aa66ff44', '#ffaa0044', '#00ff8844'];
+  const color = colors[Math.floor(Math.random() * colors.length)].substring(0, 7);
+  ambientParticles.push(new Particle(path, color, 0.005 + Math.random() * 0.007, 1.2, false));
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function drawRings() {
+  const radii = [maxRadius * 0.20, maxRadius * 0.52, maxRadius * 0.84];
+  ctx.setLineDash([2, 4]);
+  radii.forEach((r, i) => {
+    ctx.beginPath();
+    ctx.arc(CX, CY, r, 0, Math.PI * 2);
+    ctx.strokeStyle = i === 0 ? '#0d1a30' : '#091425';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Subtle radial lines every 30 degrees
+  for (let a = 0; a < 360; a += 30) {
+    const rad = (a - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(CX + Math.cos(rad) * 30, CY + Math.sin(rad) * 30);
+    ctx.lineTo(CX + Math.cos(rad) * maxRadius * 0.92, CY + Math.sin(rad) * maxRadius * 0.92);
+    ctx.strokeStyle = '#060d1a';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+}
+
+function drawConnections() {
+  connections.forEach(conn => {
+    const isSelected = selectedDirector && (
+      conn.from === selectedDirector ||
+      conn.to === selectedDirector ||
+      conn.from.parent === selectedDirector ||
+      conn.to.parent === selectedDirector
+    );
+    let alpha;
+    if (selectedDirector) {
+      alpha = isSelected ? 0.35 : 0.025;
+    } else {
+      alpha = conn.type === 'vp' ? 0.12 : conn.type === 'dir' ? 0.07 : 0.04;
+    }
+    ctx.beginPath();
+    ctx.moveTo(conn.from.x, conn.from.y);
+    ctx.lineTo(conn.to.x, conn.to.y);
+    const color = isSelected ? '0, 212, 255' : '40, 60, 120';
+    ctx.strokeStyle = `rgba(${color}, ${alpha})`;
+    ctx.lineWidth = isSelected ? 1.5 : 0.5;
+    ctx.stroke();
+  });
+}
+
+function drawNodes() {
+  // Draw workers first (back), then directors, VPs, CEO on top
+  const sortedNodes = [...nodes].sort((a, b) => {
+    const order = { worker: 0, director: 1, vp: 2, ceo: 3 };
+    return (order[a.type] || 0) - (order[b.type] || 0);
+  });
+
+  sortedNodes.forEach(node => {
+    const isHighlighted = !selectedDirector ||
+      node === selectedDirector ||
+      node.parent === selectedDirector ||
+      node.type === 'ceo' ||
+      (node.type === 'vp') ||
+      (selectedDirector.parent === node);
+
+    const dimFactor = selectedDirector && !isHighlighted ? 0.12 : 1;
+    ctx.save();
+    ctx.globalAlpha = dimFactor;
+
+    if (node.type === 'ceo') {
+      // Outer glow rings
+      const pulse = 0.5 + Math.sin(time * 0.025) * 0.5;
+      for (let i = 3; i >= 1; i--) {
+        const r = node.radius + i * 8 + pulse * 5;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 170, 0, ${0.03 / i})`;
+        ctx.fill();
+      }
+
+      // Main body
+      const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius);
+      grad.addColorStop(0, '#ffe066');
+      grad.addColorStop(0.6, '#ffaa00');
+      grad.addColorStop(1, '#cc7700');
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.shadowColor = '#ffaa00';
+      ctx.shadowBlur = 20 + pulse * 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Label
+      ctx.font = '600 11px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#ffaa00';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('D.A.R.I.O.', node.x, node.y + node.radius + 8);
+      ctx.font = '400 8px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#886600';
+      ctx.fillText('CEO', node.x, node.y + node.radius + 22);
+    }
+    else if (node.type === 'vp') {
+      const pulse = 0.7 + Math.sin(time * 0.02 + nodes.indexOf(node) * 1.5) * 0.3;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius + 5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(170, 102, 255, ${0.08 * pulse})`;
+      ctx.fill();
+
+      // Body
+      const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius);
+      grad.addColorStop(0, '#cc99ff');
+      grad.addColorStop(1, '#7733cc');
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.shadowColor = '#aa66ff';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Label
+      ctx.font = '500 9px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#bb88ff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(node.name, node.x, node.y + node.radius + 6);
+      ctx.font = '400 7px "Inter", sans-serif';
+      ctx.fillStyle = '#6644aa';
+      ctx.fillText(node.role.replace(' VP', ''), node.x, node.y + node.radius + 18);
+    }
+    else if (node.type === 'director') {
+      const isActive = node.status === 'active';
+      // Body
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      if (isActive) {
+        ctx.fillStyle = '#00d4ff';
+        ctx.shadowColor = '#00d4ff';
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.fillStyle = '#0a2a40';
+        ctx.strokeStyle = '#00607a';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Label
+      ctx.font = '400 7px "Inter", sans-serif';
+      ctx.fillStyle = isActive ? '#00d4ff' : 'rgba(0, 180, 220, 0.6)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(node.name, node.x, node.y + node.radius + 4);
+    }
+    else if (node.type === 'worker') {
+      let fillColor, glow = false;
+      switch (node.status) {
+        case 'active':
+          fillColor = '#00d4ff'; glow = true; break;
+        case 'done':
+          fillColor = '#00ff88'; glow = true; break;
+        case 'blocked':
+          fillColor = '#ff3344'; glow = true; break;
+        default:
+          fillColor = '#1a1a2e';
+      }
+
+      if (glow) {
+        ctx.shadowColor = fillColor;
+        ctx.shadowBlur = 6;
+      }
+
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+
+      if (!glow) {
+        ctx.strokeStyle = '#2a2a4e';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+
+      // Active workers get pulsing ring
+      if (node.status === 'active') {
+        const aPulse = 0.4 + Math.sin(time * 0.06 + Math.random() * 0.1) * 0.3;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius + 3, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 212, 255, ${aPulse})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Hover highlight
+    if (node === hoveredNode) {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius + 4, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  });
+}
+
+function drawParticlesAll() {
+  // Ambient first (behind)
+  ambientParticles.forEach(p => { p.update(); if (p.alive) p.draw(ctx); });
+  ambientParticles = ambientParticles.filter(p => p.alive);
+
+  // Main particles on top
+  particles.forEach(p => { p.update(); if (p.alive) p.draw(ctx); });
+  particles = particles.filter(p => p.alive);
+}
+
+// ═══════════════════════════════════════════════════
+// MAIN RENDER LOOP
+// ═══════════════════════════════════════════════════
+function render() {
+  time++;
+  ctx.clearRect(0, 0, W, H);
+
+  drawRings();
+  drawConnections();
+  drawParticlesAll();
+  drawNodes();
+
+  // Ambient particle spawn
+  if (time % 50 === 0) spawnAmbientParticle();
+  if (time % 70 === 0) spawnAmbientParticle();
+
+  requestAnimationFrame(render);
+}
+
+// ═══════════════════════════════════════════════════
+// INTERACTION
+// ═══════════════════════════════════════════════════
+canvas.addEventListener('mousemove', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  hoveredNode = null;
+  // Check in reverse (top layer first)
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const dx = mx - n.x;
+    const dy = my - n.y;
+    const hitR = Math.max(n.radius + 3, 8);
+    if (dx * dx + dy * dy < hitR * hitR) {
+      hoveredNode = n;
+      break;
+    }
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  if (hoveredNode) {
+    canvas.style.cursor = 'pointer';
+    tooltip.style.display = 'block';
+    let tx = e.clientX + 16;
+    let ty = e.clientY - 10;
+    if (tx + 260 > window.innerWidth) tx = e.clientX - 270;
+    if (ty + 80 > window.innerHeight) ty = e.clientY - 80;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top = ty + 'px';
+    tooltip.querySelector('.tt-name').textContent = hoveredNode.name;
+    tooltip.querySelector('.tt-role').textContent = hoveredNode.role || hoveredNode.type.toUpperCase();
+    const childCount = hoveredNode.children ? hoveredNode.children.length : 0;
+    let info = 'Status: ' + hoveredNode.status;
+    if (childCount > 0) info += ' | Reports: ' + childCount;
+    tooltip.querySelector('.tt-info').textContent = info;
+  } else {
+    canvas.style.cursor = 'default';
+    tooltip.style.display = 'none';
+  }
 });
 
-// ═══════ CLOCK ═══════
+canvas.addEventListener('click', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  let clicked = null;
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const dx = mx - n.x;
+    const dy = my - n.y;
+    const hitR = Math.max(n.radius + 3, 10);
+    if (dx * dx + dy * dy < hitR * hitR) {
+      clicked = n;
+      break;
+    }
+  }
+
+  if (clicked) {
+    if (clicked.type === 'ceo') {
+      // Heartbeat: burst of particles
+      selectedDirector = null;
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => spawnAmbientParticle(), i * 60);
+      }
+      // Flash all VP connections
+      const vpConns = connections.filter(c => c.type === 'vp');
+      vpConns.forEach(c => {
+        particles.push(new Particle(
+          [{ x: c.from.x, y: c.from.y }, { x: c.to.x, y: c.to.y }],
+          '#ffaa00', 0.02, 3, true
+        ));
+      });
+    } else if (clicked.type === 'director') {
+      selectedDirector = selectedDirector === clicked ? null : clicked;
+    } else if (clicked.type === 'vp') {
+      selectedDirector = null;
+      // Highlight VP children
+      clicked.children.forEach((child, i) => {
+        setTimeout(() => {
+          particles.push(new Particle(
+            [{ x: clicked.x, y: clicked.y }, { x: child.x, y: child.y }],
+            '#aa66ff', 0.02, 2.5, true
+          ));
+        }, i * 100);
+      });
+    } else if (clicked.type === 'worker') {
+      selectedDirector = clicked.parent;
+    }
+  } else {
+    selectedDirector = null;
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════════
 function updateClock() {
   const now = new Date();
-  document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('pt-PT', { hour12: false });
+  const h = String(now.getUTCHours()).padStart(2, '0');
+  const m = String(now.getUTCMinutes()).padStart(2, '0');
+  const s = String(now.getUTCSeconds()).padStart(2, '0');
+  document.getElementById('clock').textContent = h + ':' + m + ':' + s + ' UTC';
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ═══════ DATA FETCHING ═══════
+// ═══════════════════════════════════════════════════
+// EVENT FEED
+// ═══════════════════════════════════════════════════
+const eventFeed = document.getElementById('event-feed');
+
+function addEvent(type, message) {
+  const now = new Date();
+  const timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  const div = document.createElement('div');
+  div.className = 'event-line';
+  div.innerHTML = '<span class="time">[' + timeStr + ']</span> <span class="type-' + type + '">' + type.toUpperCase() + '</span> ' + message;
+  eventFeed.insertBefore(div, eventFeed.firstChild);
+  if (eventFeed.children.length > 60) {
+    eventFeed.removeChild(eventFeed.lastChild);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SIMULATED ACTIVITY (when API is offline)
+// ═══════════════════════════════════════════════════
+function getRandomWorker() {
+  const workers = nodes.filter(n => n.type === 'worker' && n.status === 'idle');
+  if (workers.length === 0) return null;
+  return workers[Math.floor(Math.random() * workers.length)];
+}
+
+function simulateDispatch() {
+  const worker = getRandomWorker();
+  if (!worker) return;
+
+  worker.status = 'active';
+  dispatchParticle(worker);
+  addEvent('dispatch', 'Task assigned to <span style="color:#00d4ff">' + worker.name + '</span> (' + worker.parent.name + ')');
+
+  // Update stats
+  updateStats();
+
+  // Complete after delay
+  const delay = 6000 + Math.random() * 18000;
+  setTimeout(() => {
+    if (worker.status !== 'active') return;
+    worker.status = 'done';
+    returnParticle(worker);
+    const score = Math.floor(72 + Math.random() * 28);
+    addEvent('complete', '<span style="color:#00ff88">' + worker.name + '</span> finished');
+    addEvent('score', 'Quality score: <span style="color:#aa66ff">' + score + '/100</span>');
+    scoreFlash(worker);
+    updateStats();
+
+    // Back to idle
+    setTimeout(() => {
+      worker.status = 'idle';
+      updateStats();
+    }, 6000 + Math.random() * 4000);
+  }, delay);
+}
+
+function updateStats() {
+  const workers = nodes.filter(n => n.type === 'worker');
+  const active = workers.filter(w => w.status === 'active').length;
+  const done = workers.filter(w => w.status === 'done').length;
+  const idle = workers.length - active - done;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-idle').textContent = idle;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-state').textContent = active > 0 ? 'EXECUTING' : 'IDLE';
+}
+
+// Start simulation
+addEvent('execute', 'Command Center v9.0 initialized');
+addEvent('dispatch', 'System scan complete — 165 entities registered');
+addEvent('execute', 'Radial topology built — 4 VPs, 26 Directors, 135 Workers');
+
+// Periodic simulated dispatches
+let simInterval = null;
+function startSimulation() {
+  simulateDispatch();
+  simInterval = setInterval(() => {
+    simulateDispatch();
+  }, 3500 + Math.random() * 5000);
+}
+setTimeout(startSimulation, 1500);
+
+// ═══════════════════════════════════════════════════
+// API FETCH (connects to real orchestrator when live)
+// ═══════════════════════════════════════════════════
 const API_BASE = 'http://localhost:8421';
+let apiOnline = false;
 
-async function fetchData(endpoint) {
+async function fetchTasks() {
   try {
-    const res = await fetch(API_BASE + endpoint, { signal: AbortSignal.timeout(5000) });
-    if (!res.ok) throw new Error(res.status);
-    setOnline(true);
-    return await res.json();
-  } catch (e) {
-    setOnline(false);
-    return null;
-  }
-}
-
-function setOnline(online) {
-  isOffline = !online;
-  const pill = document.getElementById('statusPill');
-  const text = document.getElementById('statusText');
-  const banner = document.getElementById('offlineBanner');
-  if (online) {
-    pill.className = 'status-pill';
-    text.textContent = 'ONLINE';
-    banner.classList.remove('visible');
-  } else {
-    pill.className = 'status-pill offline';
-    text.textContent = 'OFFLINE';
-    banner.classList.add('visible');
-  }
-}
-
-async function refreshAll() {
-  const [health, tasks, audit, scores, budget, state] = await Promise.all([
-    fetchData('/health'),
-    fetchData('/tasks'),
-    fetchData('/audit?limit=50'),
-    fetchData('/scores'),
-    fetchData('/budget'),
-    fetchData('/state')
-  ]);
-
-  if (health) lastData.health = health;
-  if (tasks) lastData.tasks = tasks;
-  if (audit) lastData.audit = audit;
-  if (scores) lastData.scores = scores;
-  if (budget) lastData.budget = budget;
-  if (state) lastData.state = state;
-
-  renderMissionControl();
-  renderOrgChart();
-  renderLiveExecution();
-  renderSkillPerformance();
-}
-
-// ═══════ RENDER: MISSION CONTROL ═══════
-function renderMissionControl() {
-  // Health
-  const healthPct = lastData.health?.percentage ?? lastData.health?.health_pct ?? 70;
-  const offset = 314 - (314 * healthPct / 100);
-  const arc = document.getElementById('healthArc');
-  arc.setAttribute('stroke-dashoffset', offset);
-  arc.setAttribute('stroke', healthPct > 80 ? '#00ff88' : healthPct > 50 ? '#ffaa00' : '#ff3344');
-  document.getElementById('healthValue').textContent = healthPct + '%';
-
-  // Tasks
-  const tasks = lastData.tasks;
-  if (tasks) {
-    const all = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-    const done = all.filter(t => t.status === 'done').length;
-    const active = all.filter(t => t.status === 'in_progress' || t.status === 'active' || t.status === 'executing').length;
-    const todo = all.filter(t => t.status === 'todo' || t.status === 'pending').length;
-    const blocked = all.filter(t => t.status === 'blocked').length;
-    const total = Math.max(all.length, 1);
-
-    document.getElementById('barDone').style.width = (done / total * 100) + '%';
-    document.getElementById('barActive').style.width = (active / total * 100) + '%';
-    document.getElementById('barTodo').style.width = (todo / total * 100) + '%';
-    document.getElementById('barBlocked').style.width = (blocked / total * 100) + '%';
-    document.getElementById('countDone').textContent = done;
-    document.getElementById('countActive').textContent = active;
-    document.getElementById('countTodo').textContent = todo;
-    document.getElementById('countBlocked').textContent = blocked;
-  }
-
-  // Budget
-  const budgetData = lastData.budget;
-  if (budgetData) {
-    const pct = budgetData.percentage ?? budgetData.pct ?? 0;
-    document.getElementById('budgetPct').textContent = pct.toFixed(1) + '%';
-    document.getElementById('budgetSub').textContent = `$${(budgetData.used ?? 0).toFixed(2)} / $${(budgetData.limit ?? budgetData.total ?? 100).toFixed(2)}`;
-    const fill = document.getElementById('budgetFill');
-    fill.style.width = Math.min(pct, 100) + '%';
-    fill.className = 'budget-fill' + (pct > 90 ? ' critical' : pct > 70 ? ' warn' : '');
-  }
-
-  // State Machine
-  const stateData = lastData.state;
-  if (stateData) {
-    const currentState = stateData.state || stateData.current || 'idle';
-    document.querySelectorAll('.state-node').forEach(node => {
-      node.classList.toggle('active', node.dataset.state === currentState.toLowerCase());
-    });
-  }
-
-  // Activity Feed
-  const auditData = lastData.audit;
-  if (auditData) {
-    const events = Array.isArray(auditData) ? auditData : (auditData.events || auditData.entries || []);
-    const feed = document.getElementById('activityFeed');
-    feed.innerHTML = events.slice(0, 20).map(ev => {
-      const time = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '--:--';
-      const color = ev.type === 'error' ? 'var(--red)' : ev.type === 'dispatch' ? 'var(--cyan)' : ev.type === 'score' ? 'var(--green)' : 'var(--amber)';
-      const msg = ev.message || ev.event || ev.action || JSON.stringify(ev).slice(0, 80);
-      return `<div class="feed-item"><span class="feed-time">${time}</span><div class="feed-dot" style="background:${color}"></div><span class="feed-msg">${escapeHtml(msg)}</span></div>`;
-    }).join('');
-  }
-
-  // Engine Grid
-  const engineGrid = document.getElementById('engineGrid');
-  if (!engineGrid.children.length) {
-    engineGrid.innerHTML = ENGINES.map(e => {
-      return `<div class="engine-light"><div class="indicator"></div><span>${e}</span></div>`;
-    }).join('');
-  }
-  // Update indicators based on health data
-  if (lastData.health?.engines) {
-    const lights = engineGrid.querySelectorAll('.engine-light');
-    lights.forEach(light => {
-      const name = light.querySelector('span').textContent;
-      const status = lastData.health.engines[name];
-      const ind = light.querySelector('.indicator');
-      ind.className = 'indicator' + (status === 'error' ? ' error' : status === 'warn' ? ' warn' : status === 'off' ? ' off' : '');
-    });
-  }
-}
-
-// ═══════ RENDER: ORG CHART ═══════
-function renderOrgChart() {
-  const container = document.getElementById('orgContainer');
-  const activeTasks = getActiveTaskMap();
-
-  let html = '';
-
-  // Level 0: CEO
-  html += '<div class="org-level">';
-  html += renderNode(HIERARCHY, activeTasks);
-  html += '</div>';
-
-  // Level 1: VPs + Direct Directors
-  html += '<div class="org-level">';
-  HIERARCHY.children.forEach(child => {
-    if (child.type === 'vp') {
-      const workerCount = countWorkers(child);
-      const activeCount = countActiveWorkers(child, activeTasks);
-      html += renderNode(child, activeTasks, `${activeCount}/${workerCount}`);
+    const res = await fetch(API_BASE + '/tasks', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error('not ok');
+    const data = await res.json();
+    apiOnline = true;
+    if (simInterval) { clearInterval(simInterval); simInterval = null; }
+    updateTaskPanels(data);
+    document.getElementById('status-badge').textContent = 'ONLINE';
+    document.getElementById('status-badge').className = 'badge badge-online';
+  } catch(e) {
+    if (!apiOnline) {
+      document.getElementById('status-badge').textContent = 'DEMO';
+      document.getElementById('status-badge').className = 'badge badge-online';
     }
-  });
-  html += '</div>';
+  }
+}
 
-  // Direct-report directors (under CEO)
-  html += '<div class="org-level" style="flex-wrap:wrap;gap:8px;">';
-  HIERARCHY.children.forEach(child => {
-    if (child.type === 'director') {
-      const workerCount = child.workers ? child.workers.length : 0;
-      const activeCount = child.workers ? child.workers.filter(w => activeTasks[w.id]).length : 0;
-      html += renderNode(child, activeTasks, `${activeCount}/${workerCount}`);
+async function fetchAudit() {
+  try {
+    const res = await fetch(API_BASE + '/audit?limit=20', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error('not ok');
+    const data = await res.json();
+    processAuditEvents(data);
+  } catch(e) {}
+}
+
+async function fetchBudget() {
+  try {
+    const res = await fetch(API_BASE + '/budget', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error('not ok');
+    const data = await res.json();
+    if (data.percentage !== undefined) {
+      document.getElementById('stat-budget').textContent = data.percentage + '%';
     }
-  });
-  html += '</div>';
+  } catch(e) {}
+}
 
-  // Expanded VP division
-  if (expandedVP) {
-    const vp = HIERARCHY.children.find(c => c.id === expandedVP);
-    if (vp && vp.children) {
-      html += `<div class="division-container visible">`;
-      html += `<div class="division-header"><span>${vp.name} — ${vp.role}</span><span class="close-btn" onclick="collapseVP()">&times;</span></div>`;
-      vp.children.forEach(dir => {
-        const activeCount = dir.workers ? dir.workers.filter(w => activeTasks[w.id]).length : 0;
-        html += `<div class="director-section">`;
-        html += `<div class="director-section-title">${dir.name} <span class="worker-count">(${activeCount}/${dir.workers ? dir.workers.length : 0} active)</span></div>`;
-        html += `<div class="workers-grid">`;
-        if (dir.workers) {
-          dir.workers.forEach(w => {
-            const task = activeTasks[w.id];
-            const cls = task ? 'org-node type-worker active-entity' : 'org-node type-worker idle';
-            html += `<div class="${cls}"><div class="node-name">${w.name}</div><div class="node-role">${w.skill}</div>`;
-            if (task) html += `<div class="node-task">${task}</div>`;
-            html += `</div>`;
-          });
+function updateTaskPanels(tasks) {
+  if (!tasks || !Array.isArray(tasks)) return;
+
+  const executing = tasks.filter(t => t.status === 'in_progress' || t.status === 'executing');
+  const queued = tasks.filter(t => t.status === 'todo' || t.status === 'pending');
+  const completed = tasks.filter(t => t.status === 'done').slice(-5).reverse();
+
+  const execList = document.getElementById('executing-list');
+  if (executing.length > 0) {
+    execList.innerHTML = executing.map(t =>
+      '<div class="task-item executing"><div class="task-name">' + (t.description || t.id) + '</div><div class="task-meta">' + (t.assigned_to || 'Processing') + '</div></div>'
+    ).join('');
+    // Trigger dispatch particles for executing tasks
+    executing.forEach(t => {
+      if (t.assigned_to) {
+        const worker = nodes.find(n => n.id.includes(t.assigned_to) || n.name === t.assigned_to);
+        if (worker && worker.status !== 'active') {
+          worker.status = 'active';
+          dispatchParticle(worker);
         }
-        html += `</div></div>`;
-      });
-      html += `</div>`;
-    }
+      }
+    });
+  } else {
+    execList.innerHTML = '<div class="task-item"><div class="task-name">No active tasks</div><div class="task-meta">System idle</div></div>';
   }
 
-  // Expanded direct director
-  if (expandedVP && expandedVP.startsWith('dir-')) {
-    const dir = HIERARCHY.children.find(c => c.id === expandedVP);
-    if (dir && dir.workers) {
-      html += `<div class="division-container visible">`;
-      html += `<div class="division-header"><span>${dir.name} — ${dir.role}</span><span class="close-btn" onclick="collapseVP()">&times;</span></div>`;
-      html += `<div class="workers-grid">`;
-      dir.workers.forEach(w => {
-        const task = activeTasks[w.id];
-        const cls = task ? 'org-node type-worker active-entity' : 'org-node type-worker idle';
-        html += `<div class="${cls}"><div class="node-name">${w.name}</div><div class="node-role">${w.skill}</div>`;
-        if (task) html += `<div class="node-task">${task}</div>`;
-        html += `</div>`;
-      });
-      html += `</div></div>`;
-    }
+  const queueList = document.getElementById('queue-list');
+  if (queued.length > 0) {
+    queueList.innerHTML = queued.slice(0, 6).map(t =>
+      '<div class="task-item queued"><div class="task-name">' + (t.description || t.id) + '</div><div class="task-meta">Priority: ' + (t.priority || 'normal') + '</div></div>'
+    ).join('');
+  } else {
+    queueList.innerHTML = '<div class="task-item queued"><div class="task-name">Queue empty</div><div class="task-meta">Awaiting dispatch</div></div>';
   }
 
-  container.innerHTML = html;
+  const compList = document.getElementById('completions-list');
+  if (completed.length > 0) {
+    compList.innerHTML = completed.map(t =>
+      '<div class="task-item completed"><div class="task-name">' + (t.description || t.id) + '</div><div class="task-meta">Score: <span class="score-badge">' + (t.score || '--') + '</span></div></div>'
+    ).join('');
+  }
+
+  updateStats();
 }
 
-function renderNode(node, activeTasks, badge) {
-  const isActive = activeTasks[node.id];
-  let cls = `org-node type-${node.type}`;
-  if (isActive) cls += ' active-entity';
-  if (expandedVP === node.id) cls += ' expanded';
-  if (!isActive && node.type === 'worker') cls += ' idle';
+let lastAuditTs = 0;
+function processAuditEvents(events) {
+  if (!events || !Array.isArray(events)) return;
+  const sorted = [...events].sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+  sorted.forEach(ev => {
+    const ts = ev.timestamp || ev.id || 0;
+    if (ts <= lastAuditTs) return;
+    lastAuditTs = ts;
 
-  const clickAction = (node.type === 'vp' || node.type === 'director') ? `onclick="toggleExpand('${node.id}')"` : '';
-  let html = `<div class="${cls}" ${clickAction}>`;
-  html += `<div class="node-name">${node.name}</div>`;
-  html += `<div class="node-role">${node.role || node.type.toUpperCase()}</div>`;
-  if (isActive) html += `<div class="node-task">${isActive}</div>`;
-  if (badge) html += `<div class="badge">${badge}</div>`;
-  html += `</div>`;
-  return html;
-}
-
-function countWorkers(node) {
-  let count = 0;
-  if (node.workers) count += node.workers.length;
-  if (node.children) node.children.forEach(c => count += countWorkers(c));
-  return count;
-}
-
-function countActiveWorkers(node, activeTasks) {
-  let count = 0;
-  if (node.workers) count += node.workers.filter(w => activeTasks[w.id]).length;
-  if (node.children) node.children.forEach(c => count += countActiveWorkers(c, activeTasks));
-  return count;
-}
-
-function getActiveTaskMap() {
-  const map = {};
-  if (!lastData.tasks) return map;
-  const all = Array.isArray(lastData.tasks) ? lastData.tasks : (lastData.tasks.tasks || []);
-  all.forEach(t => {
-    if (t.status === 'in_progress' || t.status === 'active' || t.status === 'executing') {
-      const assignee = t.assigned_to || t.worker || t.agent;
-      if (assignee) map[assignee] = t.skill || t.id || 'working';
+    const action = (ev.action || '').toLowerCase();
+    if (action.includes('dispatch')) {
+      const target = ev.worker || ev.target || 'worker';
+      addEvent('dispatch', 'Task dispatched to ' + target);
+      const worker = nodes.find(n => n.name === target || n.id.includes(target));
+      if (worker) { worker.status = 'active'; dispatchParticle(worker); }
+    } else if (action.includes('complete') || action.includes('done')) {
+      const target = ev.worker || ev.target || 'worker';
+      addEvent('complete', target + ' completed');
+      const worker = nodes.find(n => n.name === target || n.id.includes(target));
+      if (worker) { worker.status = 'done'; returnParticle(worker); setTimeout(() => { worker.status = 'idle'; }, 8000); }
+    } else if (action.includes('score')) {
+      addEvent('score', 'Score: ' + (ev.score || '?') + '/100');
+    } else if (action.includes('error') || action.includes('fail')) {
+      addEvent('error', ev.message || action);
     }
   });
-  return map;
 }
 
-function toggleExpand(id) {
-  expandedVP = (expandedVP === id) ? null : id;
-  renderOrgChart();
-}
+// API polling
+setInterval(fetchTasks, 5000);
+setInterval(fetchAudit, 5000);
+setInterval(fetchBudget, 30000);
+setTimeout(fetchTasks, 800);
+setTimeout(fetchAudit, 1200);
+setTimeout(fetchBudget, 1500);
 
-function collapseVP() {
-  expandedVP = null;
-  renderOrgChart();
-}
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('resize', resize);
+resize();
+render();
 
-// ═══════ RENDER: LIVE EXECUTION ═══════
-function renderLiveExecution() {
-  if (!lastData.tasks) return;
-  const all = Array.isArray(lastData.tasks) ? lastData.tasks : (lastData.tasks.tasks || []);
-
-  // Queue
-  const todo = all.filter(t => t.status === 'todo' || t.status === 'pending').slice(0, 15);
-  const queue = document.getElementById('taskQueue');
-  queue.innerHTML = todo.map(t => `<div class="queue-item"><span class="q-id">${t.id || '---'}</span><span class="q-skill">${t.skill || t.type || '---'}</span><span class="q-desc">${escapeHtml(t.description || t.title || '')}</span></div>`).join('') || '<div style="color:var(--text-dim);font-size:11px;padding:8px;">No tasks in queue</div>';
-
-  // Pipeline (show active task flowing through)
-  const active = all.find(t => t.status === 'in_progress' || t.status === 'active' || t.status === 'executing');
-  const steps = document.querySelectorAll('.pipeline-step');
-  const arrows = document.querySelectorAll('.pipeline-arrow');
-  steps.forEach(s => { s.classList.remove('active-step', 'done-step'); });
-  arrows.forEach(a => { a.classList.remove('active-arrow'); });
-
-  if (active) {
-    const phase = active.phase || active.step || 'execute';
-    const phaseOrder = ['guardrails', 'context', 'execute', 'score', 'deliver'];
-    const phaseIdx = phaseOrder.indexOf(phase.toLowerCase());
-    const idx = phaseIdx >= 0 ? phaseIdx : 2;
-    steps.forEach((s, i) => {
-      if (i < idx) s.classList.add('done-step');
-      if (i === idx) s.classList.add('active-step');
-    });
-    arrows.forEach((a, i) => {
-      if (i < idx) a.classList.add('active-arrow');
-    });
-    const taskLabel = active.skill || active.id || '---';
-    document.getElementById('pipeExecute').textContent = taskLabel;
+// Startup burst animation
+setTimeout(() => {
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => spawnAmbientParticle(), i * 80);
   }
-
-  // Completed
-  const done = all.filter(t => t.status === 'done').slice(-10).reverse();
-  const compList = document.getElementById('completedList');
-  compList.innerHTML = done.map(t => {
-    const score = t.score ?? t.quality_score ?? null;
-    const scoreClass = score === null ? '' : score >= 80 ? 'score-high' : score >= 60 ? 'score-mid' : 'score-low';
-    const time = t.completed_at ? new Date(t.completed_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '';
-    return `<div class="completed-item"><div class="c-info"><span class="c-skill">${t.skill || t.id || '---'}</span><span class="c-time">${time}</span></div><span class="c-score ${scoreClass}">${score !== null ? score : '--'}</span></div>`;
-  }).join('') || '<div style="color:var(--text-dim);font-size:11px;padding:8px;">No completed tasks yet</div>';
-
-  // Live Events
-  const auditData = lastData.audit;
-  if (auditData) {
-    const events = Array.isArray(auditData) ? auditData : (auditData.events || auditData.entries || []);
-    const liveEv = document.getElementById('liveEvents');
-    liveEv.innerHTML = events.slice(0, 25).map(ev => {
-      const time = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--:--';
-      const color = ev.type === 'error' ? 'var(--red)' : ev.type === 'dispatch' ? 'var(--cyan)' : ev.type === 'execute' ? 'var(--purple)' : ev.type === 'score' ? 'var(--green)' : 'var(--amber)';
-      const msg = ev.message || ev.event || ev.action || JSON.stringify(ev).slice(0, 100);
-      return `<div class="feed-item"><span class="feed-time">${time}</span><div class="feed-dot" style="background:${color}"></div><span class="feed-msg">${escapeHtml(msg)}</span></div>`;
-    }).join('');
-  }
-}
-
-// ═══════ RENDER: SKILL PERFORMANCE ═══════
-function renderSkillPerformance() {
-  const scores = lastData.scores;
-  if (!scores) return;
-
-  const skillScores = scores.skills || scores.by_skill || scores;
-  if (typeof skillScores !== 'object') return;
-
-  // Bar chart - top 20
-  const entries = Object.entries(skillScores).map(([k, v]) => ({
-    name: k,
-    score: typeof v === 'number' ? v : (v.avg || v.score || v.average || 0)
-  })).sort((a, b) => b.score - a.score).slice(0, 20);
-
-  const maxScore = Math.max(...entries.map(e => e.score), 1);
-  const barsContainer = document.getElementById('skillBars');
-  barsContainer.innerHTML = entries.map(e => {
-    const pct = (e.score / 100) * 100;
-    const color = e.score >= 80 ? 'var(--green)' : e.score >= 60 ? 'var(--cyan)' : e.score >= 40 ? 'var(--amber)' : 'var(--red)';
-    return `<div class="bar-row"><span class="bar-label" title="${e.name}">${e.name}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><span class="bar-value">${e.score.toFixed(0)}</span></div>`;
-  }).join('');
-
-  // Tier distribution
-  const tiers = scores.tiers || scores.distribution || {};
-  const tierA = tiers.A || tiers.a || 0;
-  const tierB = tiers.B || tiers.b || 0;
-  const tierC = tiers.C || tiers.c || 0;
-  const tierD = tiers.D || tiers.d || 0;
-  const tierTotal = Math.max(tierA + tierB + tierC + tierD, 1);
-
-  document.getElementById('tierA').textContent = tierA;
-  document.getElementById('tierB').textContent = tierB;
-  document.getElementById('tierC').textContent = tierC;
-  document.getElementById('tierD').textContent = tierD;
-  document.getElementById('tierAPct').textContent = ((tierA / tierTotal) * 100).toFixed(0) + '%';
-  document.getElementById('tierBPct').textContent = ((tierB / tierTotal) * 100).toFixed(0) + '%';
-  document.getElementById('tierCPct').textContent = ((tierC / tierTotal) * 100).toFixed(0) + '%';
-  document.getElementById('tierDPct').textContent = ((tierD / tierTotal) * 100).toFixed(0) + '%';
-
-  // Evolution Trend
-  const evolution = scores.evolution || scores.changes || scores.trends || [];
-  const trendList = document.getElementById('trendList');
-  if (Array.isArray(evolution) && evolution.length > 0) {
-    trendList.innerHTML = evolution.slice(0, 20).map(e => {
-      const change = e.change || e.delta || 0;
-      const cls = change > 0 ? 'trend-up' : change < 0 ? 'trend-down' : 'trend-flat';
-      const sign = change > 0 ? '+' : '';
-      return `<div class="trend-item"><span class="trend-skill">${e.skill || e.name || '---'}</span><span class="trend-change ${cls}">${sign}${change.toFixed(2)}</span></div>`;
-    }).join('');
-  } else {
-    trendList.innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:8px;">No evolution data yet</div>';
-  }
-
-  // Budget Breakdown
-  const budgetBySkill = scores.budget_by_skill || lastData.budget?.by_skill || {};
-  const budgetList = document.getElementById('budgetBreakdown');
-  const budgetEntries = Object.entries(budgetBySkill).sort((a, b) => b[1] - a[1]).slice(0, 15);
-  if (budgetEntries.length > 0) {
-    budgetList.innerHTML = budgetEntries.map(([skill, cost]) => {
-      return `<div class="budget-row"><span class="budget-skill">${skill}</span><span class="budget-cost">$${typeof cost === 'number' ? cost.toFixed(3) : cost}</span></div>`;
-    }).join('');
-  } else {
-    budgetList.innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:8px;">No budget data by skill</div>';
-  }
-}
-
-// ═══════ QUICK ACTIONS ═══════
-async function triggerAction(action) {
-  try {
-    const res = await fetch(API_BASE + '/' + action, { method: 'POST', signal: AbortSignal.timeout(10000) });
-    if (res.ok) {
-      setTimeout(refreshAll, 1000);
-    }
-  } catch (e) {
-    console.warn('Action failed:', action, e);
-  }
-}
-
-// ═══════ UTILS ═══════
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// ═══════ INIT ═══════
-refreshAll();
-setInterval(refreshAll, 8000);
-
-// Offline detection
-window.addEventListener('offline', () => setOnline(false));
-window.addEventListener('online', () => { setOnline(true); refreshAll(); });
+}, 300);
 </script>
 </body>
 </html>
