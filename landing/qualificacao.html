@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qualificacao — Automation Solution AI</title>
+<meta name="description" content="Descubra o potencial da sua empresa com IA. Responda a 8 perguntas e receba um diagnostico personalizado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal: #1a1a2e;
+  --charcoal-deep: #0f0f1e;
+  --charcoal-mid: #252540;
+  --charcoal-light: #33334d;
+  --gold: #d4a843;
+  --gold-light: #e0bc65;
+  --gold-soft: rgba(212,168,67,0.15);
+  --gold-glow: rgba(212,168,67,0.25);
+  --white: #f5f5f0;
+  --white-pure: #ffffff;
+  --white-dim: #d4d4cc;
+  --muted: #9a9ab0;
+  --green: #4ade80;
+  --green-soft: rgba(74,222,128,0.12);
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--charcoal-deep);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 700; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 4vw, 3rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
+p { color: var(--white-dim); }
+a { color: var(--gold); text-decoration: none; transition: color 0.3s; }
+a:hover { color: var(--gold-light); }
+.gold { color: var(--gold); }
+
+/* ---- Navigation ---- */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(15,15,30,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,168,67,0.1);
+}
+
+nav .container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.5px;
+}
+.nav-logo span { color: var(--gold); }
+
+.nav-back {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s;
+}
+.nav-back:hover { color: var(--white); }
+
+/* ---- Progress Bar ---- */
+.progress-wrapper {
+  position: fixed;
+  top: 72px; left: 0; right: 0;
+  z-index: 999;
+  background: var(--charcoal-mid);
+  height: 4px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  width: 0%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 2px 2px 0;
+}
+
+.progress-label {
+  position: fixed;
+  top: 80px; right: 24px;
+  z-index: 999;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ---- Container ---- */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---- Main Layout ---- */
+.questionnaire {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 0 80px;
+}
+
+/* ---- Header ---- */
+.q-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.q-header h1 {
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+.q-header h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.q-header p {
+  font-size: 1.05rem;
+  color: var(--muted);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* ---- Question Cards ---- */
+.q-viewport {
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+
+.q-card {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(37,37,64,0.6), rgba(26,26,46,0.8));
+  border: 1px solid rgba(212,168,67,0.08);
+  border-radius: 20px;
+  padding: 48px 40px;
+}
+
+.q-card.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  position: relative;
+}
+
+.q-card.exit-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  pointer-events: none;
+}
+
+.q-number {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.q-card h3 {
+  color: var(--white);
+  margin-bottom: 28px;
+  font-size: 1.35rem;
+}
+
+/* ---- Options ---- */
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.q-option {
+  background: rgba(212,168,67,0.04);
+  border: 1px solid rgba(212,168,67,0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--white-dim);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.q-option:hover {
+  border-color: rgba(212,168,67,0.25);
+  background: rgba(212,168,67,0.08);
+  color: var(--white);
+}
+
+.q-option.selected {
+  border-color: var(--gold);
+  background: rgba(212,168,67,0.12);
+  color: var(--white);
+}
+
+.q-option-radio {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(212,168,67,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.q-option.selected .q-option-radio {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.q-option.selected .q-option-radio::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--charcoal-deep);
+}
+
+/* ---- Navigation Buttons ---- */
+.q-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.q-btn-back {
+  background: none;
+  border: 1px solid rgba(212,168,67,0.2);
+  color: var(--muted);
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.q-btn-back:hover {
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+.q-btn-back.hidden { visibility: hidden; }
+
+.q-btn-next {
+  background: var(--gold);
+  color: var(--charcoal-deep);
+  border: none;
+  padding: 14px 36px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.q-btn-next.enabled {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.q-btn-next.enabled:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212,168,67,0.3);
+}
+
+/* ---- Results ---- */
+.result-card {
+  display: none;
+  text-align: center;
+  padding: 56px 40px;
+  background: linear-gradient(145deg, rgba(37,37,64,0.6), rgba(26,26,46,0.8));
+  border: 1px solid rgba(212,168,67,0.1);
+  border-radius: 20px;
+  animation: resultFadeIn 0.6s ease forwards;
+}
+
+.result-card.visible { display: block; }
+
+@keyframes resultFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--charcoal-deep);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 12px 32px;
+  border-radius: 30px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(212,168,67,0.3);
+}
+
+.result-card h2 {
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.result-card .result-text {
+  font-size: 1.1rem;
+  color: var(--white-dim);
+  max-width: 520px;
+  margin: 0 auto 16px;
+  line-height: 1.8;
+}
+
+.result-savings {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 24px 0;
+  line-height: 1;
+}
+
+.result-savings-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+}
+
+.result-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--charcoal-deep);
+  padding: 16px 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.result-cta:hover {
+  background: var(--gold-light);
+  color: var(--charcoal-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212,168,67,0.3);
+}
+
+.result-restart {
+  display: block;
+  margin-top: 24px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+}
+.result-restart:hover { color: var(--gold); }
+
+/* ---- Footer ---- */
+footer {
+  background: var(--charcoal-deep);
+  border-top: 1px solid rgba(212,168,67,0.06);
+  padding: 40px 0;
+  text-align: center;
+}
+
+.footer-brand {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.footer-brand span { color: var(--gold); }
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .q-card { padding: 32px 24px; }
+  .result-card { padding: 40px 24px; }
+  .q-viewport { min-height: 480px; }
+  .q-option { padding: 14px 16px; font-size: 0.88rem; }
+  .q-btn-next { padding: 12px 24px; font-size: 0.88rem; }
+  .q-btn-back { padding: 10px 20px; font-size: 0.85rem; }
+  .q-nav { gap: 12px; }
+  .result-savings { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="container" style="max-width:1180px;">
+    <a href="index.html" class="nav-logo">Automation <span>Solution</span> AI</a>
+    <a href="index.html" class="nav-back">&#8592; Voltar ao site</a>
+  </div>
+</nav>
+
+<!-- Progress Bar -->
+<div class="progress-wrapper">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="progress-label" id="progressLabel">Pergunta 1 de 8</div>
+
+<!-- Main Questionnaire -->
+<section class="questionnaire">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="q-header" id="qHeader">
+      <h1>Descubra o Potencial da Sua Empresa com <em>IA</em></h1>
+      <p>Responda a 8 perguntas para receber um diagnostico personalizado do seu negocio. Leva menos de 3 minutos.</p>
+    </div>
+
+    <!-- Questions Viewport -->
+    <div class="q-viewport" id="qViewport">
+
+      <!-- Q1 -->
+      <div class="q-card active" data-q="0">
+        <span class="q-number">Pergunta 1 de 8</span>
+        <h3>Qual o sector da sua empresa?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Restauracao/Hotelaria" data-points="3"><div class="q-option-radio"></div>Restauracao / Hotelaria</div>
+          <div class="q-option" data-value="Agencia/Marketing" data-points="4"><div class="q-option-radio"></div>Agencia / Marketing</div>
+          <div class="q-option" data-value="Imobiliario" data-points="4"><div class="q-option-radio"></div>Imobiliario</div>
+          <div class="q-option" data-value="E-commerce" data-points="4"><div class="q-option-radio"></div>E-commerce</div>
+          <div class="q-option" data-value="Servicos Profissionais" data-points="3"><div class="q-option-radio"></div>Servicos Profissionais</div>
+          <div class="q-option" data-value="Tecnologia/SaaS" data-points="5"><div class="q-option-radio"></div>Tecnologia / SaaS</div>
+          <div class="q-option" data-value="Saude" data-points="3"><div class="q-option-radio"></div>Saude</div>
+          <div class="q-option" data-value="Construcao/Arquitectura" data-points="3"><div class="q-option-radio"></div>Construcao / Arquitectura</div>
+          <div class="q-option" data-value="Outro" data-points="2"><div class="q-option-radio"></div>Outro</div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-q="1">
+        <span class="q-number">Pergunta 2 de 8</span>
+        <h3>Quantas pessoas trabalham na empresa?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="1-5" data-points="1"><div class="q-option-radio"></div>1 - 5</div>
+          <div class="q-option" data-value="6-15" data-points="2"><div class="q-option-radio"></div>6 - 15</div>
+          <div class="q-option" data-value="16-50" data-points="3"><div class="q-option-radio"></div>16 - 50</div>
+          <div class="q-option" data-value="51-200" data-points="4"><div class="q-option-radio"></div>51 - 200</div>
+          <div class="q-option" data-value="200+" data-points="5"><div class="q-option-radio"></div>200+</div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-q="2">
+        <span class="q-number">Pergunta 3 de 8</span>
+        <h3>Qual a facturacao mensal aproximada?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Menos de 10K EUR" data-points="1"><div class="q-option-radio"></div>Menos de 10K&#8364;</div>
+          <div class="q-option" data-value="10K-30K EUR" data-points="2"><div class="q-option-radio"></div>10K - 30K&#8364;</div>
+          <div class="q-option" data-value="30K-100K EUR" data-points="3"><div class="q-option-radio"></div>30K - 100K&#8364;</div>
+          <div class="q-option" data-value="100K-500K EUR" data-points="4"><div class="q-option-radio"></div>100K - 500K&#8364;</div>
+          <div class="q-option" data-value="Mais de 500K EUR" data-points="5"><div class="q-option-radio"></div>Mais de 500K&#8364;</div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-q="3">
+        <span class="q-number">Pergunta 4 de 8</span>
+        <h3>Quantas horas por semana a equipa gasta em tarefas repetitivas?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Menos de 10h" data-points="1"><div class="q-option-radio"></div>Menos de 10h</div>
+          <div class="q-option" data-value="10-20h" data-points="2"><div class="q-option-radio"></div>10 - 20h</div>
+          <div class="q-option" data-value="20-40h" data-points="3"><div class="q-option-radio"></div>20 - 40h</div>
+          <div class="q-option" data-value="40-80h" data-points="4"><div class="q-option-radio"></div>40 - 80h</div>
+          <div class="q-option" data-value="Mais de 80h" data-points="5"><div class="q-option-radio"></div>Mais de 80h</div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-q="4">
+        <span class="q-number">Pergunta 5 de 8</span>
+        <h3>Ja utiliza alguma ferramenta de IA ou automacao?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Nao, nada" data-points="3"><div class="q-option-radio"></div>Nao, nada</div>
+          <div class="q-option" data-value="ChatGPT/Gemini basico" data-points="3"><div class="q-option-radio"></div>ChatGPT / Gemini basico</div>
+          <div class="q-option" data-value="Algumas automacoes (Zapier, Make)" data-points="4"><div class="q-option-radio"></div>Algumas automacoes (Zapier, Make)</div>
+          <div class="q-option" data-value="Temos equipa tecnica" data-points="5"><div class="q-option-radio"></div>Temos equipa tecnica</div>
+          <div class="q-option" data-value="Sim, IA avancada" data-points="5"><div class="q-option-radio"></div>Sim, IA avancada</div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-q="5">
+        <span class="q-number">Pergunta 6 de 8</span>
+        <h3>Qual o maior desafio operacional hoje?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Falta de tempo/equipa" data-points="4"><div class="q-option-radio"></div>Falta de tempo / equipa</div>
+          <div class="q-option" data-value="Processos manuais e lentos" data-points="5"><div class="q-option-radio"></div>Processos manuais e lentos</div>
+          <div class="q-option" data-value="Qualidade inconsistente" data-points="4"><div class="q-option-radio"></div>Qualidade inconsistente</div>
+          <div class="q-option" data-value="Custos operacionais altos" data-points="5"><div class="q-option-radio"></div>Custos operacionais altos</div>
+          <div class="q-option" data-value="Escalar sem contratar" data-points="5"><div class="q-option-radio"></div>Escalar sem contratar</div>
+          <div class="q-option" data-value="Competir com empresas maiores" data-points="4"><div class="q-option-radio"></div>Competir com empresas maiores</div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-q="6">
+        <span class="q-number">Pergunta 7 de 8</span>
+        <h3>Tem processos documentados (SOPs, manuais)?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Nao, tudo na cabeca das pessoas" data-points="2"><div class="q-option-radio"></div>Nao, tudo na cabeca das pessoas</div>
+          <div class="q-option" data-value="Alguns informais" data-points="3"><div class="q-option-radio"></div>Alguns informais</div>
+          <div class="q-option" data-value="Sim, a maioria documentada" data-points="4"><div class="q-option-radio"></div>Sim, a maioria documentada</div>
+          <div class="q-option" data-value="Sim, todos com SOPs formais" data-points="5"><div class="q-option-radio"></div>Sim, todos com SOPs formais</div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-q="7">
+        <span class="q-number">Pergunta 8 de 8</span>
+        <h3>Se pudessemos poupar 20 horas/semana a sua equipa, qual seria o impacto?</h3>
+        <div class="q-options">
+          <div class="q-option" data-value="Pouco (ja somos eficientes)" data-points="1"><div class="q-option-radio"></div>Pouco (ja somos eficientes)</div>
+          <div class="q-option" data-value="Moderado (ajudaria)" data-points="3"><div class="q-option-radio"></div>Moderado (ajudaria)</div>
+          <div class="q-option" data-value="Grande (mudaria muito)" data-points="4"><div class="q-option-radio"></div>Grande (mudaria muito)</div>
+          <div class="q-option" data-value="Transformador (resolveria o nosso maior problema)" data-points="5"><div class="q-option-radio"></div>Transformador (resolveria o nosso maior problema)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="q-nav" id="qNav">
+      <button class="q-btn-back hidden" id="btnBack">&#8592; Anterior</button>
+      <button class="q-btn-next" id="btnNext">Seguinte &#8594;</button>
+    </div>
+
+    <!-- Results (hidden until complete) -->
+    <div class="result-card" id="resultCard">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container" style="max-width:1180px;">
+    <div class="footer-brand">Automation <span>Solution</span> AI</div>
+    <p class="footer-copy">&copy; 2026 Automation Solution AI. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  var totalQuestions = 8;
+  var currentStep = 0;
+  var answers = new Array(totalQuestions).fill(null);
+  var points = new Array(totalQuestions).fill(0);
+
+  var cards = document.querySelectorAll('.q-card');
+  var progressBar = document.getElementById('progressBar');
+  var progressLabel = document.getElementById('progressLabel');
+  var btnNext = document.getElementById('btnNext');
+  var btnBack = document.getElementById('btnBack');
+  var qNav = document.getElementById('qNav');
+  var qHeader = document.getElementById('qHeader');
+  var resultCard = document.getElementById('resultCard');
+  var qViewport = document.getElementById('qViewport');
+
+  /* Questions data for email summary */
+  var questionLabels = [
+    'Sector',
+    'Equipa',
+    'Facturacao mensal',
+    'Horas tarefas repetitivas',
+    'Uso de IA/automacao',
+    'Maior desafio',
+    'Processos documentados',
+    'Impacto de 20h poupadas'
+  ];
+
+  function updateProgress() {
+    var pct = ((currentStep + 1) / totalQuestions) * 100;
+    progressBar.style.width = pct + '%';
+    progressLabel.textContent = 'Pergunta ' + (currentStep + 1) + ' de ' + totalQuestions;
+  }
+
+  function updateButtons() {
+    btnBack.classList.toggle('hidden', currentStep === 0);
+    btnNext.textContent = currentStep === totalQuestions - 1 ? 'Ver Resultado \u2192' : 'Seguinte \u2192';
+    btnNext.classList.toggle('enabled', answers[currentStep] !== null);
+  }
+
+  function showCard(index, direction) {
+    cards.forEach(function(card, i) {
+      card.classList.remove('active', 'exit-left');
+      if (i < index) {
+        card.style.transform = 'translateX(-60px)';
+        card.style.opacity = '0';
+        card.style.pointerEvents = 'none';
+        card.style.position = 'absolute';
+      } else if (i === index) {
+        card.classList.add('active');
+        card.style.transform = '';
+        card.style.opacity = '';
+        card.style.pointerEvents = '';
+        card.style.position = 'relative';
+      } else {
+        card.style.transform = 'translateX(60px)';
+        card.style.opacity = '0';
+        card.style.pointerEvents = 'none';
+        card.style.position = 'absolute';
+      }
+    });
+
+    /* Restore selected state */
+    var opts = cards[index].querySelectorAll('.q-option');
+    opts.forEach(function(opt) {
+      opt.classList.toggle('selected', opt.getAttribute('data-value') === answers[index]);
+    });
+  }
+
+  /* Option click handler */
+  document.querySelectorAll('.q-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      var card = this.closest('.q-card');
+      var qIndex = parseInt(card.getAttribute('data-q'));
+
+      /* Deselect siblings */
+      card.querySelectorAll('.q-option').forEach(function(o) { o.classList.remove('selected'); });
+      this.classList.add('selected');
+
+      answers[qIndex] = this.getAttribute('data-value');
+      points[qIndex] = parseInt(this.getAttribute('data-points'));
+
+      btnNext.classList.add('enabled');
+    });
+  });
+
+  /* Next button */
+  btnNext.addEventListener('click', function() {
+    if (answers[currentStep] === null) return;
+
+    if (currentStep < totalQuestions - 1) {
+      currentStep++;
+      showCard(currentStep, 'next');
+      updateProgress();
+      updateButtons();
+    } else {
+      showResults();
+    }
+  });
+
+  /* Back button */
+  btnBack.addEventListener('click', function() {
+    if (currentStep > 0) {
+      currentStep--;
+      showCard(currentStep, 'back');
+      updateProgress();
+      updateButtons();
+    }
+  });
+
+  /* Keyboard support */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && answers[currentStep] !== null && resultCard.style.display !== 'block') {
+      btnNext.click();
+    }
+  });
+
+  function buildEmailBody(level, score) {
+    var lines = [
+      'Resultado do Questionario de Qualificacao',
+      '==========================================',
+      '',
+      'Nivel: ' + level,
+      'Score: ' + score + '/40',
+      '',
+      'Respostas:',
+      ''
+    ];
+    for (var i = 0; i < totalQuestions; i++) {
+      lines.push((i + 1) + '. ' + questionLabels[i] + ': ' + (answers[i] || 'N/A'));
+    }
+    lines.push('');
+    lines.push('---');
+    lines.push('Enviado automaticamente a partir do formulario de qualificacao.');
+    return lines.join('\n');
+  }
+
+  function showResults() {
+    var totalScore = 0;
+    for (var i = 0; i < points.length; i++) totalScore += points[i];
+
+    /* Hide question elements */
+    qViewport.style.display = 'none';
+    qNav.style.display = 'none';
+    qHeader.style.display = 'none';
+    document.querySelector('.progress-wrapper').style.display = 'none';
+    progressLabel.style.display = 'none';
+
+    var level, heading, text, savings, ctaText, subject;
+
+    if (totalScore <= 15) {
+      level = 'Starter';
+      heading = 'O Seu Ponto de Partida';
+      text = 'A sua empresa ainda esta numa fase inicial para a implementacao completa. Recomendamos o nosso Plano Starter para comecar a digitalizar os seus processos.';
+      savings = '';
+      ctaText = 'Conhecer o Plano Starter';
+      subject = 'Starter';
+    } else if (totalScore <= 25) {
+      level = 'Basico';
+      heading = 'A Sua Empresa Tem Potencial!';
+      text = 'A sua empresa tem potencial! Estimamos que pode poupar entre 1.000\u20ac-3.000\u20ac/mes com as nossas ferramentas basicas de automacao.';
+      savings = '1.000\u20ac - 3.000\u20ac/mes';
+      ctaText = 'Agendar Diagnostico Gratuito';
+      subject = 'Diagnostico - Nivel Basico';
+    } else if (totalScore <= 32) {
+      level = 'Profissional';
+      heading = 'Excelente Perfil!';
+      text = 'Excelente! A sua empresa e ideal para a nossa implementacao profissional. Estimamos um potencial de poupanca de 3.000\u20ac-8.000\u20ac/mes.';
+      savings = '3.000\u20ac - 8.000\u20ac/mes';
+      ctaText = 'Agendar Chamada com Especialista';
+      subject = 'Qualificado PRO';
+    } else {
+      level = 'Enterprise';
+      heading = 'Perfil Enterprise!';
+      text = 'A sua empresa tem perfil Enterprise! Potencial de poupanca superior a 10.000\u20ac/mes com implementacao completa.';
+      savings = '+10.000\u20ac/mes';
+      ctaText = 'Agendar Reuniao com o Director';
+      subject = 'Qualificado Enterprise';
+    }
+
+    var emailBody = buildEmailBody(level, totalScore);
+    var mailtoLink = 'mailto:contato@automationsolutionai.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(emailBody);
+
+    var badgeHTML = '';
+    if (totalScore > 25) {
+      var badgeLevel = totalScore <= 32 ? 'Nivel Profissional' : 'Nivel Enterprise';
+      badgeHTML = '<div class="result-badge">QUALIFICADO &mdash; ' + badgeLevel + '</div>';
+    }
+
+    var savingsHTML = '';
+    if (savings) {
+      savingsHTML = '<div class="result-savings">' + savings + '</div><div class="result-savings-label">Potencial de poupanca estimado</div>';
+    }
+
+    resultCard.innerHTML =
+      badgeHTML +
+      '<h2>' + heading + '</h2>' +
+      '<p class="result-text">' + text + '</p>' +
+      savingsHTML +
+      '<a href="' + mailtoLink + '" class="result-cta">' + ctaText + ' &#8594;</a>' +
+      '<button class="result-restart" onclick="location.reload()">Recomecar questionario</button>';
+
+    resultCard.classList.add('visible');
+    resultCard.style.display = 'block';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* Initial state */
+  updateProgress();
+  updateButtons();
+})();
+</script>
+
+</body>
+</html>
