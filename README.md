@@ -1,228 +1,206 @@
-# Orchestrator AI Framework
+# Orchestrator AI Framework v9.0
 
-**Paperclip-inspired orchestration for Claude Code.** Turn your AI agent from a tool into an autonomous team.
+**The only durable execution engine for Claude Code.** 26 Python engines. 45 API endpoints. SQLite persistence. Self-evolving.
 
 ```bash
 npx orchestrator-ai-framework init
 ```
 
-One command. Full orchestration. Any company.
-
 ---
 
-## What it does
+## What changed in v9.0
 
-The Orchestrator AI Framework adds a **management layer** to Claude Code that transforms ad-hoc AI usage into structured, auditable, budget-aware autonomous execution.
-
-| Without Framework | With Framework |
+| v2.x (YAML-based) | v9.0 (Execution Engine) |
 |---|---|
-| Ad-hoc skill invocation | Structured task decomposition |
-| No tracking across sessions | Persistent YAML taskboard |
-| No quality gates | 5-dimension auto-scoring |
-| No budget visibility | Real-time token tracking |
-| Manual coordination | Autonomous heartbeat execution |
-| No audit trail | Append-only audit log |
+| YAML files as state | SQLite DB with ACID transactions |
+| Manual task assignment | Automatic dispatch with workload awareness |
+| No execution without user | FastAPI runtime executes 24/7 |
+| Fixed 5-dimension scoring | Adaptive rubrics (16 profiles) |
+| No learning | Evolution engine with synaptic weights |
+| No crash recovery | WAL + checkpoints + replanner |
+| 8 core skills | 26 Python engines + 8 skills |
+| 0 API endpoints | 45 REST endpoints |
+| 0 tests | 48 pytest tests |
 
 ## Architecture
 
 ```
-Your Request
-    |
-    v
-[Orchestrator — Control Plane]
-    |
-    +-- Phase 0: VALIDATE (deps, budget, stale tasks)
-    +-- Phase 1: UNDERSTAND (parse intent, check context)
-    +-- Phase 2: DECOMPOSE (break into atomic tasks)
-    +-- Phase 3: DISPATCH (route to best worker)
-    +-- Phase 4: EXECUTE (parallel heartbeat windows)
-    +-- Phase 4.5: ERROR RECOVERY (retry, backoff, dead-letter)
-    +-- Phase 5: REVIEW (quality gates per policy)
-    +-- Phase 6: SYNTHESIZE (combine outputs)
-    +-- Phase 7: AUDIT (log everything, update budget)
+┌──────────────────────────────────────────────────────────┐
+│  Runtime Engine (FastAPI)  — localhost:8422               │
+│  ┌──────────┐  ┌──────────┐  ┌─────────┐  ┌──────────┐ │
+│  │Scheduler │  │ 45 REST  │  │ SQLite  │  │ Auth     │ │
+│  │ (30min)  │  │endpoints │  │ACID/WAL │  │ RBAC     │ │
+│  └────┬─────┘  └────┬─────┘  └────┬────┘  └──────────┘ │
+│       └──────────────┴─────────────┘                     │
+│  ┌───────────────────────────────────────────────────┐   │
+│  │              26 Python Engines                     │   │
+│  │  Dispatch · State · Executor · Chain DAG ·         │   │
+│  │  Quality · Evolution · AutoDiag · Guardrails ·     │   │
+│  │  Tracer · Replanner · Context · Rubrics ·          │   │
+│  │  LLM-Judge · Predictor · Token Meter ·             │   │
+│  │  Templates · Plugins · Federation · Compliance     │   │
+│  └───────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────┘
 ```
 
-## Core Skills (8 installed)
+## 26 Python Engines
 
-| Skill | What it does |
+### Core Execution
+| Engine | What it does |
 |---|---|
-| `orch-orchestrator` | Control plane — decomposes, coordinates, synthesizes |
-| `orch-taskboard` | Persistent YAML task lifecycle with atomic checkout |
-| `orch-dispatch` | Intelligent routing with workload awareness |
-| `orch-heartbeat` | Periodic task scanning + SLA enforcement |
-| `orch-autopilot` | Autonomous execution loop (scan + dispatch + execute + score) |
-| `orch-quality` | 5-dimension quality scoring with learning loop |
-| `orch-analytics` | Cross-project patterns, playbooks, performance tracking |
-| `orch-status` | System health dashboard with auto-fix |
+| `executor.py` | Full pipeline: guardrails → context → rubric → trace → execute → score |
+| `api_executor.py` | Direct Claude API execution with model routing (Haiku/Sonnet/Opus) |
+| `dispatch_engine.py` | Keyword → skill → worker routing with workload awareness |
+| `chain_executor.py` | DAG skill chains with per-step checkpoints and artifact validation |
+| `session_boot.py` | Auto-dispatch + state check on session start |
+
+### State & Persistence
+| Engine | What it does |
+|---|---|
+| `db.py` | SQLite with WAL mode, ACID transactions, CAS checkout |
+| `state_machine.py` | 4 operational states, autonomy ladder (P-A1 → P-A4) |
+| `filelock.py` | OS-level file locking + write-ahead log crash recovery |
+| `task_store.py` | DB-first task access with YAML fallback |
+
+### Quality & Learning
+| Engine | What it does |
+|---|---|
+| `quality_scorer.py` | Record scores, calculate tiers, determine actions |
+| `llm_judge.py` | Auto-scoring via Haiku (LLM-as-Judge, $0.001/score) |
+| `adaptive_rubric.py` | 16 skill profiles with context-adaptive dimensions |
+| `evolution_runner.py` | Learning journals, synaptic weight mutations, pattern crystallization |
+| `predictor.py` | Pre-execution quality/cost/risk estimates |
+
+### Safety & Recovery
+| Engine | What it does |
+|---|---|
+| `guardrails.py` | 7 pre-execution checks (blocks if FAIL) |
+| `replanner.py` | retry → sibling → fallback → escalate cascade |
+| `autodiag_runner.py` | 7 health checks with auto-fix |
+
+### Observability
+| Engine | What it does |
+|---|---|
+| `tracer.py` | Per-task execution traces with multi-attempt tracking |
+| `audit_logger.py` | Unified append-only event trail |
+| `token_meter.py` | Real token usage tracking by model/skill/project |
+
+### Infrastructure
+| Engine | What it does |
+|---|---|
+| `runtime.py` | FastAPI server with scheduler, SSE, dashboard |
+| `auth.py` | API key authentication + RBAC (admin/operator/viewer) |
+| `context_injector.py` | 6-source context assembly (memory, RAG, artifacts, hints) |
+| `task_templates.py` | 5 parametric templates with ${variables} |
+| `install_service.py` | Auto-start on Windows login |
+| `tier3.py` | 10 differentiation features (tenancy, plugins, federation, compliance, NL, etc.) |
+
+## 45 API Endpoints
+
+### Tasks & Execution
+```
+GET  /tasks                    POST /tasks
+POST /tasks/{id}/assign        POST /tasks/{id}/checkout
+POST /tasks/{id}/complete      GET  /dispatch
+POST /dispatch                 POST /pulse
+```
+
+### State & Monitoring
+```
+GET  /health                   GET  /state
+POST /state/transition         GET  /audit
+GET  /budget                   GET  /scores
+GET  /events (SSE)             GET  /dashboard (HTML)
+GET  /dashboard/data           GET  /metrics (Prometheus)
+GET  /traces
+```
+
+### Chains & Templates
+```
+POST /chains/compose           POST /chains/{name}/start
+GET  /chains                   GET  /context/{id}
+GET  /rubric/{id}              GET  /templates
+POST /templates/{name}/instantiate
+```
+
+### TIER 3 Features
+```
+GET  /agents                   POST /agents/{id}/create
+POST /tenants/{id}             GET  /tenants/{id}/tasks
+GET  /plugins                  POST /plugins/{name}/install
+POST /workflows/create         POST /federation/peers
+GET  /compliance/rgpd          GET  /compliance/soc2
+GET  /ask?q=...                GET  /optimize/cost
+```
 
 ## Quick Start
 
-### 1. Install
-
+### Install
 ```bash
 npx orchestrator-ai-framework init --company "Your Company" --preset agency
 ```
 
-Available presets: `agency`, `saas`, `studio`, `freelancer`, `custom`
-
-### 2. Add your skills
-
-Create skills in `~/.claude/skills/`:
-
-```markdown
----
-name: my-skill
-description: "What this skill does"
----
-
-# My Skill
-
-## Workflow
-1. Step one
-2. Step two
-
-## Red Flags
-- Never do X without Y
+### Start Runtime
+```bash
+python ~/.claude/orchestrator/runtime.py --port 8422
 ```
 
-### 3. Register workers
-
-Edit `~/.claude/orchestrator/company.yaml`:
-
-```yaml
-workers:
-  worker-my-skill:
-    type: "worker"
-    skill: "my-skill"
-    reports_to: "dir-delivery"
-    capabilities: [skill_a, skill_b]
+### Create API Key
+```bash
+python ~/.claude/orchestrator/auth.py --create "admin" --role admin
 ```
 
-### 4. Orchestrate
-
-In Claude Code:
-```
-/orch-orchestrator
-> "Audit and improve client X's website"
+### Run Tests
+```bash
+cd ~/.claude/orchestrator && python -m pytest tests/ -v
 ```
 
-The orchestrator will decompose, dispatch, execute, score, and synthesize.
-
-### 5. Go autonomous
-
-```
-/loop /orch-autopilot
+### Check System Health
+```bash
+curl http://localhost:8422/health
 ```
 
-The autopilot scans the taskboard, executes pending tasks, scores quality, and self-paces.
+## Presets
 
-## Key Features
-
-### Atomic Task Checkout
-One agent owns one task at a time. No duplicate work. No conflicts.
-
-### Execution Policies
-| Policy | Review | Approval | SLA |
+| Preset | Workers | Skills | Best for |
 |---|---|---|---|
-| `default` | No | No | 8h |
-| `critical` | Yes | Yes (user) | 1h |
-| `client_facing` | Yes | No | 4h |
-| `financial` | Yes | Yes (user) | 2h |
+| `agency` | 50+ | Marketing, SEO, Tech, Finance | Digital agencies |
+| `saas` | 30+ | Product, Engineering, Metrics | SaaS companies |
+| `studio` | 40+ | Design, Architecture, Construction | Design studios |
+| `freelancer` | 10 | Core skills only | Solo professionals |
 
-### Budget Tracking
-Real-time token accounting with automatic alerts at 80% and hard stop at 95%.
+## Key Capabilities
 
-```bash
-python3 ~/.claude/orchestrator/budget_tracker.py --report
-```
+### Self-Executing
+Runtime scheduler fires heartbeat every 30 min. Tasks dispatch, execute, score, and advance automatically.
 
-### Quality Scoring (5 dimensions)
-| Dimension | What it measures |
-|---|---|
-| Specificity | Client-specific or generic? |
-| Actionability | Clear next steps? |
-| Completeness | All requirements met? |
-| Accuracy | Facts correct? |
-| Tone | Format and voice match? |
+### Self-Correcting
+When tasks fail: replanner auto-retries, tries sibling workers, falls back to alternative skills, or escalates to human.
 
-Score < 60 = auto-revision. Score >= 90 = success pattern extracted.
+### Self-Evolving
+Evolution engine captures learning journals, mutates synaptic weights, and crystallizes patterns into permanent rules. Dispatch uses evolved weights for smarter routing.
 
-### Domain Playbooks
-Pre-built skill chains for common project types. Auto-detected by keyword matching.
+### Durable
+SQLite with WAL mode for ACID transactions. Per-step checkpoints in skill chains. Write-ahead log for crash recovery. Resume from any point.
 
-### Error Recovery
-- Retry with exponential backoff (3 attempts)
-- Dead-letter queue for permanently failed tasks
-- SLA timeout enforcement with auto-escalation
-- Crash recovery via session persistence
+### Observable
+Execution traces per task. Prometheus metrics. Unified audit trail. Interactive dashboard. Natural language queries.
 
-## File Structure
-
-```
-~/.claude/
-  +-- skills/
-  |   +-- orch-orchestrator/SKILL.md
-  |   +-- orch-taskboard/SKILL.md
-  |   +-- orch-dispatch/SKILL.md
-  |   +-- orch-heartbeat/SKILL.md
-  |   +-- orch-autopilot/SKILL.md
-  |   +-- orch-quality/SKILL.md
-  |   +-- orch-analytics/SKILL.md
-  |   +-- orch-status/SKILL.md
-  |   +-- your-skills/...
-  +-- orchestrator/
-      +-- company.yaml          # Your org chart
-      +-- budget_tracker.py     # Token accounting
-      +-- notifications.yaml    # Event protocol
-      +-- tasks/
-      |   +-- active/           # In-progress tasks
-      |   +-- done/             # Completed archive
-      |   +-- templates/        # Reusable task sets
-      +-- audit/                # Daily audit logs
-      +-- budgets/              # Monthly token budgets
-      +-- quality/
-          +-- skill-metrics.yaml    # Performance data
-          +-- eval-baseline.yaml    # Scoring calibration
-```
-
-## White-Labeling
-
-The framework installs with your company name. No "Orchestrator AI" branding appears in outputs — only your company identity.
-
-```bash
-npx orchestrator-ai-framework init --company "Acme Digital" --preset agency --owner "John"
-```
-
-Everything generated uses "Acme Digital" as the company name.
-
-## Validation
-
-```bash
-npx orchestrator-ai-framework validate
-```
-
-Checks: directories exist, skills installed, company.yaml valid, budget tracker present.
-
-## Uninstall
-
-```bash
-npx orchestrator-ai-framework uninstall
-```
-
-Removes core skills. Preserves your orchestrator data (tasks, audit, budget).
+### Multi-Tenant
+Isolated tasks, budget, and audit per tenant. RBAC with API keys. Federation for multi-instance delegation.
 
 ## Requirements
 
-- Claude Code CLI installed
-- Python 3.8+ (for budget tracker)
+- Claude Code CLI
+- Python 3.10+
 - Node.js 18+ (for installer)
-
-## Inspired By
-
-- [Paperclip AI](https://github.com/paperclipai/paperclip) — Company-as-org-chart, heartbeat model, atomic checkout
-- Gawande's Checklist Manifesto — Quality gates
-- Brunson's Value Ladder — Execution pipelines
+- FastAPI + uvicorn (`pip install fastapi uvicorn`)
+- Anthropic SDK (`pip install anthropic`) — for API execution
 
 ## License
 
 MIT
+
+## Built by
+
+[BARDA Digital Agency](https://github.com/bardapraiacaraiva) — 2026

@@ -1,7 +1,7 @@
 {
   "name": "orchestrator-ai-framework",
-  "version": "2.0.0",
-  "description": "Paperclip-inspired AI orchestrator framework for Claude Code. Autonomous task management, quality scoring, budget tracking, and multi-agent coordination.",
+  "version": "9.0.0",
+  "description": "Durable AI execution engine for Claude Code. SQLite persistence, FastAPI runtime, DAG execution, LLM-as-Judge scoring, adaptive rubrics, evolution learning loop, multi-tenancy, and 45 REST API endpoints.",
   "bin": {
     "orchestrator-ai-framework": "./bin/install.js",
     "orchestrator-ai": "./bin/install.js",
@@ -13,9 +13,14 @@
     "ai-agents",
     "task-management",
     "multi-agent",
-    "paperclip",
-    "automation",
-    "quality-scoring"
+    "durable-execution",
+    "dag-workflow",
+    "llm-as-judge",
+    "sqlite",
+    "fastapi",
+    "evolution-engine",
+    "adaptive-rubrics",
+    "multi-tenancy"
   ],
   "author": "BARDA Digital Agency",
   "license": "MIT",
@@ -29,9 +34,11 @@
   "files": [
     "bin/",
     "core/",
+    "engines/",
     "dashboard/",
     "presets/",
     "examples/",
+    "tests/",
     "README.md",
     "LICENSE"
   ]
