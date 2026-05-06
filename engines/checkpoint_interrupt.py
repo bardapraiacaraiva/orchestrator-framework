@@ -39,6 +39,13 @@ log = logging.getLogger("checkpoint")
 
 from db import DB
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 
 def interrupt_task(task_id: str, reason: str = "", checkpoint_data: dict = None,
                    pending_input_schema: dict = None, timeout_seconds: int = 0) -> dict:

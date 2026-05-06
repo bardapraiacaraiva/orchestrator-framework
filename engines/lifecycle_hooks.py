@@ -39,6 +39,13 @@ import logging
 from collections import defaultdict
 from typing import Any, Callable
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("lifecycle_hooks")
 

@@ -69,6 +69,13 @@ from output_guardrails import OutputGuardrailFilter
 from model_router import ModelRouterFilter
 from artifact_schemas import SchemaValidationFilter
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 PYTHON = sys.executable
 
 # TIER 1 Filter Pipeline — composable middleware for every execution

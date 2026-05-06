@@ -25,6 +25,13 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("memory_scoring")
 

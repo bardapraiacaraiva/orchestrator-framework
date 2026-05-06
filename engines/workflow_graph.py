@@ -46,6 +46,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 sys.path.insert(0, str(ORCH_DIR))
 

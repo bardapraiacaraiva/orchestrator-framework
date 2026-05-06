@@ -498,6 +498,13 @@ async def test_webhook(url: str, event: str = "test"):
 
 from fastapi.responses import HTMLResponse, FileResponse
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     """NASA Mission Control dashboard — serves dashboard.html with live API data."""

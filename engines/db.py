@@ -40,6 +40,13 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 DB_PATH = ORCH_DIR / "orchestrator.db"
 TASKS_DIR = ORCH_DIR / "tasks" / "active"

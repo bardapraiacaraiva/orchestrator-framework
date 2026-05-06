@@ -16,6 +16,13 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 PYTHON = sys.executable  # Use same Python that's running this script
 

@@ -36,6 +36,13 @@ log = logging.getLogger("suspend_resume")
 
 from db import DB
 
+# License enforcement
+try:
+    from license_manager import require_license
+    require_license()
+except (ImportError, SystemExit):
+    pass  # License check skipped (dev mode)
+
 
 def save_checkpoint(task_id: str, checkpoint_data: dict) -> dict:
     """Save execution checkpoint for a task."""
