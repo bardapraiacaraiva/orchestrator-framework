@@ -7,12 +7,12 @@
 <meta name="description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 11 agentes especializados (30 agentes + 101 workers), 200+ skills, quality scoring 88.3/100, budget tracking, execucao autonoma. 14 dias gratis.">
 <meta property="og:title" content="DARIO Orchestrator AI — 11 Agentes IA. 200+ Skills. Zero Caos.">
 <meta property="og:description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 11 agentes especializados, 200+ skills, quality scoring 88.3/100, execucao autonoma.">
-<meta property="og:image" content="https://orchestrator-ai.dev/og-image.png">
+<meta property="og:image" content="https://bfranca.com/og-orchestrator.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DARIO Orchestrator AI — 11 Agentes IA. 200+ Skills. Zero Caos.">
 <meta name="twitter:description" content="Framework de orquestracao IA Paperclip-inspired para Claude Code. 11 agentes especializados, 200+ skills, quality scoring 88.3/100, execucao autonoma.">
-<meta name="twitter:image" content="https://orchestrator-ai.dev/og-image.png">
+<meta name="twitter:image" content="https://bfranca.com/og-orchestrator.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1096,7 +1096,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>Actualizacoes permanentes</li>
           <li>Suporte prioritario</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Pro%20-%20%E2%82%AC29/mes&body=Quero%20subscrever%20o%20plano%20Pro.%0A%0ANome:%0AEmail:%0AEmpresa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">QUERO O PRO — &euro;29/mes</a>
+        <a href="mailto:barda@bfranca.com?subject=Orchestrator%20Pro%20-%20%E2%82%AC29/mes&body=Quero%20subscrever%20o%20plano%20Pro.%0A%0ANome:%0AEmail:%0AEmpresa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">QUERO O PRO — &euro;29/mes</a>
         <div class="price-fine">Pague, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
@@ -1114,7 +1114,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>Gestao de acessos</li>
           <li>Onboarding dedicado</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Team%20-%20%E2%82%AC99/mes&body=Quero%20subscrever%20o%20plano%20Team.%0A%0ANome:%0AEmail:%0AEmpresa:%0ATamanho%20equipa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">SUBSCREVER TEAM — &euro;99/mes</a>
+        <a href="mailto:barda@bfranca.com?subject=Orchestrator%20Team%20-%20%E2%82%AC99/mes&body=Quero%20subscrever%20o%20plano%20Team.%0A%0ANome:%0AEmail:%0AEmpresa:%0ATamanho%20equipa:" class="price-btn" style="display:block;text-align:center;text-decoration:none">SUBSCREVER TEAM — &euro;99/mes</a>
         <div class="price-fine">Pague, receba a chave instantaneamente. Cancele quando quiser.</div>
       </div>
 
@@ -1132,7 +1132,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
           <li>Versao com a sua marca</li>
           <li>50+ pessoas</li>
         </ul>
-        <a href="mailto:hello@barda.agency?subject=Orchestrator%20Enterprise" class="price-btn" style="display:block;text-align:center;text-decoration:none">FALAR COM A EQUIPA</a>
+        <a href="mailto:barda@bfranca.com?subject=Orchestrator%20Enterprise" class="price-btn" style="display:block;text-align:center;text-decoration:none">FALAR COM A EQUIPA</a>
         <div class="price-fine">Adaptado a sua organizacao.</div>
       </div>
 
@@ -1229,10 +1229,10 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     <a href="#skills">Skills</a>
     <a href="#pricing">Planos</a>
     <a href="#faq">FAQ</a>
-    <a href="mailto:hello@barda.agency?subject=Orchestrator%20AI%20-%20Contacto">Contacto</a>
+    <a href="mailto:barda@bfranca.com?subject=Orchestrator%20AI%20-%20Contacto">Contacto</a>
   </div>
   <p>DARIO Orchestrator AI — Construido pela BARDA Digital Agency, Portugal</p>
-  <p>Duvidas? hello@barda.agency</p>
+  <p>Duvidas? barda@bfranca.com</p>
   <p style="margin-top:8px;font-size:.75rem">&copy; 2024-2026 BARDA Agency. Todos os direitos reservados.</p>
 </footer>
 
@@ -1307,7 +1307,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     if(!email||!email.includes('@')){showToast('Introduza um email valido');return;}
     this.textContent='A gerar...';this.disabled=true;
     var self=this;
-    fetch('https://orchestrator-ai-three.vercel.app/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,name:name,whatsapp:whatsapp,days:14})})
+    fetch('http://31.97.53.231:8099/license/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,name:name,whatsapp:whatsapp,days:14})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d.key){
@@ -1325,7 +1325,7 @@ h1,h2,h3,h4{font-weight:700;line-height:1.2}
     var email=document.getElementById('trial-email').value.trim();
     if(!email||!email.includes('@')){showToast('Introduza um email valido');return;}
     this.textContent='A gerar chave...';this.disabled=true;
-    fetch('https://orchestrator-ai-three.vercel.app/api/generate-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,days:14})})
+    fetch('http://31.97.53.231:8099/license/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:'trial',email:email,days:14})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d.key){
