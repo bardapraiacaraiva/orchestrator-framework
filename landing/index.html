@@ -66,6 +66,7 @@ a:hover { color: var(--gold-light); }
 .container {
   max-width: 1180px;
   margin: 0 auto;
+  overflow: hidden;
   padding: 0 24px;
 }
 
@@ -292,7 +293,8 @@ nav .container {
 
 .hero-stats {
   display: flex;
-  gap: 48px;
+  flex-wrap: wrap;
+  gap: 32px;
   margin-top: 64px;
   padding-top: 40px;
   border-top: 1px solid rgba(212,168,67,0.12);
@@ -1119,6 +1121,10 @@ footer {
 }
 .footer-links a:hover { color: var(--gold); }
 
+/* ---- Global overflow fix ---- */
+*, *::before, *::after { max-width: 100%; }
+img, video, iframe, table { max-width: 100%; height: auto; }
+
 /* ---- Responsive ---- */
 @media (max-width: 1024px) {
   .approach-grid { grid-template-columns: 1fr; }
@@ -1131,7 +1137,8 @@ footer {
 }
 
 @media (max-width: 768px) {
-  section { padding: 72px 0; }
+  section { padding: 60px 0; }
+  .container { padding: 0 16px; }
 
   .nav-links { display: none; }
   .nav-links.open {
@@ -1146,23 +1153,116 @@ footer {
   }
   .nav-toggle { display: block; }
 
-  .hero-stats { flex-direction: column; gap: 24px; }
-  .problem-grid { grid-template-columns: 1fr; gap: 40px; }
-  .approach-grid { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
-  .dept-grid { grid-template-columns: repeat(2, 1fr); }
-  .pricing-grid { grid-template-columns: 1fr; }
-  .case-card { padding: 32px; gap: 40px; }
-  .case-metrics { grid-template-columns: 1fr 1fr; }
-  .bring-visual { grid-template-columns: 1fr 1fr; padding: 32px; }
-  .hero-cta-group { flex-direction: column; }
-  .btn-primary, .btn-secondary { justify-content: center; }
+  /* Hero */
+  .hero { min-height: auto; padding-top: 100px; padding-bottom: 60px; }
+  .hero h1 { font-size: clamp(1.6rem, 7vw, 2.4rem); }
+  .hero-subtitle { font-size: 1rem; margin-bottom: 32px; }
+  .hero-stats { flex-direction: row; flex-wrap: wrap; gap: 16px; margin-top: 40px; padding-top: 24px; }
+  .hero-stats > div { flex: 1 1 40%; min-width: 120px; }
+  .hero-stat-num { font-size: 1.8rem; }
+  .hero-stat-label { font-size: 0.7rem; }
+  .hero-cta-group { flex-direction: column; gap: 12px; }
+  .btn-primary, .btn-secondary { justify-content: center; padding: 14px 24px; font-size: 0.9rem; width: 100%; text-align: center; }
+
+  /* Problem */
+  .problem-grid { grid-template-columns: 1fr; gap: 32px; }
+  .problem-quote { padding: 28px; }
+  .problem-quote blockquote { font-size: 1.1rem; }
+
+  /* Approach */
+  .approach-grid { grid-template-columns: 1fr; gap: 16px; }
+  .approach-card { padding: 28px 20px; }
+  .approach-num { font-size: 2rem; }
+
+  /* What we bring */
+  .bring-hero { grid-template-columns: 1fr; gap: 32px; }
+  .bring-visual { grid-template-columns: 1fr 1fr; padding: 24px; gap: 16px; }
+  .bring-metric { padding: 16px; }
+  .bring-metric-num { font-size: 1.6rem; }
+
+  /* Steps */
+  .steps { grid-template-columns: 1fr; gap: 16px; }
+  .step { padding: 24px 20px; }
+
+  /* Departments — 2 columns on tablet, overflow protected */
+  .dept-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .dept-card { padding: 20px 16px; }
+  .dept-card h4 { font-size: 0.85rem; }
+  .dept-card p { font-size: 0.75rem; }
+  .dept-icon { font-size: 1.3rem; margin-bottom: 10px; }
+
+  /* Case study */
+  .case-card { grid-template-columns: 1fr; padding: 24px; gap: 32px; }
+  .case-card h3 { font-size: 1.2rem; }
+  .case-metrics { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .case-metric { padding: 16px; }
+  .case-metric-val { font-size: 1.4rem; }
+
+  /* Technology */
+  .tech-content { grid-template-columns: 1fr; gap: 32px; }
+  .tech-badge { padding: 32px 24px; }
+  .tech-badge-name { font-size: 1.3rem; }
+
+  /* Pricing — SINGLE COLUMN on mobile (prevents overflow) */
+  .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
+  .price-card { padding: 28px 20px; }
+  .price-amount { font-size: 1.4rem; }
+  .price-badge { font-size: 0.6rem; padding: 4px 12px; }
+
+  /* FAQ */
+  .faq-list { margin-top: 32px; }
+  .faq-question { padding: 16px 18px; font-size: 0.88rem; }
+  .faq-answer p { font-size: 0.85rem; }
+
+  /* Final CTA */
+  .final-cta { padding: 80px 0; }
+  .final-cta h2 { font-size: clamp(1.4rem, 5vw, 2rem); }
+  .final-cta p { font-size: 0.95rem; }
+  .final-cta .btn-primary { width: 100%; justify-content: center; padding: 16px 24px; }
+
+  /* Footer */
+  .footer-content { flex-direction: column; text-align: center; gap: 12px; }
+  .footer-links { justify-content: center; }
+
+  /* Section labels + subtitles */
+  h2 { font-size: clamp(1.4rem, 5vw, 2rem); }
+  .section-subtitle { font-size: 0.95rem; }
 }
 
 @media (max-width: 480px) {
+  .container { padding: 0 12px; }
+  section { padding: 48px 0; }
+
+  .hero h1 { font-size: 1.5rem; }
+  .hero-eyebrow { font-size: 0.65rem; letter-spacing: 2px; }
+  .hero-stats > div { flex: 1 1 45%; }
+
   .dept-grid { grid-template-columns: 1fr; }
   .bring-visual { grid-template-columns: 1fr; }
   .case-metrics { grid-template-columns: 1fr; }
+
+  .approach-card { padding: 24px 16px; }
+  .step { padding: 20px 16px; }
+  .price-card { padding: 24px 16px; }
+
+  .problem-quote { padding: 20px; }
+  .problem-quote blockquote { font-size: 1rem; }
+
+  .nav-logo { font-size: 1rem; }
+  nav .container { height: 60px; }
+
+  .tech-badge { padding: 24px 16px; }
+  .tech-badge-stats li { font-size: 0.8rem; }
+
+  .final-email { font-size: 0.75rem; }
+}
+
+/* ---- Safe word-break for all cards ---- */
+.approach-card, .dept-card, .step, .price-card, .case-card,
+.problem-quote, .tech-badge, .faq-answer, .bring-text {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 </style>
 </head>
