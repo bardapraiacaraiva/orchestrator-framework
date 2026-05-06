@@ -121,9 +121,13 @@ def score_via_api(prompt: str) -> dict:
         cost = (input_tokens / 1_000_000 * HAIKU_INPUT_COST +
                 output_tokens / 1_000_000 * HAIKU_OUTPUT_COST)
 
-        # Parse JSON from response
-        if "{" in text:
-            json_str = text[text.index("{"):text.rindex("}") + 1]
+        # Strip <thinking> tags before JSON extraction (fixed: tags could corrupt JSON parse)
+        import re
+        clean_text = re.sub(r'<thinking>.*?</thinking>', '', text, flags=re.DOTALL).strip()
+
+        # Parse JSON from cleaned response
+        if "{" in clean_text:
+            json_str = clean_text[clean_text.index("{"):clean_text.rindex("}") + 1]
             result = json.loads(json_str)
             result["judge_tokens"] = {"input": input_tokens, "output": output_tokens}
             result["judge_cost"] = round(cost, 6)
@@ -133,7 +137,12 @@ def score_via_api(prompt: str) -> dict:
         return {"score": 0, "error": "No JSON in Haiku response", "raw": text[:200]}
 
     except Exception as e:
-        return {"score": 0, "error": str(e)[:300]}
+        # Retry once on transient errors (fixed: was no retry)
+        if retries > 0 and ("rate" in str(e).lower() or "timeout" in str(e).lower() or "connection" in str(e).lower()):
+            import time
+            time.sleep(1.5)
+            return score_via_api(prompt)
+        return {"score": -1, "error": str(e)[:300]}
 
 
 def score_mock(rubric: dict) -> dict:
@@ -198,10 +207,11 @@ def judge_task(task_id: str = "", output: str = "", skill: str = "",
     result.update(score_result)
     result["status"] = "scored"
 
-    # Record in DB
-    if task_id and score_result.get("score", 0) > 0:
+    # Record in DB (fixed: score>=0 not >0 to avoid survivorship bias; model now passed)
+    if task_id and score_result.get("score", -1) >= 0:
         db.record_score(task_id, skill, score_result["score"], project,
-                        score_result.get("dimensions", {}))
+                        score_result.get("dimensions", {}),
+                        model=score_result.get("judge_model", ""))
         db.log_event("llm-judge", "task_scored", task_id=task_id,
                      details=f"score={score_result['score']} model={score_result.get('judge_model','?')} cost=${score_result.get('judge_cost',0):.4f}")
 

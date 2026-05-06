@@ -39,13 +39,6 @@ log = logging.getLogger("approval_gates")
 
 from db import DB
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 # =============================================================================
 # APPROVAL CONFIGURATION
 # =============================================================================

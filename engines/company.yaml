@@ -1459,7 +1459,7 @@ workers:
     - recommendation_engine
   worker-a360-nicho-explorer:
     type: worker
-    skill: nicho-explorer
+    skill: a360-nicho
     reports_to: dir-a360-research
     capabilities:
     - niche_discovery
@@ -1468,7 +1468,7 @@ workers:
     - market_scoring
   worker-a360-mapear-nicho:
     type: worker
-    skill: mapear-nicho-lite
+    skill: a360-nicho
     reports_to: dir-a360-research
     capabilities:
     - icp_mapping
@@ -1478,7 +1478,7 @@ workers:
     - trigger_events
   worker-a360-cliente-radar:
     type: worker
-    skill: cliente-radar
+    skill: a360-avatar
     reports_to: dir-a360-research
     capabilities:
     - prospect_research
@@ -1487,7 +1487,7 @@ workers:
     - meeting_hooks
   worker-a360-lp-builder:
     type: worker
-    skill: lp-builder
+    skill: a360-validacao
     reports_to: dir-a360-production
     capabilities:
     - landing_page
@@ -1497,7 +1497,7 @@ workers:
     - html_generation
   worker-a360-pitch-deck:
     type: worker
-    skill: pitch-deck-builder
+    skill: a360-pitch
     reports_to: dir-a360-production
     capabilities:
     - pitch_deck
@@ -1506,7 +1506,7 @@ workers:
     - sales_narrative
   worker-a360-gtm:
     type: worker
-    skill: gtm-architect
+    skill: a360-growth
     reports_to: dir-a360-production
     capabilities:
     - go_to_market
@@ -1515,7 +1515,7 @@ workers:
     - cold_email
   worker-a360-playbook-vendas:
     type: worker
-    skill: playbook-vendas
+    skill: a360-funil
     reports_to: dir-a360-production
     capabilities:
     - sales_script
@@ -1524,7 +1524,7 @@ workers:
     - objection_handling
   worker-a360-meeting-prep:
     type: worker
-    skill: meeting-prep
+    skill: a360-case-study
     reports_to: dir-a360-production
     capabilities:
     - meeting_briefing

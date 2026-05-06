@@ -44,10 +44,15 @@ def check_secrets(output: str) -> list[str]:
     issues = []
     patterns = [
         (r'(?:sk|pk|rk)[-_][a-zA-Z0-9_-]{20,}', "API key pattern (sk-/pk-/rk-)"),
+        (r'sk-ant-[a-zA-Z0-9_-]{20,}', "Anthropic API key"),
+        (r'sk_(?:live|test)_[a-zA-Z0-9]{24,}', "Stripe API key"),
         (r'ghp_[a-zA-Z0-9]{36}', "GitHub personal access token"),
         (r'eyJ[a-zA-Z0-9_-]{20,}\.eyJ[a-zA-Z0-9_-]{20,}', "JWT token"),
         (r'AKIA[0-9A-Z]{16}', "AWS access key"),
-        (r'(?:password|passwd|pwd)\s*[:=]\s*["\']?[^\s"\']{8,}', "Password in plaintext"),
+        (r'xox[bpras]-[a-zA-Z0-9-]{10,}', "Slack token"),
+        (r'SG\.[a-zA-Z0-9_-]{22}\.[a-zA-Z0-9_-]{43}', "SendGrid API key"),
+        (r'Bearer\s+[a-zA-Z0-9_-]{20,}', "Bearer token in output"),
+        (r'(?:password|passwd|pwd|senha)\s*[:=]\s*["\']?[^\s"\']{8,}', "Password in plaintext"),
         (r'-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----', "Private key"),
         (r'(?:supabase_service_role|service_role_key)\s*[:=]', "Supabase service role key"),
         (r'r8_[a-zA-Z0-9]{20,}', "Replicate API token"),

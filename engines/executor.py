@@ -68,13 +68,10 @@ from filter_pipeline import FilterPipeline, LoggingFilter, BudgetFilter, Quality
 from output_guardrails import OutputGuardrailFilter
 from model_router import ModelRouterFilter
 from artifact_schemas import SchemaValidationFilter
-
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
+from checkpoint_interrupt import should_interrupt, interrupt_task
+from approval_gates import get_approval_level, request_approval
+from guardrails import validate_task
+from termination import default_task_conditions
 
 PYTHON = sys.executable
 
@@ -99,7 +96,7 @@ def run_engine(script: str, args: list) -> dict:
         return {"error": f"{script} not found"}
     try:
         r = subprocess.run([PYTHON, str(path)] + args,
-                           capture_output=True, text=True, timeout=15, cwd=str(ORCH_DIR))
+                           capture_output=True, text=True, timeout=30, cwd=str(ORCH_DIR))
         if r.stdout.strip():
             try:
                 return json.loads(r.stdout.strip())
@@ -161,10 +158,17 @@ def execute_task(task_id: str, dry_run: bool = False) -> dict:
     result["model_id"] = filter_ctx.get("model_id", "claude-sonnet-4-6")
     result["_filter_ctx"] = filter_ctx  # Pass to after-pipeline
 
-    # ─── Step 1: GUARDRAILS ──────────────────────────────────────────────
-    guard = run_engine("guardrails.py", ["--task", task_id, "--json"])
+    # ─── Step 0.9: LIFECYCLE HOOK — task_start (was ORPHAN) ────────────
+    try:
+        from lifecycle_hooks import get_registry
+        get_registry().emit("task_start", task=task)
+    except Exception:
+        pass
+
+    # ─── Step 1: GUARDRAILS (now direct import, was subprocess) ────────
+    guard = validate_task(task_id)
     verdict = guard.get("verdict", "FAIL")
-    result["steps"].append({"step": "guardrails", "result": verdict})
+    result["steps"].append({"step": "guardrails", "result": verdict, "checks": guard.get("checks", {})})
 
     if verdict == "FAIL":
         result["status"] = "blocked"
@@ -200,6 +204,18 @@ def execute_task(task_id: str, dry_run: bool = False) -> dict:
         result["status"] = "dry_run"
         result["prompt_preview"] = prompt[:500] + "..."
         return result
+
+    # ─── Step 5.5: APPROVAL GATE (new: was not wired) ─────────────────────
+    try:
+        approval = get_approval_level(task)
+        if approval.get("needs_approval"):
+            request_approval(task_id, reason=f"Skill '{skill}' requires {approval['level']} approval")
+            result["status"] = "pending_approval"
+            result["approval_level"] = approval["level"]
+            result["steps"].append({"step": "approval_gate", "level": approval["level"]})
+            return result
+    except Exception:
+        pass  # Approval gate failure should not block execution
 
     # ─── Step 6: EXECUTE (atomic checkout in DB) ─────────────────────────
     checked_out = db.checkout_task(task_id)
@@ -284,11 +300,68 @@ def record_execution_result(task_id: str, success: bool, output: str = "",
             ])
             result["steps"].append({"step": "scored", "score": score})
 
+        # ─── HUMAN-IN-THE-LOOP CHECK (new: was dead code) ────────────────
+        try:
+            interrupt_check = should_interrupt(task, output=output, score=score)
+            if interrupt_check.get("interrupt"):
+                interrupt_task(task_id, reason=interrupt_check["reason"],
+                              checkpoint_data={"score": score, "tokens": tokens, "partial_output": output[:500]})
+                result["status"] = "awaiting_human"
+                result["interrupt_reason"] = interrupt_check["reason"]
+                result["steps"].append({"step": "interrupted", "reason": interrupt_check["reason"]})
+                db.log_event("executor", "task_interrupted", task_id=task_id,
+                            details=interrupt_check["reason"][:200])
+                return result
+        except Exception:
+            pass  # Interrupt failure should not block completion
+
         # ─── COMPLETE TASK (DB state advance) ────────────────────────────
         status = "done" if score >= 60 or score == 0 else "in_review"
-        db.complete_task(task_id, score=score, tokens=tokens, output=output[:500], status=status)
+        db.complete_task(task_id, score=score, tokens=tokens, output=output[:2000], status=status)
         result["steps"].append({"step": "completed", "final_status": status})
         result["status"] = status
+
+        # ─── AUTO-LEARN (capture insights from high-quality tasks) ────────
+        if score >= 90:
+            try:
+                from memory_blocks import auto_learn
+                auto_learn(output[:200], scope=project or "global", skill=skill, score=score)
+            except Exception:
+                pass
+
+        # ─── REACTIVE SUBSCRIPTIONS (trigger downstream tasks) ───────────
+        if status == "done":
+            try:
+                from reactive_subscriptions import on_task_completed
+                created = on_task_completed(task, score=score, tokens=tokens)
+                if created:
+                    result["reactive_tasks_created"] = len(created)
+            except Exception:
+                pass
+
+        # ─── TOKEN METER (was ORPHAN — costs never tracked) ────────────
+        if tokens > 0:
+            try:
+                model = result.get("recommended_model", "sonnet")
+                run_engine("token_meter.py", [
+                    "--input", str(int(tokens * 0.7)),
+                    "--output", str(int(tokens * 0.3)),
+                    "--model", model,
+                    "--skill", skill,
+                    "--project", project or "unknown",
+                ])
+            except Exception:
+                pass
+
+        # ─── LIFECYCLE HOOKS (was ORPHAN — events never emitted) ──────
+        try:
+            from lifecycle_hooks import get_registry
+            registry = get_registry()
+            registry.emit("task_complete", task=task, output=output[:200], score=score)
+            if score >= 90:
+                registry.emit("quality_scored", task=task, score=score)
+        except Exception:
+            pass
 
         # ─── AUDIT ───────────────────────────────────────────────────────
         db.log_event("executor", "task_completed", task_id=task_id,
@@ -300,7 +373,20 @@ def record_execution_result(task_id: str, success: bool, output: str = "",
                                   "--error", error[:300]])
         result["steps"].append({"step": "trace_end", "status": "failed"})
 
-        # ─── REPLAN (auto-recovery) ──────────────────────────────────────
+        # ─── ERROR HANDLERS (was ORPHAN — per-skill recovery) ────────────
+        try:
+            from error_handlers import get_error_registry
+            handler = get_error_registry().get(skill)
+            recovery = handler.handle(Exception(error), task, {"_retry_count": 0})
+            result["steps"].append({"step": "error_handler", "action": recovery.action, "recovered": recovery.recovered})
+            if recovery.recovered and recovery.action == "skip":
+                result["status"] = "skipped"
+                db.log_event("executor", "task_skipped", task_id=task_id, details=recovery.reason[:200])
+                return result
+        except Exception:
+            pass
+
+        # ─── REPLAN (auto-recovery fallback) ─────────────────────────────
         failure_type = "agent_timeout" if "timeout" in error.lower() else "quality_below_50" if score < 50 and score > 0 else "unknown"
         replan = run_engine("replanner.py", [
             "--task", task_id, "--failure", failure_type,
@@ -309,6 +395,13 @@ def record_execution_result(task_id: str, success: bool, output: str = "",
         result["steps"].append({"step": "replanned", "action": replan.get("action", "?")})
         result["status"] = "replanned"
         result["replan_action"] = replan.get("action")
+
+        # ─── LIFECYCLE HOOK — task_fail ──────────────────────────────────
+        try:
+            from lifecycle_hooks import get_registry
+            get_registry().emit("task_fail", task=task, error=error[:200])
+        except Exception:
+            pass
 
         # ─── AUDIT ───────────────────────────────────────────────────────
         db.log_event("executor", "task_failed", task_id=task_id,

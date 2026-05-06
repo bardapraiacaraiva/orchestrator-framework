@@ -30,13 +30,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 sys.path.insert(0, str(ORCH_DIR))
 
@@ -145,31 +138,54 @@ def get_synaptic_affinity(skill_a: str, skill_b: str) -> float:
         return 0.5
 
     weights = load_yaml(str(WEIGHTS_FILE))
-    if not weights or "pairs" not in weights:
+    if not weights:
         return 0.5
 
-    for pair in weights["pairs"]:
-        skills = pair.get("skills", [])
-        if set(skills) == {skill_a, skill_b}:
-            return pair.get("weight", 0.5)
+    # Read from affinity_graph (correct key)
+    affinity = weights.get("affinity_graph", {})
+    if not affinity:
+        return 0.5
+
+    # Try both orderings: "skill_a + skill_b" and "skill_b + skill_a"
+    key1 = f"{skill_a} + {skill_b}"
+    key2 = f"{skill_b} + {skill_a}"
+    pair = affinity.get(key1) or affinity.get(key2)
+
+    if pair and isinstance(pair, dict):
+        return float(pair.get("weight", 0.5))
 
     return 0.5
 
 
 def find_best_worker(skill: str, directors: dict = None) -> dict:
-    """Find the best available worker for a skill, using affinity weights."""
+    """Find the best AVAILABLE worker for a skill (fixed: now checks workload)."""
     if directors is None:
         directors = get_directors()
+
+    # Get current workload to check availability
+    workload = {}
+    try:
+        from db import DB
+        db = DB()
+        active = db.get_tasks(status="in_progress")
+        for t in active:
+            a = t.get("assignee", "")
+            if a:
+                workload[a] = workload.get(a, 0) + 1
+    except Exception:
+        pass
 
     candidates = []
     for dir_id, director in directors.items():
         for worker in director["team"]:
             if worker["skill"] == skill:
+                busy = workload.get(worker["id"], 0)
                 candidates.append({
                     "worker_id": worker["id"],
                     "skill": skill,
                     "director": dir_id,
-                    "affinity": 1.0,  # Direct match
+                    "affinity": 1.0,
+                    "busy": busy,
                 })
 
     # If no direct match, find workers with high affinity
@@ -178,15 +194,21 @@ def find_best_worker(skill: str, directors: dict = None) -> dict:
             for worker in director["team"]:
                 affinity = get_synaptic_affinity(skill, worker["skill"])
                 if affinity > 0.6:
+                    busy = workload.get(worker["id"], 0)
                     candidates.append({
                         "worker_id": worker["id"],
                         "skill": worker["skill"],
                         "director": dir_id,
                         "affinity": affinity,
+                        "busy": busy,
                     })
 
-    # Sort by affinity
-    candidates.sort(key=lambda c: c["affinity"], reverse=True)
+    # Sort by: available first, then highest affinity
+    candidates.sort(key=lambda c: (-c["busy"], -c["affinity"]))
+    # Prefer available workers (busy < 1)
+    available = [c for c in candidates if c["busy"] < 1]
+    if available:
+        return available[0]
     return candidates[0] if candidates else {}
 
 

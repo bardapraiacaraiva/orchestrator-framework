@@ -39,13 +39,6 @@ log = logging.getLogger("checkpoint")
 
 from db import DB
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 
 def interrupt_task(task_id: str, reason: str = "", checkpoint_data: dict = None,
                    pending_input_schema: dict = None, timeout_seconds: int = 0) -> dict:
@@ -211,21 +204,19 @@ def get_checkpoint(task_id: str) -> dict:
 # INTERRUPT CONDITIONS — define when tasks should auto-interrupt
 # =============================================================================
 
-# Skills that ALWAYS require human approval before delivery
-APPROVAL_REQUIRED_SKILLS = {
-    "dario-proposal",      # Financial commitment
-    "dario-contract",      # Legal document
-    "dario-sales-letter",  # Client-facing copy
-    "diva-contract",       # Construction contract
-    "diva-budget",         # Budget > €50K
-}
-
-# Execution policies that require approval
-APPROVAL_REQUIRED_POLICIES = {
-    "critical",
-    "client_facing",
-    "financial",
-}
+# Unified with approval_gates.py (fixed: was divergent duplicate list)
+try:
+    from approval_gates import SKILL_APPROVAL, POLICY_APPROVAL
+    APPROVAL_REQUIRED_SKILLS = {s for s, level in SKILL_APPROVAL.items() if level in ("approve", "dual")}
+    APPROVAL_REQUIRED_POLICIES = {p for p, level in POLICY_APPROVAL.items() if level in ("approve", "dual")}
+except ImportError:
+    # Fallback if approval_gates not available
+    APPROVAL_REQUIRED_SKILLS = {
+        "dario-proposal", "dario-financial-model", "dario-legal",
+        "dario-sales-letter", "dario-pitch",
+        "diva-contract", "diva-budget",
+    }
+    APPROVAL_REQUIRED_POLICIES = {"critical", "client_facing", "financial"}
 
 
 def should_interrupt(task: dict, output: str = "", score: int = 0) -> dict:

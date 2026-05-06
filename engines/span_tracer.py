@@ -56,13 +56,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 TRACES_DIR = ORCH_DIR / "traces"
 TRACES_DIR.mkdir(parents=True, exist_ok=True)

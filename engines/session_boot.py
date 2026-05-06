@@ -16,13 +16,6 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 PYTHON = sys.executable  # Use same Python that's running this script
 
@@ -59,6 +52,10 @@ def main():
         output["wal_recovered"] = recovered
     except Exception:
         pass
+
+    # 0.5. Resume suspended tasks from previous session (new: was not wired)
+    resume_result = run_engine("suspend_resume.py", ["--restart-all", "--json"])
+    output["resumed_tasks"] = resume_result.get("resumed", 0)
 
     # 1. State machine evaluation
     state_result = run_engine("state_machine.py", ["--evaluate", "--json"])

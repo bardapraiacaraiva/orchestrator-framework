@@ -185,10 +185,17 @@ def get_unassigned_tasks(tasks: list) -> list:
 
 
 def get_worker_workload(tasks: list) -> dict:
-    """Calculate current workload per worker."""
+    """Calculate current workload per worker (fixed: was calling wrong signature)."""
     try:
-        from task_store import TaskStore
-        return TaskStore().worker_workload()
+        from db import DB
+        db = DB()
+        active = db.get_tasks(status="in_progress") + db.get_tasks(status="todo") + db.get_tasks(status="in_review")
+        workload = {}
+        for t in active:
+            assignee = t.get("assignee")
+            if assignee:
+                workload[assignee] = workload.get(assignee, 0) + 1
+        return workload
     except Exception:
         workload = {}
         for t in tasks:
@@ -347,6 +354,20 @@ KEYWORD_SKILL_MAP = {
     "balancete": "conta-relatorios", "demonstracao resultados": "conta-relatorios",
     # Restaurante
     "restaurante": "skill-restaurante-pt", "menu": "skill-restaurante-pt", "gastronomico": "skill-restaurante-pt",
+    # Standalone + Portuguese terms (fixed: common PT terms were missing)
+    "seo": "seo-audit",
+    "website": "dario-wp-audit",
+    "auditoria": "dario-diagnose",
+    "analise": "dario-diagnose",
+    "relatorio": "dario-diagnose",
+    "otimizacao": "dario-cwv-fix",
+    "optimizacao": "dario-cwv-fix",
+    "campanha": "dario-ads-blueprint",
+    "proposta": "dario-proposal",
+    "apresentacao": "dario-pitch",
+    "reuniao": "dario-sop",
+    "pagina": "dario-funnel",
+    "landing page": "dario-funnel",
 }
 
 
@@ -366,7 +387,14 @@ def infer_skill_from_task(task: dict) -> Optional[str]:
             scores[skill] = scores.get(skill, 0) + len(keyword)
 
     if scores:
-        # Return skill with highest score (longest keyword matches)
+        # Tie-breaking: prefer skill matching MORE keywords, then title-match bonus (fixed: was non-deterministic)
+        title = task.get("title", "").lower()
+        keyword_counts = {}
+        for keyword, skill in KEYWORD_SKILL_MAP.items():
+            if keyword in text and skill in scores:
+                keyword_counts[skill] = keyword_counts.get(skill, 0) + 1
+                if keyword in title:
+                    scores[skill] = scores.get(skill, 0) + 10  # Title match bonus
         return max(scores, key=scores.get)
 
     return None

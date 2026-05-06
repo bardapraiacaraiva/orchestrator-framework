@@ -208,7 +208,7 @@ def evaluate_context_relevance(query: str, context: str) -> dict:
         context=context[:2000],
     )
     result = _call_haiku(prompt)
-    result["evaluator"] = "context_relevance"
+    result["evaluator"] = "relevance"  # fixed: was "context_relevance" but weights use "relevance"
     return result
 
 

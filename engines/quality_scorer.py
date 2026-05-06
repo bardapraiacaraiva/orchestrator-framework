@@ -83,11 +83,12 @@ log = logging.getLogger("quality")
 # SCORE RECORDING
 # =============================================================================
 
-def determine_action(score: int, revision_count: int = 0) -> str:
-    """Determine what happens after scoring."""
+def determine_action(score: int, revision_count: int = 0, pass_threshold: int = 0) -> str:
+    """Determine what happens after scoring (fixed: now uses per-skill threshold)."""
+    threshold = pass_threshold if pass_threshold > 0 else SHIP_THRESHOLD
     if score >= SUCCESS_THRESHOLD:
         return "success_pattern"
-    elif score >= SHIP_THRESHOLD:
+    elif score >= threshold:
         return "ship"
     elif revision_count >= REVISION_MAX:
         return "escalate"
@@ -142,10 +143,18 @@ def record_score(task_id: str, score: int, skill: str = None,
             revision_count = int(task_data.get("revision_count", 0) or 0)
             dump_yaml(task_data, str(task_file))
 
-    # 2. Determine action
-    action = determine_action(score, revision_count)
+    # 2. Determine action (now uses per-skill threshold from adaptive_rubric)
+    pass_threshold = SHIP_THRESHOLD
+    try:
+        from adaptive_rubric import SKILL_PROFILES
+        if skill and skill in SKILL_PROFILES:
+            pass_threshold = SKILL_PROFILES[skill].get("pass_threshold", SHIP_THRESHOLD)
+    except ImportError:
+        pass
+    action = determine_action(score, revision_count, pass_threshold=pass_threshold)
     result["action"] = action
     result["skill"] = skill
+    result["pass_threshold"] = pass_threshold
 
     # 3. Update skill-metrics.yaml + audit trail
     if skill:

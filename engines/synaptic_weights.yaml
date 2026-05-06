@@ -6,7 +6,7 @@ affinity_graph:
     weight: 0.55
   dario-brand + dario-naming:
     avg_combined_score: 82.4
-    co_activations: 4
+    co_activations: 7
     notes: Naming derives from brand identity
     weight: 0.55
   dario-brand + dario-offer:
@@ -16,12 +16,12 @@ affinity_graph:
     weight: 0.55
   dario-brand + dario-story-circle:
     avg_combined_score: 76.5
-    co_activations: 3
+    co_activations: 6
     notes: Brand archetype drives narrative
     weight: 0.5
   dario-brand + seo-plan:
     avg_combined_score: 83.2
-    co_activations: 3
+    co_activations: 5
     notes: Brand keywords inform SEO strategy
     weight: 0.5
   dario-content + dario-social:
@@ -81,7 +81,7 @@ affinity_graph:
     weight: 0.5
   dario-wp-audit + seo-technical:
     avg_combined_score: 81.5
-    co_activations: 3
+    co_activations: 5
     notes: WP audit overlaps with technical SEO
     weight: 0.5
   diva-briefing + diva-diagnose:
@@ -118,7 +118,7 @@ affinity_graph:
     avg_combined_score: 85.0
     co_activations: 2
     notes: Visual direction feeds material selection
-    weight: 0.65
+    weight: 1.0
   diva-timeline + diva-roadmap:
     avg_combined_score: 0
     co_activations: 0
@@ -126,17 +126,17 @@ affinity_graph:
     weight: 0.5
   seo-audit + seo-plan:
     avg_combined_score: 82.2
-    co_activations: 3
+    co_activations: 7
     notes: Audit findings feed strategy
     weight: 0.5
   seo-audit + seo-schema:
     avg_combined_score: 81.4
-    co_activations: 3
+    co_activations: 6
     notes: Audit reveals schema gaps
     weight: 0.5
   seo-audit + seo-technical:
     avg_combined_score: 81.4
-    co_activations: 3
+    co_activations: 6
     notes: Full audit includes technical checks
     weight: 0.5
   seo-content + seo-plan:

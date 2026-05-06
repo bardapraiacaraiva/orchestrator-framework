@@ -25,13 +25,6 @@ import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -72,6 +65,17 @@ log = logging.getLogger("autodiag")
 # =============================================================================
 
 def load_all_tasks() -> list:
+    """Load tasks — DB first, YAML fallback (fixed: was YAML-only)."""
+    try:
+        sys.path.insert(0, str(ORCH_DIR))
+        from db import DB
+        db = DB()
+        tasks = db.get_tasks()
+        if tasks:
+            return tasks
+    except Exception:
+        pass
+    # YAML fallback
     tasks = []
     if not TASKS_DIR.exists():
         return tasks

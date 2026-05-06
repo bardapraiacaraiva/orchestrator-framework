@@ -52,13 +52,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -151,10 +144,25 @@ DEFAULT_SCHEMAS = {
 
 
 def validate_artifact(skill: str, artifact: dict) -> dict:
-    """Validate an artifact against its skill schema."""
+    """Validate an artifact against its skill schema (uses artifact_schemas.py if available)."""
+    # Try new unified schemas first (fixed: was hardcoded only)
+    try:
+        from artifact_schemas import validate_artifact as validate_full, SCHEMAS
+        if skill in SCHEMAS:
+            output_str = json.dumps(artifact) if isinstance(artifact, dict) else str(artifact)
+            result = validate_full(output_str, skill)
+            return {
+                "valid": result.get("valid", True),
+                "missing_required": result.get("errors", []),
+                "fields_present": list(artifact.keys()) if isinstance(artifact, dict) else [],
+                "schema_exists": True,
+            }
+    except ImportError:
+        pass
+
+    # Fallback to hardcoded DEFAULT_SCHEMAS
     schema = DEFAULT_SCHEMAS.get(skill, {})
     required = schema.get("required", [])
-
     missing = [f for f in required if f not in artifact or artifact[f] is None]
 
     return {
@@ -475,6 +483,24 @@ def dry_run_chain(chain_name: str) -> dict:
     """Show execution plan without running."""
     chains_data = load_yaml(str(CHAINS_FILE)) if CHAINS_FILE.exists() else {}
     chains = chains_data.get("chains", {})
+
+    # Also check workflow_graph presets (was ORPHAN — now connected)
+    if chain_name not in chains:
+        try:
+            from workflow_graph import WORKFLOWS
+            if chain_name in WORKFLOWS:
+                wf = WORKFLOWS[chain_name]
+                plan = wf.compile()
+                return {
+                    "chain": chain_name,
+                    "description": f"Workflow graph: {chain_name}",
+                    "source": "workflow_graph",
+                    "total_waves": len(plan.waves),
+                    "total_steps": plan.total_steps,
+                    "plan": plan.to_dict(),
+                }
+        except ImportError:
+            pass
 
     if chain_name not in chains:
         return {"error": f"Chain '{chain_name}' not found. Available: {list(chains.keys())}"}

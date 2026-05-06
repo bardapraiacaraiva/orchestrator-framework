@@ -24,13 +24,6 @@ import re
 import sys
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 sys.path.insert(0, str(ORCH_DIR))
 
@@ -217,8 +210,9 @@ def validate_artifact(output: str, skill: str, strict: bool = False) -> dict:
             result["errors"].append("Expected JSON format but output is not valid JSON")
     result["checks"]["format"] = format_ok
 
-    # Check 4: Forbidden patterns
-    forbidden = schema.get("forbidden_patterns", [])
+    # Check 4: Forbidden patterns (global + per-skill)
+    global_forbidden = ["TODO", "PLACEHOLDER", "FIXME", "[inserir", "[CLIENT", "Lorem ipsum", "XXXXX", "[NOME", "[EMPRESA"]
+    forbidden = global_forbidden + schema.get("forbidden_patterns", [])
     found_forbidden = []
     for pattern in forbidden:
         if pattern.lower() in output_lower:

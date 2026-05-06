@@ -81,11 +81,21 @@ def predict(task_id: str = "", skill: str = "", model: str = "sonnet",
     except Exception:
         skill_yaml = {}
 
+    # Get real avg tokens from tasks table (fixed: was always 2500)
+    try:
+        with db._conn() as conn:
+            row = conn.execute(
+                "SELECT AVG(actual_tokens) as avg_t FROM tasks WHERE skill = ? AND actual_tokens > 0",
+                (skill,)
+            ).fetchone()
+            db_avg_tokens = int(row["avg_t"]) if row and row["avg_t"] else None
+    except Exception:
+        db_avg_tokens = None
+
     # Compute predictions
     if skill_stats and skill_stats.get("executions", 0) >= 2:
         avg_quality = skill_stats["avg_score"]
-        # Try to get real token avg from DB budget data (fixed: was always 2500)
-        avg_tokens = skill_stats.get("avg_tokens") or skill_yaml.get("avg_tokens") or DEFAULTS["avg_tokens"]
+        avg_tokens = db_avg_tokens or skill_yaml.get("avg_tokens") or DEFAULTS["avg_tokens"]
         revision_rate = skill_yaml.get("revision_rate") or 0.0
         confidence = min(0.5 + skill_stats["executions"] * 0.05, 0.95)
     elif isinstance(skill_yaml, dict) and skill_yaml.get("total_executions", 0) > 0:

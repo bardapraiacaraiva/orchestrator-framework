@@ -20,13 +20,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 RUNTIME = ORCH_DIR / "runtime.py"
 STARTUP_DIR = Path.home() / "AppData" / "Roaming" / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"

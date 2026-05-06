@@ -378,6 +378,20 @@ def assemble_context(task_id: str, skill: str = "", project: str = "") -> dict:
             "priority": "critical",
         })
 
+    # 7. Memory blocks — agent persona + project + learned (new: was not connected)
+    try:
+        from memory_blocks import assemble_context as get_memory_context
+        scope = project or "global"
+        mem_ctx = get_memory_context(scope)
+        if mem_ctx and mem_ctx.strip():
+            result["sections"].append({
+                "source": "memory_blocks",
+                "content": mem_ctx,
+                "priority": "high",
+            })
+    except Exception:
+        pass
+
     # Build final context block
     context_block = f"## Context for {task_id} ({skill})\n\n"
     for section in sorted(result["sections"], key=lambda s: {"critical": 0, "high": 1, "medium": 2}.get(s["priority"], 3)):

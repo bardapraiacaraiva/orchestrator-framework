@@ -136,19 +136,34 @@ def validate_task(task_id: str, strict: bool = False) -> dict:
                 result["warnings"].append(f"Execution would push budget past 95% ({(used + int(estimated))/limit*100:.1f}%)")
     result["checks"]["budget_sufficient"] = budget_ok
 
-    # --- Check 4: Dependencies met ---
+    # --- Check 4: Dependencies met (fixed: now checks DB first, was YAML-only) ---
     deps = task.get("depends_on", [])
+    if isinstance(deps, str):
+        try:
+            import json
+            deps = json.loads(deps)
+        except Exception:
+            deps = []
     deps_met = True
     if isinstance(deps, list) and deps:
         for dep_id in deps:
-            dep_file = TASKS_DIR / f"{dep_id}.yaml"
-            if dep_file.exists():
-                dep_data = load_yaml(str(dep_file))
-                if dep_data and dep_data.get("status") != "done":
+            dep_data = None
+            # DB first
+            try:
+                dep_data = db.get_task(dep_id) if db else None
+            except Exception:
+                pass
+            # YAML fallback
+            if not dep_data:
+                dep_file = TASKS_DIR / f"{dep_id}.yaml"
+                if dep_file.exists():
+                    dep_data = load_yaml(str(dep_file))
+            if dep_data:
+                if dep_data.get("status") != "done":
                     result["errors"].append(f"Dependency {dep_id} not done (status: {dep_data.get('status')})")
                     deps_met = False
             else:
-                result["warnings"].append(f"Dependency {dep_id} file not found (may be archived)")
+                result["warnings"].append(f"Dependency {dep_id} not found in DB or YAML")
     result["checks"]["dependencies_met"] = deps_met
 
     # --- Check 5: Assignee valid ---
@@ -182,11 +197,12 @@ def validate_task(task_id: str, strict: bool = False) -> dict:
                 result["warnings"].append(f"REFLECTIVE_PAUSE: only critical tasks auto-execute (this is '{policy}')")
     result["checks"]["state_allows"] = state_ok
 
-    # --- Check 7: Not already in_progress (prevent double-execution) ---
+    # --- Check 7: Not already running or locked (fixed: handles new statuses) ---
     status = task.get("status", "")
-    not_running = status != "in_progress"
+    blocked_statuses = {"in_progress", "pending_approval", "awaiting_human", "suspended", "done"}
+    not_running = status not in blocked_statuses
     if not not_running:
-        result["errors"].append(f"Task already in_progress — would cause double execution")
+        result["errors"].append(f"Task status '{status}' blocks execution")
     result["checks"]["not_already_running"] = not_running
 
     # --- Verdict ---

@@ -29,13 +29,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path.home() / ".claude" / "orchestrator"))
 from db import DB
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 TEMPLATES_DIR = ORCH_DIR / "tasks" / "templates"
 

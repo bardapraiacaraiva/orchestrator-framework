@@ -98,13 +98,50 @@ class Scheduler:
 
     async def _pulse(self):
         """Execute heartbeat pulse via subprocess."""
+        # Zombie task reaper
+        self._reap_zombies()
         # State check
         _run_engine("state_machine.py", ["--evaluate", "--json"])
         # Dispatch
         _run_engine("dispatch_engine.py", ["--json"])
         # AutoDiag
         _run_engine("autodiag_runner.py", ["--fix", "--json"])
+        # Evolution cycle (was ORPHAN — the system's differentiator, never ran)
+        if self.pulse_count > 0 and self.pulse_count % 48 == 0:  # Every ~24h (48 * 30min)
+            _run_engine("evolution_runner.py", ["--json"])
+            log.info("[EVOLUTION] Daily cycle executed")
+        # Budget tracker
+        _run_engine("budget_tracker.py", ["--check", "--quiet"])
+        # Dashboard refresh (was ORPHAN — dashboard went stale between manual runs)
+        _run_engine("generate_dashboard.py", [])
         log.info(f"Pulse #{self.pulse_count + 1} complete")
+
+    def _reap_zombies(self, max_age_minutes: int = 60):
+        """Find tasks stuck in in_progress and block them (new: zombie reaper)."""
+        try:
+            from db import DB
+            db = DB()
+            tasks = db.get_tasks(status="in_progress")
+            now = datetime.now(timezone.utc)
+            reaped = 0
+            for t in tasks:
+                checked_out = t.get("checked_out_at", "")
+                if not checked_out:
+                    continue
+                try:
+                    co_time = datetime.fromisoformat(checked_out.replace("Z", "+00:00"))
+                    age_min = (now - co_time).total_seconds() / 60
+                    if age_min > max_age_minutes:
+                        db.block_task(t["id"], f"Zombie reaper: in_progress for {age_min:.0f} min (max {max_age_minutes})")
+                        db.log_event("zombie_reaper", "task_reaped", task_id=t["id"],
+                                    details=f"Stuck {age_min:.0f} min")
+                        reaped += 1
+                except Exception:
+                    pass
+            if reaped:
+                log.warning(f"[REAPER] Reaped {reaped} zombie tasks")
+        except Exception as e:
+            log.error(f"[REAPER] Error: {e}")
 
 
 scheduler = Scheduler()
@@ -118,7 +155,7 @@ def _run_engine(script: str, args: list) -> dict:
     try:
         result = subprocess.run(
             [PYTHON, str(script_path)] + args,
-            capture_output=True, text=True, timeout=15, cwd=str(ORCH_DIR)
+            capture_output=True, text=True, timeout=30, cwd=str(ORCH_DIR)
         )
         if result.stdout.strip():
             try:
@@ -136,9 +173,43 @@ def _run_engine(script: str, args: list) -> dict:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # LICENSE CHECK (was ORPHAN — never enforced, anyone could run indefinitely)
+    try:
+        from license_manager import check_license
+        lic = check_license()
+        if not lic.get("valid"):
+            log.error(f"[LICENSE] {lic.get('reason', 'Invalid')}. Runtime blocked.")
+            log.error(f"[LICENSE] Activate: python license_manager.py --activate DARIO-XXXX-XXXX-XXXX-PRO")
+            # Don't sys.exit — allow health endpoint but block task execution
+            app.state.license_valid = False
+        else:
+            app.state.license_valid = True
+            tier = lic.get("tier", "?")
+            days = lic.get("days_remaining", "permanent")
+            log.info(f"[LICENSE] {tier.upper()} — {'permanent' if lic.get('permanent') else f'{days} days remaining'}")
+    except Exception as e:
+        log.warning(f"[LICENSE] Check failed: {e} — allowing startup")
+        app.state.license_valid = True  # Fail-open for dev
+
+    # STARTUP: Resume suspended tasks
+    try:
+        _run_engine("suspend_resume.py", ["--restart-all", "--json"])
+        log.info("[STARTUP] Suspended tasks resumed")
+    except Exception as e:
+        log.warning(f"[STARTUP] Resume failed: {e}")
+
     if scheduler_enabled:
         await scheduler.start()
+
     yield
+
+    # SHUTDOWN: Suspend all in_progress tasks (new: was not wired)
+    try:
+        _run_engine("suspend_resume.py", ["--suspend-all", "--json"])
+        log.info("[SHUTDOWN] Active tasks suspended")
+    except Exception as e:
+        log.warning(f"[SHUTDOWN] Suspend failed: {e}")
+
     if scheduler_enabled:
         await scheduler.stop()
 
@@ -151,6 +222,37 @@ app = FastAPI(
     description="Persistent runtime engine for the DARIO orchestrator ecosystem",
     lifespan=lifespan,
 )
+
+# Auth middleware (was ORPHAN — all endpoints were unauthenticated)
+try:
+    from auth import verify_key, check_permission
+    from fastapi import Request
+    from starlette.middleware.base import BaseHTTPMiddleware
+
+    class AuthMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request: Request, call_next):
+            # Skip auth for health and docs
+            if request.url.path in ("/health", "/docs", "/openapi.json", "/dashboard"):
+                return await call_next(request)
+            # Check API key header
+            api_key = request.headers.get("X-API-Key", "")
+            if api_key:
+                auth_result = verify_key(api_key)
+                if not auth_result.get("valid"):
+                    from fastapi.responses import JSONResponse
+                    return JSONResponse({"detail": "Invalid API key"}, status_code=401)
+                request.state.role = auth_result.get("role", "viewer")
+            # Allow unauthenticated for localhost (dev mode)
+            elif request.client and request.client.host in ("127.0.0.1", "localhost", "::1"):
+                request.state.role = "admin"
+            else:
+                request.state.role = "viewer"  # Read-only for unknown callers
+            return await call_next(request)
+
+    app.add_middleware(AuthMiddleware)
+    log.info("[AUTH] Middleware active (was orphaned)")
+except ImportError:
+    log.warning("[AUTH] auth.py not available — endpoints unauthenticated")
 
 
 # ─── Models ──────────────────────────────────────────────────────────────────
@@ -283,8 +385,11 @@ async def get_scores():
 
 
 @app.post("/pulse")
-async def trigger_pulse():
+async def trigger_pulse(request: Request = None):
     """Manually trigger a heartbeat pulse."""
+    # License guard on execution (was ORPHAN — no enforcement)
+    if hasattr(app.state, 'license_valid') and not app.state.license_valid:
+        return {"error": "License expired or invalid. Activate VIP key.", "status": "blocked"}
     await scheduler._pulse()
     scheduler.pulse_count += 1
     scheduler.last_pulse = datetime.now(timezone.utc).isoformat()
@@ -307,48 +412,53 @@ async def start_chain(chain_name: str, project: str = "", context: str = ""):
 
 # ─── #15: Real-Time SSE Event Stream ─────────────────────────────────────────
 
-from asyncio import Queue
 from fastapi.responses import StreamingResponse
 
-event_subscribers: list[Queue] = []
-
-
-async def broadcast_event(event: dict):
-    """Push event to all SSE subscribers."""
-    dead = []
-    for q in event_subscribers:
-        try:
-            await q.put(event)
-        except Exception:
-            dead.append(q)
-    for q in dead:
-        event_subscribers.remove(q)
+# SSE Streaming — now uses full EventBus (was ORPHAN inline version)
+try:
+    from sse_streaming import get_bus, stream_task_events
+    _sse_bus = get_bus()
+    log.info("[SSE] EventBus active (was inline orphan)")
+except ImportError:
+    _sse_bus = None
+    log.warning("[SSE] sse_streaming.py not available")
 
 
 @app.get("/events")
-async def sse_stream():
-    """Server-Sent Events stream for real-time updates."""
-    queue = Queue()
-    event_subscribers.append(queue)
-
-    async def event_generator():
-        try:
-            yield f"data: {json.dumps({'type': 'connected', 'subscribers': len(event_subscribers)})}\n\n"
-            while True:
-                event = await queue.get()
-                yield f"data: {json.dumps(event, default=str)}\n\n"
-        except asyncio.CancelledError:
-            event_subscribers.remove(queue)
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+async def sse_stream(task_id: str = "", modes: str = "updates,scores"):
+    """Server-Sent Events stream with filtering (upgraded from inline to full EventBus)."""
+    if not _sse_bus:
+        return {"error": "SSE not available"}
+    mode_list = [m.strip() for m in modes.split(",")]
+    return StreamingResponse(
+        stream_task_events(_sse_bus, task_id, mode_list),
+        media_type="text/event-stream"
+    )
 
 
-# Override task endpoints to broadcast events
+@app.get("/events/history/{task_id}")
+async def sse_history(task_id: str, limit: int = 50):
+    """Get recent events for a task (new endpoint)."""
+    if not _sse_bus:
+        return []
+    return _sse_bus.get_history(task_id, limit)
+
+
+@app.get("/events/stats")
+async def sse_stats():
+    """SSE bus statistics (new endpoint)."""
+    if not _sse_bus:
+        return {}
+    return _sse_bus.stats()
+
+
+# Override task endpoints to emit SSE events
 _orig_complete = complete_task
 @app.post("/tasks/{task_id}/complete", response_model=None)
 async def complete_task_with_event(task_id: str, req: TaskComplete):
     result = await _orig_complete(task_id, req)
-    await broadcast_event({"type": "task_completed", "task_id": task_id, "score": req.score})
+    if _sse_bus:
+        _sse_bus.emit(task_id, "task_complete", {"score": req.score})
     return result
 
 
@@ -497,13 +607,6 @@ async def test_webhook(url: str, event: str = "test"):
 # ─── #20: Visual DAG Dashboard ──────────────────────────────────────────────
 
 from fastapi.responses import HTMLResponse, FileResponse
-
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():

@@ -451,6 +451,21 @@ def cmd_full_cycle(args):
     rules = check_crystallization(journal)
     results["rules"] = [r.get("pattern", "") for r in rules]
 
+    # 4.5. Regression test via eval_suite (new: was not wired)
+    try:
+        from eval_suite import run_suite
+        eval_result = run_suite()
+        results["eval_suite"] = {
+            "total": eval_result.get("total", 0),
+            "passed": eval_result.get("passed", 0),
+            "failed": eval_result.get("failed", 0),
+            "regression": eval_result.get("regression", False),
+        }
+        if eval_result.get("regression"):
+            log.warning("[EVOLUTION] REGRESSION DETECTED — eval suite found quality drop")
+    except Exception as e:
+        results["eval_suite"] = {"error": str(e)[:100]}
+
     # 5. Update changelog + audit trail
     append_changelog(journal, weight_result, ckpt, rules)
 
