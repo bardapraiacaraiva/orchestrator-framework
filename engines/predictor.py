@@ -28,13 +28,6 @@ sys.path.insert(0, str(ORCH_DIR))
 
 from db import DB
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("predictor")
 
@@ -80,7 +73,8 @@ def predict(task_id: str = "", skill: str = "", model: str = "sonnet",
         y = YAML()
         qf = ORCH_DIR / "quality" / "skill-metrics.yaml"
         if qf.exists():
-            yaml_metrics = y.load(open(str(qf), 'r', encoding='utf-8'))
+            with open(str(qf), 'r', encoding='utf-8') as _qf:
+                yaml_metrics = y.load(_qf)
             skill_yaml = (yaml_metrics or {}).get("skills", {}).get(skill, {})
         else:
             skill_yaml = {}
@@ -90,7 +84,8 @@ def predict(task_id: str = "", skill: str = "", model: str = "sonnet",
     # Compute predictions
     if skill_stats and skill_stats.get("executions", 0) >= 2:
         avg_quality = skill_stats["avg_score"]
-        avg_tokens = skill_yaml.get("avg_tokens") or 2500
+        # Try to get real token avg from DB budget data (fixed: was always 2500)
+        avg_tokens = skill_stats.get("avg_tokens") or skill_yaml.get("avg_tokens") or DEFAULTS["avg_tokens"]
         revision_rate = skill_yaml.get("revision_rate") or 0.0
         confidence = min(0.5 + skill_stats["executions"] * 0.05, 0.95)
     elif isinstance(skill_yaml, dict) and skill_yaml.get("total_executions", 0) > 0:

@@ -1,0 +1,158 @@
+affinity_graph:
+  dario-brand + dario-content:
+    avg_combined_score: 82.5
+    co_activations: 4
+    notes: Brand voice guides content production
+    weight: 0.55
+  dario-brand + dario-naming:
+    avg_combined_score: 82.4
+    co_activations: 4
+    notes: Naming derives from brand identity
+    weight: 0.55
+  dario-brand + dario-offer:
+    avg_combined_score: 80.5
+    co_activations: 4
+    notes: Brand positioning feeds offer creation
+    weight: 0.55
+  dario-brand + dario-story-circle:
+    avg_combined_score: 76.5
+    co_activations: 3
+    notes: Brand archetype drives narrative
+    weight: 0.5
+  dario-brand + seo-plan:
+    avg_combined_score: 83.2
+    co_activations: 3
+    notes: Brand keywords inform SEO strategy
+    weight: 0.5
+  dario-content + dario-social:
+    avg_combined_score: 82.0
+    co_activations: 2
+    notes: Content repurposed for social media
+    weight: 0.5
+  dario-diagnose + dario-proposal:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Diagnosis feeds proposal scope
+    weight: 0.5
+  dario-diagnose + seo-audit:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Diagnostic + SEO audit = complete picture
+    weight: 0.5
+  dario-funnel + dario-ads-blueprint:
+    avg_combined_score: 80.0
+    co_activations: 2
+    notes: Ads drive traffic into funnel
+    weight: 0.5
+  dario-kw-cluster + dario-content:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Keyword clusters guide content creation
+    weight: 0.5
+  dario-kw-cluster + seo-plan:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Keyword clusters shape site architecture
+    weight: 0.5
+  dario-offer + dario-email-seq:
+    avg_combined_score: 80.0
+    co_activations: 2
+    notes: Email sequences nurture toward the offer
+    weight: 0.5
+  dario-offer + dario-sales-letter:
+    avg_combined_score: 80.0
+    co_activations: 2
+    notes: Sales letter delivers the offer
+    weight: 0.5
+  dario-pipeline + dario-proposal:
+    avg_combined_score: 82.0
+    co_activations: 2
+    notes: Pipeline leads to proposals
+    weight: 0.5
+  dario-proposal + diva-contract:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Accepted proposal becomes construction contract
+    weight: 0.5
+  dario-wp-audit + dario-cwv-fix:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Audit finds issues, CWV fixes them
+    weight: 0.5
+  dario-wp-audit + seo-technical:
+    avg_combined_score: 81.5
+    co_activations: 3
+    notes: WP audit overlaps with technical SEO
+    weight: 0.5
+  diva-briefing + diva-diagnose:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Briefing captures requirements, diagnose assesses reality
+    weight: 0.5
+  diva-briefing + diva-floor-plan:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Briefing room requirements drive floor plan
+    weight: 0.5
+  diva-briefing + diva-moodboard:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Briefing style preferences drive moodboard
+    weight: 0.5
+  diva-budget + diva-timeline:
+    avg_combined_score: 82.0
+    co_activations: 2
+    notes: Budget constrains timeline, timeline affects budget
+    weight: 0.5
+  diva-floor-plan + diva-budget:
+    avg_combined_score: 82.0
+    co_activations: 2
+    notes: Floor plan areas determine budget quantities
+    weight: 0.5
+  diva-floor-plan + diva-energy:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Floor plan data needed for energy certification
+    weight: 0.5
+  diva-moodboard + diva-materials:
+    avg_combined_score: 85.0
+    co_activations: 2
+    notes: Visual direction feeds material selection
+    weight: 0.65
+  diva-timeline + diva-roadmap:
+    avg_combined_score: 0
+    co_activations: 0
+    notes: Timeline feeds into project roadmap
+    weight: 0.5
+  seo-audit + seo-plan:
+    avg_combined_score: 82.2
+    co_activations: 3
+    notes: Audit findings feed strategy
+    weight: 0.5
+  seo-audit + seo-schema:
+    avg_combined_score: 81.4
+    co_activations: 3
+    notes: Audit reveals schema gaps
+    weight: 0.5
+  seo-audit + seo-technical:
+    avg_combined_score: 81.4
+    co_activations: 3
+    notes: Full audit includes technical checks
+    weight: 0.5
+  seo-content + seo-plan:
+    avg_combined_score: 80.8
+    co_activations: 3
+    notes: Content audit informs content strategy
+    weight: 0.5
+  seo-local + seo-schema:
+    avg_combined_score: 81.8
+    co_activations: 3
+    notes: Local SEO needs LocalBusiness schema
+    weight: 0.5
+reinforcement:
+  failure_decrement: 0.05
+  max_weight: 1.0
+  min_weight: 0.1
+  on_failure_threshold: 50
+  on_success_threshold: 85
+  success_increment: 0.05

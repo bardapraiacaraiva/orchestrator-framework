@@ -25,13 +25,6 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("memory_scoring")
 
@@ -44,21 +37,22 @@ DEFAULT_WEIGHTS = {
 
 # Importance keywords → boost
 IMPORTANCE_KEYWORDS = {
-    "critico": 1.0,
-    "critical": 1.0,
-    "decisao": 0.9,
-    "decision": 0.9,
-    "bloqueado": 0.8,
-    "blocked": 0.8,
-    "cliente": 0.7,
-    "client": 0.7,
-    "orcamento": 0.7,
-    "budget": 0.7,
-    "prazo": 0.6,
-    "deadline": 0.6,
-    "legal": 0.8,
-    "contrato": 0.8,
-    "contract": 0.8,
+    # Critical
+    "critico": 1.0, "critical": 1.0, "urgente": 1.0, "urgent": 1.0,
+    # Decisions
+    "decisao": 0.9, "decision": 0.9, "aprovado": 0.9, "approved": 0.9,
+    # Blockers
+    "bloqueado": 0.8, "blocked": 0.8, "impedimento": 0.8,
+    # Client/financial
+    "cliente": 0.7, "client": 0.7, "orcamento": 0.7, "budget": 0.7,
+    # Legal/contracts
+    "legal": 0.8, "contrato": 0.8, "contract": 0.8, "rgpd": 0.8,
+    # Deadlines
+    "prazo": 0.6, "deadline": 0.6, "vencimento": 0.6, "entrega": 0.6,
+    # Risk
+    "risco": 0.7, "risk": 0.7, "perda": 0.7, "multa": 0.8, "penalidade": 0.8,
+    # Priority
+    "prioritario": 0.8, "priority": 0.8, "importante": 0.7, "important": 0.7,
 }
 
 # Scope priority: more specific = higher boost

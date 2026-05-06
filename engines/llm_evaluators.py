@@ -27,13 +27,6 @@ import logging
 import sys
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 sys.path.insert(0, str(ORCH_DIR))
 
@@ -90,14 +83,71 @@ Score 0-100. Respond ONLY as JSON:
 
 # Skill → expected tone mapping
 SKILL_TONES = {
+    # Marketing & copy
     "dario-brand": ("brand positioning document", "professional, strategic, confident"),
     "dario-offer": ("sales offer", "persuasive, value-focused, urgent"),
     "dario-sales-letter": ("long-form sales letter", "emotional, storytelling, persuasive"),
     "dario-proposal": ("commercial proposal", "professional, clear, structured"),
+    "dario-naming": ("brand naming candidates", "creative, concise, memorable"),
+    "dario-story-circle": ("brand origin story", "narrative, emotional, authentic"),
+    "dario-pitch": ("investor pitch deck", "confident, data-backed, visionary"),
+    "dario-content": ("blog/article content", "informative, engaging, SEO-aware"),
+    "dario-social": ("social media post", "casual, engaging, platform-native"),
+    "dario-pr": ("press release", "formal, newsworthy, factual"),
+    "dario-email-seq": ("email sequence", "conversational, persuasive, progressive"),
+    "dario-ads-blueprint": ("ad campaign plan", "action-oriented, metric-driven, clear"),
+    "dario-funnel": ("sales funnel design", "strategic, conversion-focused, systematic"),
+    "dario-pipeline": ("sales pipeline plan", "structured, data-driven, actionable"),
+    # Technical
     "seo-audit": ("technical audit report", "analytical, data-driven, actionable"),
+    "seo-technical": ("technical SEO report", "precise, systematic, evidence-based"),
+    "seo-local": ("local SEO analysis", "specific, location-aware, actionable"),
+    "seo-plan": ("SEO strategy document", "strategic, data-backed, prioritized"),
+    "seo-content": ("content quality analysis", "evaluative, constructive, specific"),
     "dario-wp-audit": ("WordPress audit", "technical, structured, prioritized"),
+    "dario-woo-audit": ("WooCommerce audit", "technical, commerce-focused, prioritized"),
     "dario-diagnose": ("diagnostic report", "consultative, thorough, prioritized"),
+    "dario-pentest-checklist": ("security assessment", "precise, severity-ranked, technical"),
+    "dario-sop": ("standard procedure", "clear, step-by-step, unambiguous"),
+    # DIVA
     "diva-briefing": ("architecture briefing", "professional, detailed, systematic"),
+    "diva-budget": ("construction budget", "precise, itemized, reference-backed"),
+    "diva-moodboard": ("design concept board", "visual, evocative, style-coherent"),
+    "diva-materials": ("material specification", "technical, brand-specific, sourced"),
+    "diva-timeline": ("construction timeline", "structured, realistic, milestone-based"),
+    "diva-contract": ("construction contract", "formal, legal, comprehensive"),
+    "diva-diagnose": ("site diagnostic", "technical, evidence-based, prioritized"),
+    "diva-roadmap": ("project roadmap", "strategic, phased, actionable"),
+    # Finance
+    "dario-financial-model": ("financial model", "precise, assumption-explicit, data-driven"),
+    "dario-saas-metrics": ("SaaS dashboard", "metric-focused, benchmark-compared, concise"),
+    # A360
+    "a360-avatar": ("customer avatar", "detailed, psychographic, empathetic"),
+    "a360-oferta": ("irresistible offer", "value-stacked, urgent, specific"),
+    "a360-nicho": ("niche analysis", "data-driven, market-specific, validated"),
+    "a360-pitch": ("investor pitch", "confident, traction-focused, visionary"),
+}
+
+# Evaluator weights by skill type
+SKILL_EVAL_WEIGHTS = {
+    # Technical: faithfulness matters most
+    "technical": {"faithfulness": 0.40, "completeness": 0.30, "relevance": 0.20, "tone": 0.10},
+    # Creative: tone and relevance matter more
+    "creative": {"faithfulness": 0.20, "completeness": 0.20, "relevance": 0.30, "tone": 0.30},
+    # Default balanced
+    "default": {"faithfulness": 0.30, "completeness": 0.25, "relevance": 0.25, "tone": 0.20},
+}
+
+SKILL_EVAL_TYPE = {
+    "seo-audit": "technical", "seo-technical": "technical", "seo-schema": "technical",
+    "dario-wp-audit": "technical", "dario-woo-audit": "technical", "dario-cwv-fix": "technical",
+    "dario-pentest-checklist": "technical", "dario-sop": "technical",
+    "dario-financial-model": "technical", "dario-saas-metrics": "technical",
+    "diva-budget": "technical", "diva-licensing": "technical", "diva-energy": "technical",
+    "dario-brand": "creative", "dario-naming": "creative", "dario-story-circle": "creative",
+    "dario-sales-letter": "creative", "dario-content": "creative", "dario-social": "creative",
+    "dario-pitch": "creative", "dario-offer": "creative",
+    "diva-moodboard": "creative", "diva-render-brief": "creative",
 }
 
 
@@ -225,13 +275,27 @@ def evaluate_full(output: str, context: str = "", query: str = "", skill: str = 
         if r.get("score", -1) >= 0:
             results.append(r)
 
-    # Composite score (weighted average)
-    valid_scores = [r["score"] for r in results if r.get("score", -1) >= 0]
-    composite = round(sum(valid_scores) / len(valid_scores), 1) if valid_scores else -1
+    # Composite score with skill-type weights (fixed: was unweighted average)
+    eval_type = SKILL_EVAL_TYPE.get(skill, "default") if skill else "default"
+    weights = SKILL_EVAL_WEIGHTS.get(eval_type, SKILL_EVAL_WEIGHTS["default"])
+
+    weighted_sum = 0
+    weight_total = 0
+    for r in results:
+        if r.get("score", -1) < 0:
+            continue
+        evaluator = r.get("evaluator", "")
+        w = weights.get(evaluator, 0.25)
+        weighted_sum += r["score"] * w
+        weight_total += w
+
+    composite = round(weighted_sum / weight_total, 1) if weight_total > 0 else -1
 
     return {
         "composite_score": composite,
         "evaluators_run": len(results),
+        "eval_type": eval_type,
+        "weights_used": weights,
         "results": results,
     }
 

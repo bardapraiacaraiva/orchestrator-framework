@@ -31,13 +31,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("termination")
 
@@ -210,25 +203,27 @@ class QualityReached(TerminationCondition):
 
 
 class StallDetection(TerminationCondition):
-    """Stop when last N outputs/scores are identical (agent is stuck)."""
+    """Stop when last N outputs/scores are near-identical (agent is stuck)."""
     name = "stall_detection"
 
-    def __init__(self, window: int = 3):
+    def __init__(self, window: int = 3, tolerance: int = 2):
         self.window = window
+        self.tolerance = tolerance  # Max score spread to consider "stalled"
 
     def check(self, ctx: dict) -> TerminationResult:
         scores = ctx.get("last_scores", [])
         outputs = ctx.get("last_outputs", [])
 
-        # Check score stall
+        # Check score stall (fixed: was exact-only, now uses tolerance)
         if len(scores) >= self.window:
             recent = scores[-self.window:]
-            if len(set(recent)) == 1:
+            spread = max(recent) - min(recent)
+            if spread <= self.tolerance:
                 return TerminationResult(
                     should_stop=True,
-                    reason=f"Stall detected: last {self.window} scores identical ({recent[0]})",
+                    reason=f"Stall detected: last {self.window} scores within {self.tolerance} points ({recent})",
                     condition_name=self.name,
-                    details={"stalled_scores": recent},
+                    details={"stalled_scores": recent, "spread": spread},
                 )
 
         # Check output stall (same output hash)
@@ -267,6 +262,28 @@ class MaxSteps(TerminationCondition):
 
     def __repr__(self):
         return f"MaxSteps({self.max_steps})"
+
+
+class CostLimit(TerminationCondition):
+    """Stop when estimated cost exceeds USD limit (per-task cost ceiling)."""
+    name = "cost_limit"
+
+    def __init__(self, max_usd: float = 5.0):
+        self.max_usd = max_usd
+
+    def check(self, ctx: dict) -> TerminationResult:
+        cost = ctx.get("estimated_cost_usd", 0) or ctx.get("cost_usd", 0)
+        if cost >= self.max_usd:
+            return TerminationResult(
+                should_stop=True,
+                reason=f"Cost limit: ${cost:.2f} >= ${self.max_usd:.2f}",
+                condition_name=self.name,
+                details={"cost_usd": cost, "limit": self.max_usd},
+            )
+        return TerminationResult(should_stop=False)
+
+    def __repr__(self):
+        return f"CostLimit(${self.max_usd})"
 
 
 class BudgetPercent(TerminationCondition):
@@ -311,7 +328,7 @@ class TripwireTriggered(TerminationCondition):
 
 def default_task_conditions() -> TerminationCondition:
     """Default conditions for single task execution."""
-    return TokenLimit(100_000) | Timeout(600) | TripwireTriggered()
+    return TokenLimit(100_000) | Timeout(900) | CostLimit(5.0) | TripwireTriggered()
 
 
 def chain_conditions() -> TerminationCondition:

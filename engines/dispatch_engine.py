@@ -28,13 +28,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 # --- YAML handling (try ruamel for round-trip, fallback to PyYAML) ---
 try:
     from ruamel.yaml import YAML
@@ -283,6 +276,77 @@ KEYWORD_SKILL_MAP = {
     "licensing": "diva-licensing", "camara": "diva-licensing", "alvara": "diva-licensing", "licenciamento": "diva-licensing", "licença": "diva-licensing",
     "energy": "diva-energy", "sce": "diva-energy",
     "smart home": "diva-smart-home", "domotica": "diva-smart-home",
+    # DIVA (extended)
+    "briefing": "diva-briefing", "questionario": "diva-briefing",
+    "bim": "diva-bim", "revit": "diva-bim", "archicad": "diva-bim",
+    "landscape": "diva-landscape", "paisagismo": "diva-landscape", "jardim": "diva-landscape",
+    "mep": "diva-mep", "avac": "diva-mep", "canalizacao": "diva-mep",
+    "acoustics": "diva-acoustics", "acustica": "diva-acoustics", "isolamento sonoro": "diva-acoustics",
+    "accessibility": "diva-accessibility", "mobilidade reduzida": "diva-accessibility",
+    "ffe": "diva-ffe", "mobiliario projecto": "diva-ffe",
+    "pss": "diva-inspection", "seguranca obra": "diva-inspection",
+    "roadmap projecto": "diva-roadmap",
+    "portfolio caso": "diva-portfolio",
+    "comparar propostas": "diva-comparador", "comparador": "diva-comparador",
+    "planradar": "diva-planradar",
+    "render brief": "diva-render-brief",
+    "vision foto": "diva-vision", "analisar foto": "diva-vision",
+    # Marketing (extended)
+    "content": "dario-content", "editorial": "dario-content", "blog post": "dario-content", "artigo": "dario-content",
+    "social media": "dario-social", "instagram": "dario-social", "linkedin": "dario-social", "tiktok": "dario-social", "reels": "dario-social",
+    "press release": "dario-pr", "comunicado": "dario-pr", "media": "dario-pr",
+    "cro": "dario-cro", "conversion": "dario-cro", "ab test": "dario-cro",
+    "data analytics": "dario-data", "google analytics": "dario-data",
+    "movement": "dario-movement", "tribal": "dario-movement", "comunidade": "dario-movement",
+    "product": "dario-product", "prd": "dario-product", "user stories": "dario-product", "sprint": "dario-product",
+    "layout": "dario-layout-visual", "typography": "dario-layout-visual", "grid": "dario-layout-visual",
+    # HR / Legal / Support
+    "hiring": "dario-hr", "recruitment": "dario-hr", "recrutamento": "dario-hr", "job description": "dario-hr",
+    "legal": "dario-legal", "nda": "dario-legal", "termos servico": "dario-legal", "rgpd": "dario-legal",
+    "support ticket": "dario-support", "faq": "dario-support", "helpdesk": "dario-support",
+    # C-Level
+    "c-level": "dario-c-level", "okr": "dario-c-level", "strategic vision": "dario-c-level", "visao estrategica": "dario-c-level",
+    # A360 Skills
+    "nicho": "a360-nicho", "tam sam": "a360-nicho", "market validation": "a360-nicho",
+    "avatar": "a360-avatar", "buyer persona": "a360-avatar", "cliente ideal": "a360-avatar",
+    "case study": "a360-case-study", "caso sucesso": "a360-case-study",
+    "funil aquisicao": "a360-funil", "lead magnet": "a360-funil",
+    "growth engine": "a360-growth", "viral loop": "a360-growth", "referral": "a360-growth",
+    "lancamento": "a360-lancamento", "launch": "a360-lancamento", "pre-launch": "a360-lancamento",
+    "metricas negocio": "a360-metricas", "burn rate": "a360-metricas", "runway": "a360-metricas",
+    "business model": "a360-modelo", "unit economics": "a360-modelo", "revenue stream": "a360-modelo",
+    "grand slam": "a360-oferta", "irresistible offer": "a360-oferta",
+    "investor pitch": "a360-pitch", "fundraising": "a360-pitch",
+    "scaling": "a360-scale", "escalar": "a360-scale", "milestone": "a360-scale",
+    "validacao": "a360-validacao", "smoke test": "a360-validacao", "mvp": "a360-validacao",
+    # ATLAS Events
+    "evento": "atlas-briefing", "event planning": "atlas-briefing",
+    "venue": "atlas-venue", "espaco evento": "atlas-venue",
+    "catering": "atlas-catering", "menu evento": "atlas-catering",
+    "av setup": "atlas-av", "som evento": "atlas-av", "iluminacao evento": "atlas-av",
+    "event budget": "atlas-budget", "orcamento evento": "atlas-budget",
+    "rsvp": "atlas-guest", "convidados": "atlas-guest",
+    "event marketing": "atlas-marketing", "promover evento": "atlas-marketing",
+    "staffing evento": "atlas-staff", "equipa evento": "atlas-staff",
+    "event timeline": "atlas-timeline", "run of show": "atlas-timeline",
+    "sponsor": "atlas-sponsor", "patrocinio": "atlas-sponsor",
+    "hybrid event": "atlas-hybrid", "evento virtual": "atlas-hybrid",
+    # LUCAS internal
+    "budget tracking": "lucas-budget-tracking", "token usage": "lucas-budget-tracking",
+    "cost alert": "lucas-cost-alerting",
+    "stale task": "lucas-stale-detection",
+    "system health": "lucas-health-monitoring",
+    "feedback loop": "lucas-feedback-loop",
+    "skill evaluation": "lucas-skill-evaluation",
+    "revenue tracking": "lucas-revenue-tracking",
+    # Contabilidade
+    "facturacao": "conta-facturacao", "e-fatura": "conta-facturacao", "saft": "conta-facturacao",
+    "iva": "conta-iva", "declaracao iva": "conta-iva",
+    "irc": "conta-irc", "modelo 22": "conta-irc",
+    "payroll": "conta-payroll", "salarios": "conta-payroll", "dmr": "conta-payroll",
+    "balancete": "conta-relatorios", "demonstracao resultados": "conta-relatorios",
+    # Restaurante
+    "restaurante": "skill-restaurante-pt", "menu": "skill-restaurante-pt", "gastronomico": "skill-restaurante-pt",
 }
 
 
@@ -333,12 +397,15 @@ def get_weight_boost(skill: str, weights: dict) -> float:
     for pair_key, pair_data in weights.items():
         if not isinstance(pair_data, dict):
             continue
-        if skill in str(pair_key):
-            weight = float(pair_data.get("weight", 0.5))
-            co_activations = int(pair_data.get("co_activations", 0))
-            if weight > 0.5 and co_activations > 0:
-                # Boost proportional to weight above baseline
-                boosts.append(weight - 0.5)
+        # Parse pair key correctly: "skill-a + skill-b"
+        parts = [p.strip() for p in pair_key.split(" + ")]
+        if skill not in parts:
+            continue
+        weight = float(pair_data.get("weight", 0.5))
+        co_activations = int(pair_data.get("co_activations", 0))
+        if weight > 0.5 and co_activations > 0:
+            # Boost proportional to weight above baseline
+            boosts.append(weight - 0.5)
 
     if boosts:
         avg_boost = sum(boosts) / len(boosts)

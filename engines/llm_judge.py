@@ -37,13 +37,6 @@ sys.path.insert(0, str(ORCH_DIR))
 
 from db import DB
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 PYTHON = sys.executable
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("judge")
@@ -95,17 +88,19 @@ PASS THRESHOLD: {threshold}/100
 
 OUTPUT TO EVALUATE:
 ---
-{output[:4000]}
+{output[:8000]}
 ---
 
 INSTRUCTIONS:
-1. Score each dimension from 0.0 to 1.0 based on the scoring guide
-2. Calculate weighted total: score = sum(weight_i * dimension_i) * 100
-3. Determine action: score >= {threshold} → "ship", score < {threshold} → "revision"
-4. If score >= 90 → "success_pattern"
+1. First THINK about the quality in <thinking> tags (2-3 sentences)
+2. Score each dimension from 0.0 to 1.0 based on the scoring guide
+3. Calculate weighted total: score = sum(weight_i * dimension_i) * 100
+4. Determine action: score >= {threshold} → "ship", score < {threshold} → "revision"
+5. If score >= 90 → "success_pattern"
 
-Respond with ONLY valid JSON (no markdown, no explanation):
-{{"score": <int 0-100>, "action": "<ship|revision|success_pattern>", "dimensions": {{"<name>": <float 0.0-1.0>}}, "feedback": "<one specific sentence>"}}"""
+Response format:
+<thinking>Brief reasoning about quality...</thinking>
+{{"score": <int 0-100>, "action": "<ship|revision|success_pattern>", "dimensions": {{"<name>": <float 0.0-1.0>}}, "feedback": "<one specific improvement suggestion>"}}"""
 
 
 def score_via_api(prompt: str) -> dict:
@@ -116,7 +111,7 @@ def score_via_api(prompt: str) -> dict:
 
         response = client.messages.create(
             model=HAIKU_MODEL,
-            max_tokens=300,
+            max_tokens=500,
             messages=[{"role": "user", "content": prompt}],
         )
 

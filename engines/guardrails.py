@@ -32,13 +32,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -163,7 +156,7 @@ def validate_task(task_id: str, strict: bool = False) -> dict:
     assignee_ok = True
     if assignee and assignee != "null":
         if COMPANY_FILE.exists():
-            company = load_yaml(str(COMPANY_FILE)) if not 'company' in dir() else company
+            company = load_yaml(str(COMPANY_FILE)) if 'company' not in locals() else company
             workers = company.get("workers", {})
             agents = company.get("agents", {})
             valid_ids = set(workers.keys())

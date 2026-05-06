@@ -29,13 +29,6 @@ import logging
 import sys
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -232,6 +225,158 @@ SKILL_PROFILES = {
     "dario-diagnose": {
         "dimensions": ["completeness", "actionability", "accuracy", "specificity", "strategic_coherence"],
         "weights": [0.25, 0.25, 0.20, 0.15, 0.15],
+        "pass_threshold": 65,
+    },
+
+    # --- ADDED: Marketing extended ---
+    "dario-content": {
+        "dimensions": ["creativity", "specificity", "seo_impact", "tone", "completeness"],
+        "weights": [0.25, 0.20, 0.20, 0.20, 0.15],
+        "pass_threshold": 65,
+    },
+    "dario-social": {
+        "dimensions": ["creativity", "tone", "actionability", "specificity"],
+        "weights": [0.30, 0.30, 0.20, 0.20],
+        "pass_threshold": 60,
+    },
+    "dario-pr": {
+        "dimensions": ["tone", "specificity", "completeness", "client_readiness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "dario-ads-blueprint": {
+        "dimensions": ["actionability", "data_backed", "specificity", "strategic_coherence"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "dario-funnel": {
+        "dimensions": ["strategic_coherence", "actionability", "completeness", "specificity"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "dario-pipeline": {
+        "dimensions": ["actionability", "data_backed", "specificity", "completeness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "dario-pitch": {
+        "dimensions": ["creativity", "strategic_coherence", "specificity", "client_readiness"],
+        "weights": [0.25, 0.25, 0.25, 0.25],
+        "pass_threshold": 75,
+    },
+    "dario-proposal": {
+        "dimensions": ["specificity", "financial_accuracy", "client_readiness", "completeness"],
+        "weights": [0.25, 0.25, 0.25, 0.25],
+        "pass_threshold": 75,
+    },
+    "dario-story-circle": {
+        "dimensions": ["creativity", "tone", "specificity", "completeness"],
+        "weights": [0.35, 0.25, 0.20, 0.20],
+        "pass_threshold": 65,
+    },
+
+    # --- ADDED: SEO extended ---
+    "seo-technical": {
+        "dimensions": ["technical_depth", "accuracy", "actionability", "completeness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "seo-content": {
+        "dimensions": ["seo_impact", "completeness", "actionability", "accuracy"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "seo-schema": {
+        "dimensions": ["accuracy", "technical_depth", "completeness"],
+        "weights": [0.40, 0.35, 0.25],
+        "pass_threshold": 80,
+    },
+
+    # --- ADDED: DIVA extended ---
+    "diva-briefing": {
+        "dimensions": ["completeness", "specificity", "actionability", "client_readiness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "diva-moodboard": {
+        "dimensions": ["creativity", "visual_quality", "specificity", "completeness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "diva-materials": {
+        "dimensions": ["specificity", "accuracy", "pt_compliance", "completeness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "diva-timeline": {
+        "dimensions": ["accuracy", "completeness", "actionability", "pt_compliance"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "diva-inspection": {
+        "dimensions": ["accuracy", "completeness", "pt_compliance", "actionability"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 75,
+    },
+    "diva-contract": {
+        "dimensions": ["pt_compliance", "accuracy", "completeness", "client_readiness"],
+        "weights": [0.35, 0.25, 0.20, 0.20],
+        "pass_threshold": 80,
+    },
+    "diva-energy": {
+        "dimensions": ["pt_compliance", "accuracy", "technical_depth", "completeness"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 75,
+    },
+    "diva-diagnose": {
+        "dimensions": ["completeness", "accuracy", "actionability", "specificity"],
+        "weights": [0.25, 0.25, 0.25, 0.25],
+        "pass_threshold": 65,
+    },
+    "diva-roadmap": {
+        "dimensions": ["strategic_coherence", "completeness", "actionability", "accuracy"],
+        "weights": [0.25, 0.25, 0.25, 0.25],
+        "pass_threshold": 70,
+    },
+
+    # --- ADDED: A360 ---
+    "a360-avatar": {
+        "dimensions": ["specificity", "completeness", "data_backed", "actionability"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+    "a360-oferta": {
+        "dimensions": ["specificity", "actionability", "creativity", "completeness"],
+        "weights": [0.25, 0.25, 0.25, 0.25],
+        "pass_threshold": 70,
+    },
+    "a360-nicho": {
+        "dimensions": ["data_backed", "specificity", "completeness", "accuracy"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 65,
+    },
+
+    # --- ADDED: Finance extended ---
+    "dario-saas-metrics": {
+        "dimensions": ["financial_accuracy", "data_backed", "completeness", "actionability"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 75,
+    },
+
+    # --- ADDED: Technical extended ---
+    "dario-woo-audit": {
+        "dimensions": ["technical_depth", "accuracy", "completeness", "actionability"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
+        "pass_threshold": 70,
+    },
+    "dario-pentest-checklist": {
+        "dimensions": ["accuracy", "technical_depth", "completeness", "actionability"],
+        "weights": [0.30, 0.30, 0.20, 0.20],
+        "pass_threshold": 75,
+    },
+    "dario-sop": {
+        "dimensions": ["completeness", "actionability", "accuracy", "specificity"],
+        "weights": [0.30, 0.25, 0.25, 0.20],
         "pass_threshold": 65,
     },
 }

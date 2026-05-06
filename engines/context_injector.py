@@ -30,13 +30,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -53,7 +46,10 @@ except ImportError:
 
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 TASKS_DIR = ORCH_DIR / "tasks" / "active"
-MEMORY_DIR = Path.home() / ".claude" / "projects" / "C--Users-barda" / "memory"
+# Dynamic memory dir (fixed: was hardcoded to one user/machine)
+_project_base = Path.home() / ".claude" / "projects"
+_candidates = list(_project_base.glob("*/memory")) if _project_base.exists() else []
+MEMORY_DIR = _candidates[0] if _candidates else _project_base / "default" / "memory"
 CHAINS_FILE = ORCH_DIR / "skill_chains.yaml"
 RUNS_DIR = ORCH_DIR / "chain_runs"
 RAG_URL = "http://localhost:8420"
@@ -92,8 +88,38 @@ def get_project_memory(project: str) -> str:
 
 
 def get_previous_outputs(project: str, current_task_id: str) -> list:
-    """Get outputs from completed tasks in the same project."""
+    """Get outputs from completed tasks in the same project (DB-first, YAML fallback)."""
     outputs = []
+
+    # Try DB first (has full outputs stored)
+    try:
+        sys.path.insert(0, str(ORCH_DIR))
+        from db import DB
+        db = DB()
+        with db._conn() as conn:
+            rows = conn.execute(
+                """SELECT id, skill, quality_score, substr(completion_comment, 1, 500) as preview
+                   FROM tasks
+                   WHERE project = ? AND id != ? AND status = 'done'
+                   AND completion_comment IS NOT NULL AND length(completion_comment) > 50
+                   ORDER BY quality_score DESC
+                   LIMIT 5""",
+                (project, current_task_id),
+            ).fetchall()
+            for r in rows:
+                d = dict(r)
+                outputs.append({
+                    "task": d["id"],
+                    "skill": d["skill"],
+                    "output": d["preview"],
+                    "score": d.get("quality_score"),
+                })
+        if outputs:
+            return outputs
+    except Exception:
+        pass
+
+    # YAML fallback
     if not TASKS_DIR.exists():
         return outputs
 
@@ -113,12 +139,12 @@ def get_previous_outputs(project: str, current_task_id: str) -> list:
                 outputs.append({
                     "task": data.get("id"),
                     "skill": data.get("skill", "?"),
-                    "output": comment[:300],
+                    "output": comment[:500],
                 })
         except Exception:
             pass
 
-    return outputs[:5]  # Max 5 previous outputs
+    return outputs[:5]
 
 
 def get_chain_artifacts(project: str, skill: str) -> dict:
@@ -179,6 +205,16 @@ def search_rag(keywords: list, task_description: str = "") -> list:
                         })
         except Exception:
             pass
+
+    # Rank results with composite scoring (fixed: was orphan module, now integrated)
+    if results:
+        try:
+            from composite_memory_scoring import score_and_rank
+            project = ""  # Will be set by caller
+            ranked = score_and_rank(results, scope=project, limit=5)
+            results = [{"text": r["content"][:300], "score": r["composite"], "source": r["source"], "method": "ranked"} for r in ranked]
+        except ImportError:
+            pass  # Fallback to unranked results
 
     # Strategy 2: Keyword fallback (if semantic returned nothing)
     if not results and keywords:

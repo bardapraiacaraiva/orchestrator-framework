@@ -33,17 +33,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 ORCH_DIR = Path.home() / ".claude" / "orchestrator"
 BLOCKS_DIR = ORCH_DIR / "memory_blocks"
 
-MAX_BLOCK_SIZE = 2048  # chars
+MAX_BLOCK_SIZE = 4096  # chars (increased from 2048 — projects need more space)
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("memory_blocks")
@@ -188,6 +181,24 @@ def memory_rethink(block_name: str, new_content: str, scope: str = "global") -> 
 
 
 # =============================================================================
+# AUTO-LEARN — system writes to "learned" block after high-quality tasks
+# =============================================================================
+
+def auto_learn(insight: str, scope: str = "global", skill: str = "", score: int = 0) -> dict:
+    """
+    Automatically write a learning insight to the 'learned' block.
+    Called by executor post-execution when score >= 90.
+    """
+    if not insight or not insight.strip():
+        return {"success": False, "error": "Empty insight"}
+
+    prefix = f"[{skill} score={score}] " if skill else ""
+    entry = f"{prefix}{insight.strip()}"
+
+    return memory_insert("learned", entry, index=-1, scope=scope)
+
+
+# =============================================================================
 # SHARED MEMORY — DARIO + DIVA unified project context (Letta-inspired)
 # =============================================================================
 
@@ -204,7 +215,7 @@ def share_block(block_name: str, from_scope: str, to_scope: str) -> dict:
 def sync_project_blocks(project: str, agents: list[str] = None) -> list[dict]:
     """Sync project memory blocks across multiple agent scopes."""
     if agents is None:
-        agents = ["dario", "diva", "lucas"]
+        agents = ["dario", "diva", "lucas", "atlas", "a360"]
 
     results = []
     # Read the canonical project block

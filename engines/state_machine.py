@@ -25,13 +25,6 @@ import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 # --- YAML handling ---
 try:
     from ruamel.yaml import YAML
@@ -280,8 +273,8 @@ def evaluate_triggers(state: dict, budget_pct: float, quality: dict,
 
     # --- REFLECTIVE_PAUSE triggers ---
     if current == "ACTIVE":
-        if quality["last_3_avg"] > 0 and quality["last_3_avg"] < 60:
-            return "REFLECTIVE_PAUSE", f"Quality regression: last 3 avg = {quality['last_3_avg']:.1f} < 60"
+        if quality["last_3_avg"] > 0 and quality["last_3_avg"] < 60 and quality.get("total_scored", 0) >= 5:
+            return "REFLECTIVE_PAUSE", f"Quality regression: last 3 avg = {quality['last_3_avg']:.1f} < 60 (min 5 scored)"
 
         if 0.50 <= health < 0.70:
             return "REFLECTIVE_PAUSE", f"SystemHealth degraded: {health:.3f} (between 0.50-0.70)"
@@ -294,7 +287,10 @@ def evaluate_triggers(state: dict, budget_pct: float, quality: dict,
         if health >= 0.85 and quality["last_3_avg"] >= 60:
             return "ACTIVE", f"Recovery: health={health:.3f} >= 0.85, quality={quality['last_3_avg']:.1f} >= 60"
 
-    # --- Recovery: GUARDIAN → ACTIVE (only via manual --transition) ---
+    # --- Recovery: GUARDIAN → ACTIVE (auto-recovery when conditions improve) ---
+    if current == "GUARDIAN":
+        if budget_pct < 90 and health >= 0.70:
+            return "ACTIVE", f"Auto-recovery: budget={budget_pct:.1f}% < 90%, health={health:.3f} >= 0.70"
 
     # --- EXPANSION triggers ---
     if current == "ACTIVE" and tasks.get("all_done", False):

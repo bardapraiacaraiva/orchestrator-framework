@@ -27,13 +27,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from copy import deepcopy
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 # --- YAML handling ---
 try:
     from ruamel.yaml import YAML
@@ -74,12 +67,12 @@ STATE_FILE = ORCH_DIR / "current_state.yaml"
 CHANGELOG = EVOLUTION_DIR / "CHANGELOG.md"
 
 # Bounds
-MAX_MUTATIONS_PER_SESSION = 3
+MAX_MUTATIONS_PER_SESSION = 8
 WEIGHT_MIN = 0.1
 WEIGHT_MAX = 1.0
 WEIGHT_SUCCESS_INCREMENT = 0.05
-WEIGHT_FAILURE_DECREMENT = 0.03
-SUCCESS_THRESHOLD = 80
+WEIGHT_FAILURE_DECREMENT = 0.05  # Balanced with success (was 0.03)
+SUCCESS_THRESHOLD = 85  # Raised from 80 (too easy)
 FAILURE_THRESHOLD = 50
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
@@ -99,9 +92,9 @@ def generate_journal() -> dict:
         "avg_quality_score": 0,
         "skills_used": {},
         "skill_pairs_observed": [],
-        "dispatch_accuracy": 100,  # TODO: track actual misroutes
-        "fallback_triggered": 0,
-        "user_corrections": 0,
+        "dispatch_accuracy": 0,  # Computed below from audit logs
+        "fallback_triggered": 0,  # Computed below from audit logs
+        "user_corrections": 0,  # TODO: implement user feedback mechanism
         "observations": [],
         "evolutionary_delta": 0,
     }
@@ -136,18 +129,40 @@ def generate_journal() -> dict:
     journal["avg_quality_score"] = round(sum(all_scores) / len(all_scores), 1) if all_scores else 0
     journal["skills_used"] = skills_used
 
-    # Calculate evolutionary delta
-    if len(all_scores) >= 10:
-        last_half = all_scores[len(all_scores)//2:]
-        first_half = all_scores[:len(all_scores)//2]
-        delta = round(sum(last_half)/len(last_half) - sum(first_half)/len(first_half), 2)
-        journal["evolutionary_delta"] = delta
-    elif len(all_scores) >= 4:
-        mid = len(all_scores) // 2
-        last = all_scores[mid:]
-        first = all_scores[:mid]
-        delta = round(sum(last)/len(last) - sum(first)/len(first), 2)
-        journal["evolutionary_delta"] = delta
+    # Compute dispatch accuracy from DB audit logs
+    try:
+        sys.path.insert(0, str(ORCH_DIR))
+        from db import DB
+        db = DB()
+        audit = db.get_audit(limit=200)
+        dispatches = [e for e in audit if e.get("action") == "task_dispatch_ok"]
+        reassigns = [e for e in audit if e.get("action") in ("task_reassigned", "dispatch_fallback")]
+        fallbacks = [e for e in audit if "fallback" in str(e.get("action", "")).lower()]
+        total_dispatches = len(dispatches) + len(reassigns)
+        if total_dispatches > 0:
+            journal["dispatch_accuracy"] = round(len(dispatches) / total_dispatches * 100, 1)
+        else:
+            journal["dispatch_accuracy"] = 100  # No data yet
+        journal["fallback_triggered"] = len(fallbacks)
+    except Exception:
+        journal["dispatch_accuracy"] = 0  # Unknown
+
+    # Calculate evolutionary delta PER SKILL then average (fixed: was mixing skills)
+    per_skill_deltas = []
+    for skill_name, skill_data in skills.items():
+        if not isinstance(skill_data, dict):
+            continue
+        scores = skill_data.get("scores", [])
+        if len(scores) >= 4:
+            mid = len(scores) // 2
+            recent = scores[mid:]
+            older = scores[:mid]
+            skill_delta = sum(recent)/len(recent) - sum(older)/len(older)
+            per_skill_deltas.append(skill_delta)
+
+    if per_skill_deltas:
+        journal["evolutionary_delta"] = round(sum(per_skill_deltas) / len(per_skill_deltas), 2)
+        journal["per_skill_delta_count"] = len(per_skill_deltas)
 
     # Auto-observations
     for skill_name, skill_data in skills.items():
@@ -241,10 +256,10 @@ def update_weights() -> dict:
         old_weight = float(pair_data.get("weight", 0.5))
         new_weight = old_weight
 
-        # Check if they share a domain (co-activation proxy)
+        # Check co-activation: same domain AND both executed (fixed: was too loose)
         domain_a = data_a.get("best_domain", "")
         domain_b = data_b.get("best_domain", "")
-        co_activated = (domain_a == domain_b and domain_a != "") or (exec_a >= 2 and exec_b >= 2)
+        co_activated = (domain_a == domain_b and domain_a != "" and exec_a >= 1 and exec_b >= 1)
 
         if co_activated:
             # Update co_activations

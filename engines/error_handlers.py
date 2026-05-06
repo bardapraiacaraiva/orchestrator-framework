@@ -33,13 +33,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 log = logging.getLogger("error_handlers")
 
@@ -175,26 +168,52 @@ class ErrorHandlerRegistry:
 
     def __init__(self):
         self._handlers: dict[str, ErrorHandler] = {}
-        self._default = SkipStep("No handler defined — step skipped")
+        self._default = RetryWithModel(upgrade_to="sonnet", max_retries=1)  # Fixed: was SkipStep (silent loss)
         self._register_defaults()
 
     def _register_defaults(self):
         """Register sensible defaults per skill category."""
-        # Creative skills → retry with better model
+        # Creative/strategic → retry with Opus (needs best model)
         for skill in ["dario-brand", "dario-offer", "dario-pitch", "dario-sales-letter",
-                       "dario-story-circle", "dario-movement"]:
+                       "dario-story-circle", "dario-movement", "dario-c-level",
+                       "dario-naming", "dario-content", "dario-social", "dario-pr"]:
             self._handlers[skill] = RetryWithModel(upgrade_to="opus", max_retries=1)
 
-        # Technical skills → retry then skip
-        for skill in ["seo-schema", "seo-sitemap", "dario-sop", "dario-kw-cluster"]:
+        # Technical/analysis → retry with Sonnet
+        for skill in ["seo-schema", "seo-sitemap", "seo-audit", "seo-technical",
+                       "seo-content", "seo-local", "seo-plan", "seo-page",
+                       "dario-sop", "dario-kw-cluster", "dario-wp-audit",
+                       "dario-woo-audit", "dario-cwv-fix", "dario-diagnose",
+                       "dario-pentest-checklist", "dario-make-blueprint",
+                       "dario-cro", "dario-data"]:
             self._handlers[skill] = RetryWithModel(upgrade_to="sonnet", max_retries=1)
 
-        # Financial/legal → escalate human (too risky to auto-recover)
-        for skill in ["dario-proposal", "dario-financial-model", "diva-contract", "diva-budget"]:
+        # Financial/legal → escalate human (too risky)
+        for skill in ["dario-proposal", "dario-financial-model", "dario-pricing-calculator",
+                       "dario-legal", "dario-negotiation",
+                       "diva-contract", "diva-budget", "diva-comparador"]:
             self._handlers[skill] = EscalateHuman("Financial/legal task failed — needs human review")
 
-        # Non-critical → skip
-        for skill in ["dario-obsidian-save", "dario-rag-ingest"]:
+        # DIVA design → retry with Opus (creative)
+        for skill in ["diva-moodboard", "diva-render", "diva-render-brief", "diva-vision",
+                       "diva-materials", "diva-landscape", "diva-smart-home", "diva-ffe"]:
+            self._handlers[skill] = RetryWithModel(upgrade_to="opus", max_retries=1)
+
+        # DIVA technical → retry with Sonnet
+        for skill in ["diva-briefing", "diva-floor-plan", "diva-timeline", "diva-inspection",
+                       "diva-licensing", "diva-energy", "diva-bim", "diva-mep", "diva-acoustics",
+                       "diva-accessibility", "diva-roadmap", "diva-diagnose", "diva-planradar"]:
+            self._handlers[skill] = RetryWithModel(upgrade_to="sonnet", max_retries=1)
+
+        # A360 → retry with Sonnet
+        for skill in ["a360-avatar", "a360-nicho", "a360-oferta", "a360-funil",
+                       "a360-growth", "a360-lancamento", "a360-metricas", "a360-modelo",
+                       "a360-pitch", "a360-scale", "a360-validacao", "a360-case-study"]:
+            self._handlers[skill] = RetryWithModel(upgrade_to="sonnet", max_retries=1)
+
+        # Non-critical helpers → skip
+        for skill in ["dario-obsidian-save", "dario-rag-ingest", "diva-obsidian-save",
+                       "diva-rag-ingest", "dario-projeto", "diva-projeto"]:
             self._handlers[skill] = SkipStep("Non-critical helper task")
 
     def register(self, skill: str, handler: ErrorHandler):

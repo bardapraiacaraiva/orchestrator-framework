@@ -39,13 +39,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# License enforcement
-try:
-    from license_manager import require_license
-    require_license()
-except (ImportError, SystemExit):
-    pass  # License check skipped (dev mode)
-
 try:
     from ruamel.yaml import YAML
     yaml_engine = YAML()
@@ -218,15 +211,20 @@ def update_skill_metrics(skill: str, score: int, project: str = None,
     if not isinstance(sd.get("live_scores"), list):
         sd["live_scores"] = []
 
-    # Add score
+    # Add score with timestamp (fixed: was unbounded + no timestamp)
     sd["scores"].append(score)
+    sd["scores"] = sd["scores"][-100:]  # Cap at 100 (prevent unbounded growth)
     if source == "live":
         sd["live_scores"].append(score)
+        sd["live_scores"] = sd["live_scores"][-100:]
     sd["total_executions"] = (sd.get("total_executions") or 0) + 1
+    sd["last_scored_at"] = datetime.now(timezone.utc).isoformat()
 
-    # Recalculate averages
+    # Recalculate averages using RECENT scores only (fixed: was using all-time)
+    recent_scores = sd["scores"][-20:]  # Last 20 = current performance
     all_scores = sd["scores"]
-    sd["avg_quality_score"] = round(sum(all_scores) / len(all_scores), 1)
+    sd["avg_quality_score"] = round(sum(recent_scores) / len(recent_scores), 1)
+    sd["avg_quality_alltime"] = round(sum(all_scores) / len(all_scores), 1)
     sd["best_score"] = max(all_scores)
     sd["worst_score"] = min(all_scores)
 
