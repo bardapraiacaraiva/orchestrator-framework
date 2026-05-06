@@ -40,7 +40,7 @@ LICENSE_FILE = ORCH_DIR / "license.json"
 FINGERPRINT_FILE = ORCH_DIR / ".fingerprint"
 
 # License validation server (phone-home)
-LICENSE_SERVER = "https://api.bfranca.com/license"  # Future: real server
+LICENSE_SERVER = "http://31.97.53.231:8099/license"
 PHONE_HOME_INTERVAL_HOURS = 24  # Check every 24h
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
