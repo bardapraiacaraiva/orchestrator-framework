@@ -171,7 +171,7 @@ function readLicense() {
 function checkLicenseStatus(license) {
   // No license = BLOCKED
   if (!license.tier || license.tier === 'none' || !license.key) {
-    return { valid: false, status: 'no_license', tier: 'none', message: 'No license found. Install with: npx orchestrator-ai-framework init --license YOUR-KEY. Get your key at bfranca.com/orchestrator' };
+    return { valid: false, status: 'no_license', tier: 'none', message: 'No license found. Install with: npx orchestrator-ai-framework init --license YOUR-KEY. Get your key at automationsolutionai.com/orchestrator' };
   }
 
   // VIP tier — NEVER expires, full access forever
@@ -188,10 +188,10 @@ function checkLicenseStatus(license) {
     const expires = new Date(license.expires_at);
     if (now < expires) {
       const days_remaining = Math.ceil((expires - now) / 86400000);
-      return { valid: true, status: 'trial', tier: 'trial', days_remaining, message: `Free trial: ${days_remaining} days remaining. Upgrade at bfranca.com/orchestrator` };
+      return { valid: true, status: 'trial', tier: 'trial', days_remaining, message: `Free trial: ${days_remaining} days remaining. Upgrade at automationsolutionai.com/orchestrator` };
     }
     // Trial expired — BLOCKED until they pay
-    return { valid: false, status: 'trial_expired', tier: 'expired', message: 'Free trial expired (14 days). Upgrade to Pro to continue: bfranca.com/orchestrator' };
+    return { valid: false, status: 'trial_expired', tier: 'expired', message: 'Free trial expired (14 days). Upgrade to Pro to continue: automationsolutionai.com/orchestrator' };
   }
 
   if (!license.expires_at) {
@@ -213,7 +213,7 @@ function checkLicenseStatus(license) {
   }
 
   // Expired past grace — BLOCKED until renewal
-  return { valid: false, status: 'expired', tier: 'none', message: 'License expired. All access blocked. Renew at bfranca.com/orchestrator/#pricing' };
+  return { valid: false, status: 'expired', tier: 'none', message: 'License expired. All access blocked. Renew at automationsolutionai.com/orchestrator/#pricing' };
 }
 
 // === FEATURE GATING ===

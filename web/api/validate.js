@@ -89,7 +89,7 @@ export default async function handler(req, res) {
     return res.status(404).json({
       valid: false,
       status: 'not_found',
-      message: 'License key not found. Check your key or purchase at bfranca.com/orchestrator'
+      message: 'License key not found. Check your key or purchase at automationsolutionai.com/orchestrator'
     });
   }
 

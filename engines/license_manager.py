@@ -14,8 +14,8 @@ Usage:
     python license_manager.py --check                # Validate (exit 0=ok, 1=expired)
     python license_manager.py --status               # Show license info
 
-Purchase VIP: https://bfranca.com/orchestrator
-Contact: barda@bfranca.com
+Purchase VIP: https://automationsolutionai.com/orchestrator
+Contact: contato@automationsolutionai.com
 """
 
 import argparse
@@ -174,7 +174,7 @@ def validate_key(key: str) -> dict:
             # Key format OK but not in local hash list — try server
             return {"valid": True, "tier": "pro" if suffix == "PRO" else "enterprise", "server_validate": True}
 
-    return {"valid": False, "reason": "Invalid or expired key. Purchase at https://bfranca.com/orchestrator"}
+    return {"valid": False, "reason": "Invalid or expired key. Purchase at https://automationsolutionai.com/orchestrator"}
 
 
 # =============================================================================
@@ -209,7 +209,7 @@ def init_trial() -> dict:
                 return {
                     "success": False,
                     "error": "Trial already used on this machine. Activate a VIP key.",
-                    "purchase_url": "https://bfranca.com/orchestrator",
+                    "purchase_url": "https://automationsolutionai.com/orchestrator",
                 }
         except Exception:
             pass
@@ -309,7 +309,7 @@ def check_license() -> dict:
                     "tier": "trial",
                     "reason": "Trial expired",
                     "expired_at": expires_str,
-                    "message": "Your 7-day trial has expired. Purchase VIP: https://bfranca.com/orchestrator",
+                    "message": "Your 7-day trial has expired. Purchase VIP: https://automationsolutionai.com/orchestrator",
                     "action": "activate_key",
                 }
             days_remaining = (expires - now).days
@@ -382,7 +382,7 @@ def require_license():
         if message:
             print(f"  {message}")
         print(f"\n  Activate: python license_manager.py --activate DARIO-XXXX-XXXX-XXXX-PRO")
-        print(f"  Purchase: https://bfranca.com/orchestrator\n")
+        print(f"  Purchase: https://automationsolutionai.com/orchestrator\n")
         sys.exit(1)
     return result
 
@@ -431,7 +431,7 @@ def main():
 |  Offline:   NO (internet required)       |
 |                                          |
 |  Purchase VIP for permanent offline use: |
-|  https://bfranca.com/orchestrator        |
+|  https://automationsolutionai.com/orchestrator        |
 +------------------------------------------+
 """)
         else:
